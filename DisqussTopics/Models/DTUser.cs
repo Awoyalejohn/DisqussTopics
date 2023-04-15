@@ -11,8 +11,5 @@
         public ICollection<Comment>? Comments { get; set; } // navigation property
         public ICollection<Topic>? CreatedTopics { get; set; } // navigation property
         public ICollection<Topic>? SubscibedTopics { get; set; } // navigation property
-
-
-
     }
 }

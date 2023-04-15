@@ -13,9 +13,8 @@
 
         public ICollection<DTUser>? Upvotes { get; set; } // navigation property
         public ICollection<DTUser>? Downvotes { get; set; } // navigation property
-        public string DTUserId { get; set; }
-        public DTUser Author { get; set; }
-
-
+        public DTUser? Author { get; set; } // navigation property
+        public Topic? Topic { get; set; } // navitgation property
+        public ICollection<Comment>? Comments { get; set; } // navigation property
     }
 }
