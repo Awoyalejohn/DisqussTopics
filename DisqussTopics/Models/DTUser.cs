@@ -1,8 +1,9 @@
-﻿namespace DisqussTopics.Models
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace DisqussTopics.Models
 {
-    public class DTUser
+    public class DTUser : IdentityUser
     {
-        public int Id { get; set; }
         public string? DTUsername { get; set; }
         public string? Bio { get; set; }
         public string? Avatar { get; set; }
@@ -11,5 +12,9 @@
         public ICollection<Comment>? Comments { get; set; } // navigation property
         public ICollection<Topic>? CreatedTopics { get; set; } // navigation property
         public ICollection<Topic>? SubscibedTopics { get; set; } // navigation property
+        public ICollection<Post>? PostUpvotes{ get; set; } // navigation property
+        public ICollection<Post>? PostDownvotes { get; set; } // navigation property
+        public ICollection<Comment>? CommentUpvotes{ get; set; } // navigation property
+        public ICollection<Comment>? CommentDownvotes{ get; set; } // navigation property
     }
 }

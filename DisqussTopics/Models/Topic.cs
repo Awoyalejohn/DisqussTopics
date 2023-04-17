@@ -10,9 +10,10 @@
         public string? Banner { get; set; }
         public string? Icon { get; set; }
 
-        public DTUser? TopicCreator { get; set; } // navigation property
+        public string? DTUserId { get; set; } // foreign key property
+        public DTUser? DTUser { get; set; } // navigation property
         public ICollection<Post>? Posts { get; set; } // naviagtion property
-        public ICollection<DTUser>? SubscribedUsers { get; set; } // navigation property
+        public ICollection<DTUser>? DTUsers { get; set; } // navigation property
         public ICollection<Rule>? Rules { get; set; } // navigation property
     }
 }

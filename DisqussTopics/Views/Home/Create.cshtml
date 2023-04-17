@@ -1,0 +1,65 @@
+﻿@model DisqussTopics.Models.ViewModels.PostViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Post</h4>
+
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Post.Title" class="control-label"></label>
+                <input asp-for="Post.Title" class="form-control" />
+                <span asp-validation-for="Post.Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Post.Slug" class="control-label"></label>
+                <input asp-for="Post.Slug" class="form-control" />
+                <span asp-validation-for="Post.Slug" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Post.Created" class="control-label"></label>
+                <input asp-for="Post.Created" class="form-control" />
+                <span asp-validation-for="Post.Created" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Post.Updated" class="control-label"></label>
+                <input asp-for="Post.Updated" class="form-control" />
+                <span asp-validation-for="Post.Updated" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Post.Content" class="control-label"></label>
+                <input asp-for="Post.Content" class="form-control" />
+                <span asp-validation-for="Post.Content" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Post.Image" class="control-label"></label>
+                <input asp-for="Post.Image" class="form-control" />
+                <span asp-validation-for="Post.Image" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Post.Video" class="control-label"></label>
+                <input asp-for="Post.Video" class="form-control" />
+                <span asp-validation-for="Post.Video" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TopicId" class="control-label"></label>
+                <select asp-for="TopicId" asp-items="Model.Topics">
+                    <option value="">All</option>
+                </select>
+                <span asp-validation-for="TopicId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Create</button>
+            </div>
+        </form>
+    </div>
+</div>

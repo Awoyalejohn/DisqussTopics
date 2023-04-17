@@ -9,7 +9,9 @@
 
         public ICollection<DTUser>? Upvotes { get; set; } // navigation property
         public ICollection<DTUser>? Downvotes { get; set; } // navigation property
-        public DTUser? Commenter { get; set; } // naviagtion property
+        public string? DTUserId { get; set; } // foreign key property
+        public DTUser? DTUser { get; set; } // naviagtion property
+        public int PostId { get; set; } // foreign key property
         public Post? Post { get; set; } // naviagtion property
     }
 }
