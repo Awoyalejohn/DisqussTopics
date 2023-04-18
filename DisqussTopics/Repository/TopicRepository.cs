@@ -18,6 +18,12 @@ namespace DisqussTopics.Repository
             throw new NotImplementedException();
         }
 
+        public async Task<Topic?> GetTopicById(int id)
+        {
+           return await _context.Topics
+                .FirstOrDefaultAsync(t => t.Id == id);
+        }
+
         public Topic GetTopicBySlug(string slug)
         {
             throw new NotImplementedException();

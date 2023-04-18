@@ -38,19 +38,36 @@ namespace DisqussTopics.Controllers
         }
 
         // POST: Home/Create
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create([Bind("Post,TopicId,Topics")] PostViewModel postViewModel)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        _postRepository.InsertPost(post);
-        //        await _postRepository.SaveAsync();
-        //        return RedirectToAction(nameof(Index));
-        //    }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Post,TopicId,Topics")] PostViewModel postViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                // Get the topic Id form the form data
+                var topicId = postViewModel.TopicId;
 
-        //    return View(post);
-        //}
+                // Map the postViewModel properties to the post model
+                var post = new Post()
+                {
+                    TopicId = topicId,
+                    Title = postViewModel.Post.Title,
+                    Slug = postViewModel.Post.Slug,
+                    Created = postViewModel.Post.Created,
+                    Updated = postViewModel.Post.Updated,
+                    Content = postViewModel.Post.Content,
+                    Image = postViewModel.Post.Image,
+                    Video = postViewModel.Post.Video,
+                };
+                _postRepository.InsertPost(post);
+                await _postRepository.SaveAsync();
+                return RedirectToAction(nameof(Index));
+            }
+
+            // If the model state is not valid, redisplay the form with validation errors
+            postViewModel.Topics = new SelectList(await _topicRepository.GetTopicsQuery().ToListAsync(), "Id", "Name");
+            return View(postViewModel);
+        }
 
         public IActionResult Privacy() => View();
 

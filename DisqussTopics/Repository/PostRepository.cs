@@ -27,6 +27,7 @@ namespace DisqussTopics.Repository
         {
             return await _context.Posts
                 .AsNoTracking()
+                .Include(p => p.Topic)
                 .ToListAsync();
         }
 

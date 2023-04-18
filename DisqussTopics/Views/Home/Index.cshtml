@@ -1,8 +1,59 @@
-﻿@{
+﻿@model IEnumerable<DisqussTopics.Models.Post>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Slug)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Created)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Updated)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Content)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Image)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Video)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Topic)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Title)</td>
+
+                <td>@Html.DisplayFor(modelItem => item.Slug)</td>
+
+                <td>@Html.DisplayFor(modelItem => item.Created)</td>
+
+                <td>@Html.DisplayFor(modelItem => item.Updated)</td>
+
+                <td>@Html.DisplayFor(modelItem => item.Content)</td>
+
+                <td>@Html.DisplayFor(modelItem => item.Image)</td>
+
+                <td>@Html.DisplayFor(modelItem => item.Video)</td>
+
+                <td>@Html.DisplayFor(modelItem => item.Topic.Name)</td>
+            </tr>
+        }
+    </tbody>
+</table>

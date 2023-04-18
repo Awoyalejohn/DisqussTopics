@@ -6,7 +6,7 @@ namespace DisqussTopics.Models.ViewModels
     {
         public Post Post { get; set; } = null!;
         public int TopicId { get; set; }
-        public SelectList Topics { get; set; } = null!;
+        public SelectList? Topics { get; set; }
 
     }
 }
