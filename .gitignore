@@ -348,3 +348,7 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+# library manager
+lib/
+/DisqussTopics/Data/Seed.cs

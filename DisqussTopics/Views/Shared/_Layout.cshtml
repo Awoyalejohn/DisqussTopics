@@ -38,6 +38,7 @@
                             <a class="nav-link disabled">Disabled</a>
                         </li>
                     </ul>
+                    <partial name="_LoginPartial" />
                     <form class="d-flex" role="search">
                         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                         <button class="btn btn-outline-success" type="submit">Search</button>
@@ -64,6 +65,7 @@
     <!-- Scripts -->
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    @RenderSection("scripts", required: false)
 
 
 </body>

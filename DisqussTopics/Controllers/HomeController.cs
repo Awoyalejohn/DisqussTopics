@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Security.Claims;
+using Slugify;
 
 namespace DisqussTopics.Controllers
 {
@@ -24,7 +26,7 @@ namespace DisqussTopics.Controllers
         // GET: Home
         public async Task<IActionResult> Index()
         {
-            return View( await _postRepository.GetPosts());
+            return View(await _postRepository.GetPostsNoTracking());
         }
 
         // GET: Home/Create
@@ -32,7 +34,7 @@ namespace DisqussTopics.Controllers
         {
             var postViewModel = new PostViewModel()
             {
-                Topics = new SelectList(await _topicRepository.GetTopicsQuery().ToListAsync(), "Id", "Name") 
+                Topics = new SelectList(await _topicRepository.GetTopicsQuery().ToListAsync(), "Id", "Name")
             };
             return View(postViewModel);
         }
@@ -40,19 +42,29 @@ namespace DisqussTopics.Controllers
         // POST: Home/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Post,TopicId,Topics")] PostViewModel postViewModel)
+        public async Task<IActionResult> Create([Bind("Post,TopicId,Topics,DTUserId")] PostViewModel postViewModel)
         {
             if (ModelState.IsValid)
             {
-                // Get the topic Id form the form data
+                // Get the topic Id from the form data
                 var topicId = postViewModel.TopicId;
+
+                // instantiate SlugHelper class
+                SlugHelper helper = new SlugHelper();
+
+                var slug = helper.GenerateSlug(postViewModel.Post.Title);
+
+                // Get the user Id 
+                var currentUserId = HttpContext.User
+                    .FindFirstValue(ClaimTypes.NameIdentifier);
 
                 // Map the postViewModel properties to the post model
                 var post = new Post()
                 {
                     TopicId = topicId,
+                    DTUserId = currentUserId,
                     Title = postViewModel.Post.Title,
-                    Slug = postViewModel.Post.Slug,
+                    Slug = slug,
                     Created = postViewModel.Post.Created,
                     Updated = postViewModel.Post.Updated,
                     Content = postViewModel.Post.Content,
@@ -69,6 +81,16 @@ namespace DisqussTopics.Controllers
             return View(postViewModel);
         }
 
+        //GET Home/{Topic}/{Slug}/{Id}
+        public async Task<IActionResult> Detail(int id)
+        {
+            var post = await _postRepository
+                .GetPostByIdNoTracking(id);
+
+            if (post == null) return NotFound();
+
+            return View(post);
+        }
         public IActionResult Privacy() => View();
 
         public IActionResult Error()

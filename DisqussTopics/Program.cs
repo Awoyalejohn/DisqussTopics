@@ -29,6 +29,14 @@ builder.Services.AddScoped<ITopicRepository, TopicRepository>();
 
 var app = builder.Build();
 
+// Seed data
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    await Seed.SeedRolesAsync(services);
+}
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -42,6 +50,8 @@ app.UseRouting();
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.MapControllerRoute("slugRoute", "{controller=Home}/{action=Detail}/{Topic}/{Slug}/{Id}");
 
 app.MapDefaultControllerRoute();
 
