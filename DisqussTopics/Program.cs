@@ -26,6 +26,11 @@ builder.Services.AddControllersWithViews();
 // Repository
 builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddScoped<ITopicRepository, TopicRepository>();
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+
+
+// service for sessions
+builder.Services.AddSession();
 
 var app = builder.Build();
 
@@ -44,6 +49,8 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseStaticFiles();
+
+app.UseSession();
 
 app.UseRouting();
 

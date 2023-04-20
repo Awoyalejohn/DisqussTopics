@@ -89,7 +89,23 @@ namespace DisqussTopics.Controllers
 
             if (post == null) return NotFound();
 
-            return View(post);
+            var postDetailViewModel = new PostDetailViewModel()
+            {
+                Post = post,
+                Comment = new Comment()
+            };
+
+            if (HttpContext.Session.GetString("Content") != null)
+            {
+                // Get view data from the session variable
+                var content = HttpContext.Session.GetString("Content");
+                postDetailViewModel.Comment.Content = content ?? string.Empty;
+
+                // Remove the session variable to prevent it from being used again
+                HttpContext.Session.Remove("Content");
+            }
+
+            return View(postDetailViewModel);
         }
         public IActionResult Privacy() => View();
 

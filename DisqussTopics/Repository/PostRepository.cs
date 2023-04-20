@@ -13,7 +13,7 @@ namespace DisqussTopics.Repository
             _context = context;
         }
 
-        public void DeletePost(string slug)
+        public void DeletePost(int id)
         {
             throw new NotImplementedException();
         }
@@ -29,9 +29,11 @@ namespace DisqussTopics.Repository
                 .FirstOrDefaultAsync(p => p.Slug == slug && p.Topic.Name == topic);
         }
 
-        public Post GetPostById(int id)
+        public async Task<Post> GetPostById(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Posts
+                .Include(p => p.Topic)
+                .FirstOrDefaultAsync(p => p.Id == id);
         }
         public async Task<Post> GetPostByIdNoTracking(int id)
         {

@@ -8,11 +8,11 @@ namespace DisqussTopics.Repository
         Task<IEnumerable<Post>> GetPostsNoTracking();
         Post GetPostBySlug(string slug, string topic);
         Task<Post> GetPostBySlugNoTracking(string slug, string topic);
-        Post GetPostById(int id);
+        Task<Post> GetPostById(int id);
         Task<Post> GetPostByIdNoTracking(int id);
         void InsertPost(Post post);
         void UpdatePost(Post post);
-        void DeletePost(string slug);
+        void DeletePost(int id);
         Task SaveAsync();
         IQueryable<Post> GetPostsQuery();
     }
