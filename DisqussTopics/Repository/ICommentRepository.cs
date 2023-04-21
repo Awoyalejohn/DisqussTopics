@@ -7,7 +7,7 @@ namespace DisqussTopics.Repository
         Task<IEnumerable<Comment>> GetComments();
         Task<IEnumerable<Comment>> GetCommentsNoTracking();
         Task<IEnumerable<Comment>> GetPostComments();
-        Task<IEnumerable<Comment>> GetPostCommentsNoTracking();
+        Task<IEnumerable<Comment>> GetPostCommentsNoTracking(Post post);
         Post GetCommentById(int id);
         Task<Post> GetCommentByIdNoTracking(int id);
         void InsertComment(Comment comment);

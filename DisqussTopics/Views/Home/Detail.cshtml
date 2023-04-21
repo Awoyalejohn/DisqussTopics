@@ -58,12 +58,19 @@
     </dl>
 </div>
 
+<button type="button" class="btn btn-success">Upvote</button>
+<button type="button" class="btn btn-danger">Downvote</button>
+<p>Upvotes count: </p>
+<p>Downvotes count: </p>
+
+
 <h4>Comment</h4>
 
 <hr />
 
 <form asp-controller="Comment" asp-action="Create">
     <input type="hidden" asp-for="Post.Id" />
+    <div asp-validation-summary="All" class="text-danger"></div>
     <div class="form-group">
         <input type="hidden" asp-for="Comment.PostId"/>
         <label asp-for="Comment.Content" class="control-label"></label>
@@ -94,5 +101,12 @@
 </div>
 
 <h4>Comments</h4>
+
+@foreach (var item in Model.Comments)
+{
+    <p>@item.Content</p>
+    <p>@item.Created</p>
+    <p>@item.Updated</p>
+}
 
 <hr />

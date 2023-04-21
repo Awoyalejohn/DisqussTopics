@@ -2,6 +2,8 @@
 using DisqussTopics.Models.ViewModels;
 using DisqussTopics.Repository;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 
 namespace DisqussTopics.Controllers
 {
@@ -26,12 +28,17 @@ namespace DisqussTopics.Controllers
             var slug = post.Slug;
             var topic = post.Topic.Name;
 
+            // Get the current user id
+            var currentUserId = HttpContext.User
+                .FindFirstValue(ClaimTypes.NameIdentifier);
+
             var comment = new Comment()
             {
                 Content = postDetailViewModel.Comment.Content,
                 Created = postDetailViewModel.Comment.Created,
                 Updated = postDetailViewModel.Comment.Updated,
                 PostId = postId,
+                DTUserId = currentUserId
             };
 
             if (ModelState.IsValid)
@@ -48,10 +55,18 @@ namespace DisqussTopics.Controllers
                 Comment = comment,
             };
 
-            // Set the value of a session variable named "Content"
-            HttpContext.Session.SetString("Content", comment.Content);
+            if (!newPostDetailViewModel.Comment.Content.IsNullOrEmpty())
+            {
+                // Set the value of a session variable named "Content"
+                HttpContext.Session.SetString("Content", comment.Content);
+            }
+            else
+            {
+                HttpContext.Session.SetString("NoContent", "Comment cannot be empty!");
+            }
 
-            //return View("~/Views/Home/Detail.cshtml", newPostDetailViewModel);
+      
+
             return RedirectToAction("Detail", "Home", new { Topic = topic, Slug = slug, Id = postId });
         }
     }

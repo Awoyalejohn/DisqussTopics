@@ -14,13 +14,15 @@ namespace DisqussTopics.Controllers
     {
         private readonly IPostRepository _postRepository;
         private readonly ITopicRepository _topicRepository;
+        private readonly ICommentRepository _commentRepository;
 
         private readonly ILogger<HomeController> _logger;
-        public HomeController(ILogger<HomeController> logger, IPostRepository postRepository, ITopicRepository topicRepository)
+        public HomeController(ILogger<HomeController> logger, IPostRepository postRepository, ITopicRepository topicRepository, ICommentRepository commentRepository)
         {
             _logger = logger;
             _postRepository = postRepository;
             _topicRepository = topicRepository;
+            _commentRepository = commentRepository;
         }
 
         // GET: Home
@@ -89,10 +91,13 @@ namespace DisqussTopics.Controllers
 
             if (post == null) return NotFound();
 
+            var comments = await _commentRepository.GetPostCommentsNoTracking(post); 
+
             var postDetailViewModel = new PostDetailViewModel()
             {
                 Post = post,
-                Comment = new Comment()
+                Comment = new Comment(),
+                Comments = comments,
             };
 
             if (HttpContext.Session.GetString("Content") != null)
@@ -103,6 +108,15 @@ namespace DisqussTopics.Controllers
 
                 // Remove the session variable to prevent it from being used again
                 HttpContext.Session.Remove("Content");
+            }
+            else if (HttpContext.Session.GetString("NoContent") != null)
+            {
+                // Get view data from the session variable
+                var noContent = HttpContext.Session.GetString("NoContent");
+                ModelState.AddModelError("", noContent ?? "comment cannnot be empty");
+
+                // Remove the session variable to prevent it from being used again
+                HttpContext.Session.Remove("NoContent");
             }
 
             return View(postDetailViewModel);
