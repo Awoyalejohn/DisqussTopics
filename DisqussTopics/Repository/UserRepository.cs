@@ -29,6 +29,8 @@ namespace DisqussTopics.Repository
             var currentUser = await _context.Users
                 .Include(u => u.PostUpvotes)
                 .Include(u => u.PostDownvotes)
+                .Include(u => u.CommentUpvotes)
+                .Include(u => u.CommentDownvotes)
                 .FirstOrDefaultAsync(u => u.Id == userId);
 
             return currentUser;

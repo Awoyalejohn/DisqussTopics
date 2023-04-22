@@ -63,7 +63,7 @@
 {
     @if (Model.PostUpvoted)
     {
-        <form method="post" asp-controller="Post" asp-action="RemoveUpvotePost">
+        <form method="post" asp-controller="Post" asp-action="RemoveUpvotePost" asp-route-id="@Model.Post.Id">
             <input type="hidden" asp-for="Post.Id" />
             <button type="submit" class="btn btn-success">
                 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">
@@ -74,7 +74,7 @@
     }
     else
     {
-        <form method="post" asp-controller="Post" asp-action="UpvotePost">
+        <form method="post" asp-controller="Post" asp-action="UpvotePost" asp-route-id="@Model.Post.Id">
             <input type="hidden" asp-for="Post.Id" />
             <button type="submit" class="btn btn-success">
                 <span class="material-symbols-outlined">
@@ -88,7 +88,7 @@
 
     @if (Model.PostDownvoted)
     {
-        <form method="post" asp-controller="Post" asp-action="RemoveDownvotePost">
+        <form method="post" asp-controller="Post" asp-action="RemoveDownvotePost" asp-route-id="@Model.Post.Id">
             <input type="hidden" asp-for="Post.Id" />
             <button type="submit" class="btn btn-danger">
                 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">
@@ -99,7 +99,7 @@
     }
     else
     {
-        <form method="post" asp-controller="Post" asp-action="DownvotePost">
+        <form method="post" asp-controller="Post" asp-action="DownvotePost" asp-route-id="@Model.Post.Id">
             <input type="hidden" asp-for="Post.Id" />
             <button type="submit" class="btn btn-danger">
                 <span class="material-symbols-outlined">
@@ -169,8 +169,6 @@ else
 }
 
 
-
-
 <div>
     <!-- Edit link goes here  -->
     <!-- Delete link goes here  -->
@@ -181,9 +179,80 @@ else
 
 @foreach (var item in Model.Comments)
 {
-    <p>@item.Content</p>
+    <h4>@item.Content</h4>
     <p>@item.Created</p>
     <p>@item.Updated</p>
+
+    if (User.Identity.IsAuthenticated)
+    {
+
+        @if (item.Upvotes.Any(c => c.Id == Model.UserId))
+        {
+            <form asp-controller="Comment" asp-action="RemoveUpvoteComment" asp-route-id="@item.Id">
+                <button type="submit" class="btn btn-info">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">
+                        arrow_circle_up
+                    </span>
+                </button>
+            </form>
+        }
+        else
+        {
+            <form asp-controller="Comment" asp-action="UpvoteComment" asp-route-id="@item.Id">
+                <button type="submit" class="btn btn-info">
+                    <span class="material-symbols-outlined">
+                        arrow_circle_up
+                    </span>
+                </button>
+            </form>
+        }
+
+        <br />
+
+        @if (item.Downvotes.Any(c => c.Id == Model.UserId))
+        {
+            <form asp-controller="Comment" asp-action="RemoveDownvoteComment" asp-route-id="@item.Id">
+                <button type="submit" class="btn btn-warning">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">
+                        arrow_circle_down
+                    </span>
+                </button>
+            </form>
+        }
+        else
+        {
+            <form asp-controller="Comment" asp-action="DownvoteComment" asp-route-id="@item.Id">
+                <button type="submit" class="btn btn-warning">
+                    <span class="material-symbols-outlined">
+                        arrow_circle_down
+                    </span>
+                </button>
+            </form>
+        }
+    }
+    else
+    {
+        <p>You need to login to upvote or downvote comments</p>
+    }
+
+
+    @if (item.Upvotes != null)
+    {
+        <p>Upvotes count: @item.Upvotes.Count</p>
+    }
+    else
+    {
+        <p>Upvotes count: 0</p>
+    }
+
+    @if (item.Downvotes != null)
+    {
+        <p>Downvotes count: @item.Downvotes.Count</p>
+    }
+    else
+    {
+        <p>Downvotes count: 0</p>
+    }
 }
 
 <hr />

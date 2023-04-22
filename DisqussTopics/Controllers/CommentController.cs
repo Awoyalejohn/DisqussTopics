@@ -11,11 +11,13 @@ namespace DisqussTopics.Controllers
     {
         private readonly ICommentRepository _commentRepository;
         private readonly IPostRepository _postRepository;
+        private readonly IUserRepository _userRepository;
 
-        public CommentController(ICommentRepository commentRepository, IPostRepository postRepository)
+        public CommentController(ICommentRepository commentRepository, IPostRepository postRepository, IUserRepository userRepository)
         {
             _commentRepository = commentRepository;
             _postRepository = postRepository;
+            _userRepository = userRepository;
         }
 
         [HttpPost]
@@ -65,8 +67,129 @@ namespace DisqussTopics.Controllers
                 HttpContext.Session.SetString("NoContent", "Comment cannot be empty!");
             }
 
-      
+            return RedirectToAction("Detail", "Home", new { Topic = topic, Slug = slug, Id = postId });
+        }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpvoteComment(int id)
+        {
+            var comment = await _commentRepository.GetCommentById(id);
+
+            var currentUserId = HttpContext.User
+                .FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var currentUser = await _userRepository
+                .GetUserByIdAsync(currentUserId);
+
+            var post = await _postRepository.GetPostById(comment.PostId);
+
+            var topic = post.Topic.Name;
+            var slug = post.Slug;
+            var postId = post.Id;
+
+            if (!comment.Downvotes.Any(c => c.Id == currentUserId))
+            {
+                comment.Upvotes.Add(currentUser);
+                currentUser.CommentUpvotes.Add(comment);
+                await _commentRepository.SaveAsync();
+                return RedirectToAction("Detail", "Home", new { Topic = topic, Slug = slug, Id = postId });
+            }
+            else
+            {
+                comment.Downvotes.Remove(currentUser);
+                currentUser.CommentDownvotes.Remove(comment);
+
+                comment.Upvotes.Add(currentUser);
+                currentUser.CommentUpvotes.Add(comment);
+
+                await _commentRepository.SaveAsync();
+                return RedirectToAction("Detail", "Home", new { Topic = topic, Slug = slug, Id = postId });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveUpvoteComment(int id)
+        {
+            var comment = await _commentRepository.GetCommentById(id);
+
+            var currentUserId = HttpContext.User
+                .FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var currentUser = await _userRepository
+                .GetUserByIdAsync(currentUserId);
+
+            var post = await _postRepository.GetPostById(comment.PostId);
+
+            var topic = post.Topic.Name;
+            var slug = post.Slug;
+            var postId = post.Id;
+
+            comment.Upvotes.Remove(currentUser);
+            currentUser.CommentUpvotes.Remove(comment);
+            await _commentRepository.SaveAsync();
+            return RedirectToAction("Detail", "Home", new { Topic = topic, Slug = slug, Id = postId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DownvoteComment(int id)
+        {
+            var comment = await _commentRepository.GetCommentById(id);
+
+            var currentUserId = HttpContext.User
+                .FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var currentUser = await _userRepository
+                .GetUserByIdAsync(currentUserId);
+
+            var post = await _postRepository.GetPostById(comment.PostId);
+
+            var topic = post.Topic.Name;
+            var slug = post.Slug;
+            var postId = post.Id;
+
+            if (!comment.Upvotes.Any(c => c.Id == currentUserId))
+            {
+                comment.Downvotes.Add(currentUser);
+                currentUser.CommentDownvotes.Add(comment);
+                await _commentRepository.SaveAsync();
+                return RedirectToAction("Detail", "Home", new { Topic = topic, Slug = slug, Id = postId });
+            }
+            else
+            {
+                comment.Upvotes.Remove(currentUser);
+                currentUser.CommentUpvotes.Remove(comment);
+
+                comment.Downvotes.Add(currentUser);
+                currentUser.CommentDownvotes.Add(comment);
+                await _commentRepository.SaveAsync();
+                return RedirectToAction("Detail", "Home", new { Topic = topic, Slug = slug, Id = postId });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveDownvoteComment(int id)
+        {
+            var comment = await _commentRepository.GetCommentById(id);
+
+            var currentUserId = HttpContext.User
+                .FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var currentUser = await _userRepository
+                .GetUserByIdAsync(currentUserId);
+
+            var post = await _postRepository.GetPostById(comment.PostId);
+
+            var topic = post.Topic.Name;
+            var slug = post.Slug;
+            var postId = post.Id;
+
+            comment.Downvotes.Remove(currentUser);
+            currentUser.CommentDownvotes.Remove(comment);
+            await _commentRepository.SaveAsync();
             return RedirectToAction("Detail", "Home", new { Topic = topic, Slug = slug, Id = postId });
         }
     }

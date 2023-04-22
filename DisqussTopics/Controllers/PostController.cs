@@ -20,9 +20,8 @@ namespace DisqussTopics.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpvotePost([Bind("Post")] PostDetailViewModel postDetailViewModel)
+        public async Task<IActionResult> UpvotePost(int id)
         {
-            var id = postDetailViewModel.Post.Id;
             var post = await _postRepository.GetPostById(id);
 
             var currentUserId = HttpContext.User
@@ -59,9 +58,8 @@ namespace DisqussTopics.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RemoveUpvotePost([Bind("Post")] PostDetailViewModel postDetailViewModel)
+        public async Task<IActionResult> RemoveUpvotePost(int id)
         {
-            var id = postDetailViewModel.Post.Id;
             var post = await _postRepository.GetPostById(id);
 
             var currentUserId = HttpContext.User
@@ -83,9 +81,8 @@ namespace DisqussTopics.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DownvotePost([Bind("Post")] PostDetailViewModel postDetailViewModel)
+        public async Task<IActionResult> DownvotePost(int id)
         {
-            var id = postDetailViewModel.Post.Id;
             var post = await _postRepository.GetPostById(id);
 
             var currentUserId = HttpContext.User
@@ -119,9 +116,8 @@ namespace DisqussTopics.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RemoveDownvotePost([Bind("Post")] PostDetailViewModel postDetailViewModel)
+        public async Task<IActionResult> RemoveDownvotePost(int id)
         {
-            var id = postDetailViewModel.Post.Id;
             var post = await _postRepository.GetPostById(id);
 
             var currentUserId = HttpContext.User

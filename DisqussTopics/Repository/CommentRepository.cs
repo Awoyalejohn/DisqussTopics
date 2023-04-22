@@ -18,12 +18,17 @@ namespace DisqussTopics.Repository
             throw new NotImplementedException();
         }
 
-        public Post GetCommentById(int id)
+        public async Task<Comment> GetCommentById(int id)
         {
-            throw new NotImplementedException();
+            var comment = await _context.Comments
+                .Include(c => c.Upvotes)
+                .Include(c => c.Downvotes)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            return comment;
         }
 
-        public Task<Post> GetCommentByIdNoTracking(int id)
+        public Task<Comment> GetCommentByIdNoTracking(int id)
         {
             throw new NotImplementedException();
         }
@@ -47,6 +52,8 @@ namespace DisqussTopics.Repository
         {
             var comments = await _context.Comments
                 .AsNoTracking()
+                .Include(c => c.Upvotes)
+                .Include(c => c.Downvotes)
                 .Where(c => c.PostId == post.Id)
                 .ToListAsync();
 

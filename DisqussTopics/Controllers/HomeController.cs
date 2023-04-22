@@ -15,14 +15,20 @@ namespace DisqussTopics.Controllers
         private readonly IPostRepository _postRepository;
         private readonly ITopicRepository _topicRepository;
         private readonly ICommentRepository _commentRepository;
+        private readonly IUserRepository _userRepository;
 
         private readonly ILogger<HomeController> _logger;
-        public HomeController(ILogger<HomeController> logger, IPostRepository postRepository, ITopicRepository topicRepository, ICommentRepository commentRepository)
+        public HomeController(ILogger<HomeController> logger,
+            IPostRepository postRepository,
+            ITopicRepository topicRepository,
+            ICommentRepository commentRepository,
+            IUserRepository userRepository)
         {
             _logger = logger;
             _postRepository = postRepository;
             _topicRepository = topicRepository;
             _commentRepository = commentRepository;
+            _userRepository = userRepository;
         }
 
         // GET: Home
@@ -93,11 +99,12 @@ namespace DisqussTopics.Controllers
 
             var comments = await _commentRepository.GetPostCommentsNoTracking(post); 
 
-            var curretnUserId = HttpContext.User
+            var currentUserId = HttpContext.User
                 .FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var postUpvoted = post.Upvotes.Any(u => u.Id == curretnUserId);
-            var postDownvoted = post.Downvotes.Any(u => u.Id == curretnUserId);
+
+            var postUpvoted = post.Upvotes.Any(u => u.Id == currentUserId);
+            var postDownvoted = post.Downvotes.Any(u => u.Id == currentUserId);
             //var commentUpvoted;
             //var commentDownvoted;
 
@@ -108,6 +115,7 @@ namespace DisqussTopics.Controllers
                 Comments = comments,
                 PostUpvoted = postUpvoted,
                 PostDownvoted = postDownvoted,
+                UserId = currentUserId
             };
 
             if (HttpContext.Session.GetString("Content") != null)

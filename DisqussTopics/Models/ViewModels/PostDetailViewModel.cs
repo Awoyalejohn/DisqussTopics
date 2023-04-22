@@ -7,7 +7,6 @@
         public IEnumerable<Comment>? Comments { get; set; }
         public bool PostUpvoted { get; set; }
         public bool PostDownvoted { get; set; }
-        public bool CommentUpvoted { get; set; }
-        public bool CommentDownvoted { get; set; }
+        public string? UserId { get; set; }
     }
 }

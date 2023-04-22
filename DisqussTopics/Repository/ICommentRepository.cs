@@ -8,8 +8,8 @@ namespace DisqussTopics.Repository
         Task<IEnumerable<Comment>> GetCommentsNoTracking();
         Task<IEnumerable<Comment>> GetPostComments();
         Task<IEnumerable<Comment>> GetPostCommentsNoTracking(Post post);
-        Post GetCommentById(int id);
-        Task<Post> GetCommentByIdNoTracking(int id);
+        Task<Comment> GetCommentById(int id);
+        Task<Comment> GetCommentByIdNoTracking(int id);
         void InsertComment(Comment comment);
         void UpdateComment(Comment comment);
         void DeleteComment(int id);
