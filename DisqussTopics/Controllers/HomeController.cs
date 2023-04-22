@@ -93,11 +93,21 @@ namespace DisqussTopics.Controllers
 
             var comments = await _commentRepository.GetPostCommentsNoTracking(post); 
 
+            var curretnUserId = HttpContext.User
+                .FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var postUpvoted = post.Upvotes.Any(u => u.Id == curretnUserId);
+            var postDownvoted = post.Downvotes.Any(u => u.Id == curretnUserId);
+            //var commentUpvoted;
+            //var commentDownvoted;
+
             var postDetailViewModel = new PostDetailViewModel()
             {
                 Post = post,
                 Comment = new Comment(),
                 Comments = comments,
+                PostUpvoted = postUpvoted,
+                PostDownvoted = postDownvoted,
             };
 
             if (HttpContext.Session.GetString("Content") != null)

@@ -58,38 +58,115 @@
     </dl>
 </div>
 
-<button type="button" class="btn btn-success">Upvote</button>
-<button type="button" class="btn btn-danger">Downvote</button>
-<p>Upvotes count: </p>
-<p>Downvotes count: </p>
+
+@if (User.Identity.IsAuthenticated)
+{
+    @if (Model.PostUpvoted)
+    {
+        <form method="post" asp-controller="Post" asp-action="RemoveUpvotePost">
+            <input type="hidden" asp-for="Post.Id" />
+            <button type="submit" class="btn btn-success">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">
+                    arrow_circle_up
+                </span>
+            </button>
+        </form>
+    }
+    else
+    {
+        <form method="post" asp-controller="Post" asp-action="UpvotePost">
+            <input type="hidden" asp-for="Post.Id" />
+            <button type="submit" class="btn btn-success">
+                <span class="material-symbols-outlined">
+                    arrow_circle_up
+                </span>
+            </button>
+        </form>
+    }
+
+    <br />
+
+    @if (Model.PostDownvoted)
+    {
+        <form method="post" asp-controller="Post" asp-action="RemoveDownvotePost">
+            <input type="hidden" asp-for="Post.Id" />
+            <button type="submit" class="btn btn-danger">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">
+                    arrow_circle_down
+                </span>
+            </button>
+        </form>
+    }
+    else
+    {
+        <form method="post" asp-controller="Post" asp-action="DownvotePost">
+            <input type="hidden" asp-for="Post.Id" />
+            <button type="submit" class="btn btn-danger">
+                <span class="material-symbols-outlined">
+                    arrow_circle_down
+                </span>
+            </button>
+        </form>
+    }
+}
+else
+{
+    <p>You need to login to upvote or downvote posts</p>
+}
+
+
+@if (Model.Post.Upvotes != null)
+{
+    <p>Upvotes count: @Model.Post.Upvotes.Count</p>
+}
+else
+{
+    <p>Upvotes count: 0</p>
+}
+
+@if (Model.Post.Downvotes != null)
+{
+    <p>Downvotes count: @Model.Post.Downvotes.Count</p>
+}
+else
+{
+    <p>Downvotes count: 0</p>
+}
 
 
 <h4>Comment</h4>
 
 <hr />
 
-<form asp-controller="Comment" asp-action="Create">
-    <input type="hidden" asp-for="Post.Id" />
-    <div asp-validation-summary="All" class="text-danger"></div>
-    <div class="form-group">
-        <input type="hidden" asp-for="Comment.PostId"/>
-        <label asp-for="Comment.Content" class="control-label"></label>
-        <input asp-for="Comment.Content" class="form-control" />
-        <span asp-validation-for="Comment.Content" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Comment.Created" class="control-label"></label>
-        <input asp-for="Comment.Created" class="form-control" />
-        <span asp-validation-for="Comment.Created" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Comment.Updated" class="control-label"></label>
-        <input asp-for="Comment.Updated" class="form-control" />
-        <span asp-validation-for="Comment.Updated" class="text-danger"></span>
-    </div>
+@if (User.Identity.IsAuthenticated)
+{
+    <form asp-controller="Comment" asp-action="Create">
+        <input type="hidden" asp-for="Post.Id" />
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="form-group">
+            <input type="hidden" asp-for="Comment.PostId" />
+            <label asp-for="Comment.Content" class="control-label"></label>
+            <input asp-for="Comment.Content" class="form-control" />
+            <span asp-validation-for="Comment.Content" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Comment.Created" class="control-label"></label>
+            <input asp-for="Comment.Created" class="form-control" />
+            <span asp-validation-for="Comment.Created" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Comment.Updated" class="control-label"></label>
+            <input asp-for="Comment.Updated" class="form-control" />
+            <span asp-validation-for="Comment.Updated" class="text-danger"></span>
+        </div>
 
-    <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+}
+else
+{
+    <p>You need to login to comment on a post!</p>
+}
 
 
 

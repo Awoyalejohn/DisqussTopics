@@ -33,12 +33,17 @@ namespace DisqussTopics.Repository
         {
             return await _context.Posts
                 .Include(p => p.Topic)
+                .Include(p => p.Upvotes)
+                .Include(p => p.Downvotes)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
         public async Task<Post> GetPostByIdNoTracking(int id)
         {
             return await _context.Posts
                 .AsNoTracking()
+                .Include(p => p.Topic)
+                .Include(p => p.Upvotes)
+                .Include(p => p.Downvotes)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
