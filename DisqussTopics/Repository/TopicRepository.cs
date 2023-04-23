@@ -20,18 +20,44 @@ namespace DisqussTopics.Repository
 
         public async Task<Topic?> GetTopicById(int id)
         {
-           return await _context.Topics
+            return await _context.Topics
+                 .FirstOrDefaultAsync(t => t.Id == id);
+        }
+
+        public async Task<Topic?> GetTopicByIdNoTracking(int id)
+        {
+            return await _context.Topics
+                .Include(t => t.Posts)
+                .Include(t => t.DTUsers)
+                .Include(t => t.Rules)
                 .FirstOrDefaultAsync(t => t.Id == id);
         }
 
-        public Topic GetTopicBySlug(string slug)
+        public async Task<Topic?> GetTopicBySlug(string slug)
         {
-            throw new NotImplementedException();
+            return await _context.Topics
+                .Include(t => t.Posts)
+                .Include(t => t.DTUsers)
+                .Include(t => t.Rules)
+                .FirstOrDefaultAsync(t => t.Slug == slug);
         }
 
-        public Task<IEnumerable<Topic>> GetTopics()
+        public async Task<Topic?> GetTopicBySlugNoTrackng(string slug)
         {
-            throw new NotImplementedException();
+            return await _context.Topics
+                .AsNoTracking()
+                .Include(t => t.Posts)
+                .Include(t => t.DTUsers)
+                .Include(t => t.Rules)
+                .FirstOrDefaultAsync(t => t.Slug == slug);
+        }
+
+        public async Task<IEnumerable<Topic>> GetTopics()
+        {
+            var topics = await _context.Topics
+                .ToListAsync();
+
+            return topics;
         }
 
         public IQueryable<Topic> GetTopicsQuery()

@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Security.Claims;
 using Slugify;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DisqussTopics.Controllers
 {
@@ -38,6 +39,7 @@ namespace DisqussTopics.Controllers
         }
 
         // GET: Home/Create
+        [Authorize]
         public async Task<IActionResult> Create()
         {
             var postViewModel = new PostViewModel()
@@ -73,8 +75,8 @@ namespace DisqussTopics.Controllers
                     DTUserId = currentUserId,
                     Title = postViewModel.Post.Title,
                     Slug = slug,
-                    Created = postViewModel.Post.Created,
-                    Updated = postViewModel.Post.Updated,
+                    Created = DateTime.Now,
+                    Updated = DateTime.Now,
                     Content = postViewModel.Post.Content,
                     Image = postViewModel.Post.Image,
                     Video = postViewModel.Post.Video,

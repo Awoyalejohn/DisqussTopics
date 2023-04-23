@@ -6,8 +6,10 @@ namespace DisqussTopics.Repository
     {
         Task<IEnumerable<Topic>> GetTopics();
         IQueryable<Topic> GetTopicsQuery();
-        Topic GetTopicBySlug(string slug);
-        Task<Topic> GetTopicById(int id);
+        Task<Topic?> GetTopicBySlug(string slug);
+        Task<Topic?> GetTopicBySlugNoTrackng(string slug);
+        Task<Topic?> GetTopicById(int id);
+        Task<Topic?> GetTopicByIdNoTracking(int id);
         void InsertTopic(Topic topic);
         void UpdateTopic(Topic topic);
         void DeleteTopic(string slug);

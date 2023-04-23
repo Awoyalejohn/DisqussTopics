@@ -1,0 +1,50 @@
+﻿@model DisqussTopics.Models.ViewModels.TopicViewModel
+@{
+    ViewData["Title"] = "Detail";
+}
+
+<h4>@Html.DisplayFor(model => model.Topic.Name)</h4>
+
+<hr />
+
+<h6>About</h6>
+<p>@Html.DisplayFor(model => model.Topic.About)</p>
+
+<h6>Posts</h6>
+
+
+<h6>Rules</h6>
+
+
+<h6>DTUsers</h6>
+
+
+@if (User.Identity.IsAuthenticated)
+{
+
+    @if (Model.Topic.DTUsers.Any(u => u.Id == Model.DTUserId))
+    {
+
+        <form asp-action="Unsubscribe" asp-route-slug="@Model.Topic.Slug">
+            @*<input type="hidden" asp-for="Topic.Id"/>*@
+            <button type="submit" class="btn btn-dark">Unsubscribe</button>
+        </form>
+
+    }
+    else
+    {
+        <form asp-action="Subscribe" asp-route-slug="@Model.Topic.Slug">
+            @*<input type="hidden" asp-for="Topic.Id" />*@
+            <button type="submit" class="btn btn-primary">Subscribe</button>
+        </form>
+    }
+
+}
+else
+{
+    <p>You need to login to subscribe to topics</p>
+}
+
+
+
+

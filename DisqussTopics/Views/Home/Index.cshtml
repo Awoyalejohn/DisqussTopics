@@ -55,7 +55,11 @@
 
                 <td>@Html.DisplayFor(modelItem => item.Video)</td>
 
-                <td>@Html.DisplayFor(modelItem => item.Topic.Name)</td>
+                <td>
+                    <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Topic.Slug">
+                        @Html.DisplayFor(modelItem => item.Topic.Name)
+                    </a>
+                </td>
                 <td>
                     <a asp-action="Detail" asp-route-topic="@item.Topic.Name" asp-route-slug="@item.Slug" asp-route-id="@item.Id">Detail</a>|
                     <a>Edit</a>|

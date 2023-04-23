@@ -1,4 +1,4 @@
-﻿@model DisqussTopics.Models.Topic
+﻿@model DisqussTopics.Models.ViewModels.TopicViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -13,36 +13,27 @@
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
+            <input type="hidden" asp-for="DTUserId" />
             <div asp-validation-summary="All" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+                <label asp-for="Topic.Name" class="control-label"></label>
+                <input asp-for="Topic.Name" class="form-control" />
+                <span asp-validation-for="Topic.Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Slug" class="control-label"></label>
-                <input asp-for="Slug" class="form-control" />
-                <span asp-validation-for="Slug" class="text-danger"></span>
+                <label asp-for="Topic.About" class="control-label"></label>
+                <input asp-for="Topic.About" class="form-control" />
+                <span asp-validation-for="Topic.About" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Created" class="control-label"></label>
-                <input asp-for="Created" class="form-control" />
-                <span asp-validation-for="Created" class="text-danger"></span>
+                <label asp-for="Topic.Banner" class="control-label"></label>
+                <input asp-for="Topic.Banner" class="form-control" />
+                <span asp-validation-for="Topic.Banner" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="About" class="control-label"></label>
-                <input asp-for="About" class="form-control" />
-                <span asp-validation-for="About" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Banner" class="control-label"></label>
-                <input asp-for="Banner" class="form-control" />
-                <span asp-validation-for="Banner" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Icon" class="control-label"></label>
-                <input asp-for="Icon" class="form-control" />
-                <span asp-validation-for="Icon" class="text-danger"></span>
+                <label asp-for="Topic.Icon" class="control-label"></label>
+                <input asp-for="Topic.Icon" class="form-control" />
+                <span asp-validation-for="Topic.Icon" class="text-danger"></span>
             </div>
 
             <div class="form-group">

@@ -59,7 +59,9 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.MapControllerRoute("slugRoute", "{controller=Home}/{action=Detail}/{Topic}/{Slug}/{Id}");
+app.MapControllerRoute("postSlugRoute", "{controller=Home}/{action=Detail}/{Topic}/{Slug}/{Id}");
+
+app.MapControllerRoute("topicSlugRoute", "{controller=Topic}/{action=Detail}/{Slug}");
 
 app.MapDefaultControllerRoute();
 

@@ -31,6 +31,7 @@ namespace DisqussTopics.Repository
                 .Include(u => u.PostDownvotes)
                 .Include(u => u.CommentUpvotes)
                 .Include(u => u.CommentDownvotes)
+                .Include(u => u.SubscibedTopics)
                 .FirstOrDefaultAsync(u => u.Id == userId);
 
             return currentUser;
