@@ -28,6 +28,7 @@ builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddScoped<ITopicRepository, TopicRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IRuleRepository, RuleRepository>();
 
 
 // service for sessions
@@ -62,6 +63,8 @@ app.UseAuthorization();
 app.MapControllerRoute("postSlugRoute", "{controller=Home}/{action=Detail}/{Topic}/{Slug}/{Id}");
 
 app.MapControllerRoute("topicSlugRoute", "{controller=Topic}/{action=Detail}/{Slug}");
+
+app.MapControllerRoute("ruleRoute", "{controller=Topic}/{action=CreateRule}/{slug}");
 
 app.MapDefaultControllerRoute();
 

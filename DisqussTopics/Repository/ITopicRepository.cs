@@ -5,7 +5,7 @@ namespace DisqussTopics.Repository
     public interface ITopicRepository
     {
         Task<IEnumerable<Topic>> GetTopics();
-        IQueryable<Topic> GetTopicsQuery();
+        Task<IEnumerable<Topic>> GetSubscribedTopics(string userId);
         Task<Topic?> GetTopicBySlug(string slug);
         Task<Topic?> GetTopicBySlugNoTrackng(string slug);
         Task<Topic?> GetTopicById(int id);

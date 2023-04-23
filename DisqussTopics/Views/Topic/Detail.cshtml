@@ -12,11 +12,93 @@
 
 <h6>Posts</h6>
 
+<a asp-controller="Topic" asp-action="CreateRule" asp-route-slug="@Model.Topic.Slug" class="btn btn-danger">
+    Add Rules
+</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Topic.Posts.First().Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Topic.Posts.First().Slug)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Topic.Posts.First().Created)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Topic.Posts.First().Updated)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Topic.Posts.First().Content)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Topic.Posts.First().Image)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Topic.Posts.First().Video)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Topic)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Topic.Posts)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Title)</td>
+
+                <td>@Html.DisplayFor(modelItem => item.Slug)</td>
+
+                <td>@Html.DisplayFor(modelItem => item.Created)</td>
+
+                <td>@Html.DisplayFor(modelItem => item.Updated)</td>
+
+                <td>@Html.DisplayFor(modelItem => item.Content)</td>
+
+                <td>@Html.DisplayFor(modelItem => item.Image)</td>
+
+                <td>@Html.DisplayFor(modelItem => item.Video)</td>
+
+                <td>
+                    <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Topic.Slug">
+                        @Html.DisplayFor(modelItem => item.Topic.Name)
+                    </a>
+                </td>
+                <td>
+                    <a asp-action="Detail" asp-route-topic="@item.Topic.Name" asp-route-slug="@item.Slug" asp-route-id="@item.Id">Detail</a>|
+                    <a>Edit</a>|
+                    <a>Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
 
 <h6>Rules</h6>
-
+@foreach (var item in Model.Topic.Rules)
+{
+    <h6>@Html.DisplayFor(modelItem => item.Title)</h6>
+    <p>@Html.DisplayFor(modelItem => item.Description)</p>
+}
 
 <h6>DTUsers</h6>
+
+@if (Model.Topic.DTUsers != null)
+{
+    <p>Number of Subscribers = @Model.Topic.DTUsers.Count</p>
+}
+else
+{
+    <p>Number of Subscribers = 0</p>
+}
+
 
 
 @if (User.Identity.IsAuthenticated)

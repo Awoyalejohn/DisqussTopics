@@ -18,6 +18,12 @@ namespace DisqussTopics.Repository
             throw new NotImplementedException();
         }
 
+        public async Task<IEnumerable<Topic>> GetSubscribedTopics(string userId)
+        {
+            return await _context.Topics
+                .Where(t => t.DTUsers.Any(u => u.Id == userId)).ToListAsync();
+        }
+
         public async Task<Topic?> GetTopicById(int id)
         {
             return await _context.Topics
@@ -57,13 +63,6 @@ namespace DisqussTopics.Repository
             var topics = await _context.Topics
                 .ToListAsync();
 
-            return topics;
-        }
-
-        public IQueryable<Topic> GetTopicsQuery()
-        {
-            var topics = from topic in _context.Topics
-                         select topic;
             return topics;
         }
 

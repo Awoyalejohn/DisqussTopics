@@ -1,0 +1,35 @@
+﻿@model DisqussTopics.Models.Rule
+
+@{
+    ViewData["Title"] = "Create Rule";
+}
+
+<h1>Create</h1>
+
+<h4>Rule</h4>
+
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-controller="Topic" asp-action="CreateRule" asp-route-slug="@Model.Topic.Slug">
+            <input type="hidden" asp-for="TopicId" />
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Create</button>
+            </div>
+        </form>
+    </div>
+</div>

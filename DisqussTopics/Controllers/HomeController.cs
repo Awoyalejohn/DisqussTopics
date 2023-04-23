@@ -39,21 +39,29 @@ namespace DisqussTopics.Controllers
         }
 
         // GET: Home/Create
-        [Authorize]
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Create()
         {
+            var currentUserId = HttpContext.User
+                .FindFirstValue(ClaimTypes.NameIdentifier);
+
             var postViewModel = new PostViewModel()
             {
-                Topics = new SelectList(await _topicRepository.GetTopicsQuery().ToListAsync(), "Id", "Name")
+                Topics = new SelectList(await _topicRepository.GetSubscribedTopics(currentUserId), "Id", "Name")
             };
             return View(postViewModel);
         }
 
         // POST: Home/Create
+        [Authorize(Roles = "User, Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Post,TopicId,Topics,DTUserId")] PostViewModel postViewModel)
         {
+            // Get the user Id 
+            var currentUserId = HttpContext.User
+                .FindFirstValue(ClaimTypes.NameIdentifier);
+
             if (ModelState.IsValid)
             {
                 // Get the topic Id from the form data
@@ -64,9 +72,7 @@ namespace DisqussTopics.Controllers
 
                 var slug = helper.GenerateSlug(postViewModel.Post.Title);
 
-                // Get the user Id 
-                var currentUserId = HttpContext.User
-                    .FindFirstValue(ClaimTypes.NameIdentifier);
+
 
                 // Map the postViewModel properties to the post model
                 var post = new Post()
@@ -87,7 +93,7 @@ namespace DisqussTopics.Controllers
             }
 
             // If the model state is not valid, redisplay the form with validation errors
-            postViewModel.Topics = new SelectList(await _topicRepository.GetTopicsQuery().ToListAsync(), "Id", "Name");
+            postViewModel.Topics = new SelectList(await _topicRepository.GetSubscribedTopics(currentUserId), "Id", "Name");
             return View(postViewModel);
         }
 

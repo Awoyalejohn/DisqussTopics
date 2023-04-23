@@ -9,6 +9,7 @@ using System.Security.Claims;
 
 namespace DisqussTopics.Controllers
 {
+    [Authorize(Roles = "User, Admin")]
     public class TopicController : Controller
     {
         private readonly ITopicRepository _topicRepository;
@@ -21,7 +22,6 @@ namespace DisqussTopics.Controllers
         }
 
         // GET: Topic/Create
-        [Authorize]
         public IActionResult Create()
         {
             var currenUserId = HttpContext.User
@@ -35,7 +35,6 @@ namespace DisqussTopics.Controllers
         }
 
         // POST Topic/Create
-        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create([Bind("Topic, DTUserId")] TopicViewModel topicViewModel)

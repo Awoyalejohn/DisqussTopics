@@ -1,13 +1,16 @@
-﻿using DisqussTopics.Data;
+﻿using DisqussTopics.Constants;
+using DisqussTopics.Data;
 using DisqussTopics.Models;
 using DisqussTopics.Models.ViewModels;
 using DisqussTopics.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace DisqussTopics.Controllers
 {
+    [Authorize(Roles = "User, Admin")]
     public class PostController : Controller
     {
         private readonly IPostRepository _postRepository;
@@ -54,7 +57,6 @@ namespace DisqussTopics.Controllers
                 return RedirectToAction("Detail", "Home", new { Topic = topic, Slug = slug, Id = postId });
             }
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
