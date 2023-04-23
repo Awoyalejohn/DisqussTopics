@@ -7,6 +7,7 @@ using System.Security.Claims;
 
 namespace DisqussTopics.Controllers
 {
+    [Route("Post")]
     public class CommentController : Controller
     {
         private readonly ICommentRepository _commentRepository;
@@ -20,9 +21,11 @@ namespace DisqussTopics.Controllers
             _userRepository = userRepository;
         }
 
+        [Route("Detail/{topic}/{slug}/{id}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Post,Comment")] PostDetailViewModel postDetailViewModel)
+        [ActionName("Detail")]
+        public async Task<IActionResult> CreateComment([Bind("Post,Comment")] PostDetailViewModel postDetailViewModel)
         {
             var postId = postDetailViewModel.Post.Id;
             var post = await _postRepository.GetPostById(postId);
@@ -37,39 +40,39 @@ namespace DisqussTopics.Controllers
             var comment = new Comment()
             {
                 Content = postDetailViewModel.Comment.Content,
-                Created = postDetailViewModel.Comment.Created,
-                Updated = postDetailViewModel.Comment.Updated,
+                Created = DateTime.Now,
+                Updated = DateTime.Now,
                 PostId = postId,
                 DTUserId = currentUserId
             };
 
             if (ModelState.IsValid)
             {
-               
                 _commentRepository.InsertComment(comment);
                 await _commentRepository.SaveAsync();
-                return RedirectToAction("Detail", "Home", new { Topic = topic, Slug = slug, Id = postId });
+                return RedirectToAction("Detail", "Post", new { Topic = topic, Slug = slug, Id = postId });
             }
+
+            var comments = await _commentRepository.GetPostCommentsNoTracking(post);
+
+
+            var postUpvoted = post.Upvotes.Any(u => u.Id == currentUserId);
+            var postDownvoted = post.Downvotes.Any(u => u.Id == currentUserId);
 
             var newPostDetailViewModel = new PostDetailViewModel()
             {
                 Post = post,
                 Comment = comment,
+                PostUpvoted = postUpvoted,
+                PostDownvoted = postDownvoted,
+                Comments = comments,
+                UserId = currentUserId
             };
 
-            if (!newPostDetailViewModel.Comment.Content.IsNullOrEmpty())
-            {
-                // Set the value of a session variable named "Content"
-                HttpContext.Session.SetString("Content", comment.Content);
-            }
-            else
-            {
-                HttpContext.Session.SetString("NoContent", "Comment cannot be empty!");
-            }
-
-            return RedirectToAction("Detail", "Home", new { Topic = topic, Slug = slug, Id = postId });
+            return View("~/Views/Post/Detail.cshtml", newPostDetailViewModel);
         }
 
+        [Route("{action}/{id}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpvoteComment(int id)
@@ -93,7 +96,7 @@ namespace DisqussTopics.Controllers
                 comment.Upvotes.Add(currentUser);
                 currentUser.CommentUpvotes.Add(comment);
                 await _commentRepository.SaveAsync();
-                return RedirectToAction("Detail", "Home", new { Topic = topic, Slug = slug, Id = postId });
+                return RedirectToAction("Detail", "Post", new { Topic = topic, Slug = slug, Id = postId });
             }
             else
             {
@@ -104,10 +107,11 @@ namespace DisqussTopics.Controllers
                 currentUser.CommentUpvotes.Add(comment);
 
                 await _commentRepository.SaveAsync();
-                return RedirectToAction("Detail", "Home", new { Topic = topic, Slug = slug, Id = postId });
+                return RedirectToAction("Detail", "Post", new { Topic = topic, Slug = slug, Id = postId });
             }
         }
 
+        [Route("{action}/{id}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RemoveUpvoteComment(int id)
@@ -129,9 +133,10 @@ namespace DisqussTopics.Controllers
             comment.Upvotes.Remove(currentUser);
             currentUser.CommentUpvotes.Remove(comment);
             await _commentRepository.SaveAsync();
-            return RedirectToAction("Detail", "Home", new { Topic = topic, Slug = slug, Id = postId });
+            return RedirectToAction("Detail", "Post", new { Topic = topic, Slug = slug, Id = postId });
         }
 
+        [Route("{action}/{id}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DownvoteComment(int id)
@@ -155,7 +160,7 @@ namespace DisqussTopics.Controllers
                 comment.Downvotes.Add(currentUser);
                 currentUser.CommentDownvotes.Add(comment);
                 await _commentRepository.SaveAsync();
-                return RedirectToAction("Detail", "Home", new { Topic = topic, Slug = slug, Id = postId });
+                return RedirectToAction("Detail", "Post", new { Topic = topic, Slug = slug, Id = postId });
             }
             else
             {
@@ -165,10 +170,11 @@ namespace DisqussTopics.Controllers
                 comment.Downvotes.Add(currentUser);
                 currentUser.CommentDownvotes.Add(comment);
                 await _commentRepository.SaveAsync();
-                return RedirectToAction("Detail", "Home", new { Topic = topic, Slug = slug, Id = postId });
+                return RedirectToAction("Detail", "Post", new { Topic = topic, Slug = slug, Id = postId });
             }
         }
 
+        [Route("{action}/{id}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RemoveDownvoteComment(int id)
@@ -190,7 +196,7 @@ namespace DisqussTopics.Controllers
             comment.Downvotes.Remove(currentUser);
             currentUser.CommentDownvotes.Remove(comment);
             await _commentRepository.SaveAsync();
-            return RedirectToAction("Detail", "Home", new { Topic = topic, Slug = slug, Id = postId });
+            return RedirectToAction("Detail", "Post", new { Topic = topic, Slug = slug, Id = postId });
         }
     }
 }

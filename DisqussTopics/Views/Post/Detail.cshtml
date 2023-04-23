@@ -63,8 +63,7 @@
 {
     @if (Model.PostUpvoted)
     {
-        <form method="post" asp-controller="Post" asp-action="RemoveUpvotePost" asp-route-id="@Model.Post.Id">
-            <input type="hidden" asp-for="Post.Id" />
+        <form asp-controller="Post" asp-action="RemoveUpvotePost" asp-route-id="@Model.Post.Id">
             <button type="submit" class="btn btn-success">
                 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">
                     arrow_circle_up
@@ -74,8 +73,7 @@
     }
     else
     {
-        <form method="post" asp-controller="Post" asp-action="UpvotePost" asp-route-id="@Model.Post.Id">
-            <input type="hidden" asp-for="Post.Id" />
+        <form asp-controller="Post" asp-action="UpvotePost" asp-route-id="@Model.Post.Id">
             <button type="submit" class="btn btn-success">
                 <span class="material-symbols-outlined">
                     arrow_circle_up
@@ -88,8 +86,7 @@
 
     @if (Model.PostDownvoted)
     {
-        <form method="post" asp-controller="Post" asp-action="RemoveDownvotePost" asp-route-id="@Model.Post.Id">
-            <input type="hidden" asp-for="Post.Id" />
+        <form asp-controller="Post" asp-action="RemoveDownvotePost" asp-route-id="@Model.Post.Id">
             <button type="submit" class="btn btn-danger">
                 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">
                     arrow_circle_down
@@ -99,8 +96,7 @@
     }
     else
     {
-        <form method="post" asp-controller="Post" asp-action="DownvotePost" asp-route-id="@Model.Post.Id">
-            <input type="hidden" asp-for="Post.Id" />
+        <form asp-controller="Post" asp-action="DownvotePost" asp-action="DownvotePost" asp-route-id="@Model.Post.Id">
             <button type="submit" class="btn btn-danger">
                 <span class="material-symbols-outlined">
                     arrow_circle_down
@@ -140,7 +136,7 @@ else
 
 @if (User.Identity.IsAuthenticated)
 {
-    <form asp-controller="Comment" asp-action="Create">
+    <form asp-controller="Post" asp-action="Detail">
         <input type="hidden" asp-for="Post.Id" />
         <div asp-validation-summary="All" class="text-danger"></div>
         <div class="form-group">
@@ -148,16 +144,6 @@ else
             <label asp-for="Comment.Content" class="control-label"></label>
             <input asp-for="Comment.Content" class="form-control" />
             <span asp-validation-for="Comment.Content" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="Comment.Created" class="control-label"></label>
-            <input asp-for="Comment.Created" class="form-control" />
-            <span asp-validation-for="Comment.Created" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="Comment.Updated" class="control-label"></label>
-            <input asp-for="Comment.Updated" class="form-control" />
-            <span asp-validation-for="Comment.Updated" class="text-danger"></span>
         </div>
 
         <button type="submit" class="btn btn-primary">Submit</button>
