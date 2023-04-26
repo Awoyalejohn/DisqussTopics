@@ -92,7 +92,8 @@ namespace DisqussTopics.Controllers
             return View(postViewModel);
         }
 
-        //GET Home/{Topic}/{Slug}/{Id}
+        //GET Post/{Topic}/{Slug}/{Id}
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Detail(int id)
         {
             var post = await _postRepository
@@ -121,26 +122,97 @@ namespace DisqussTopics.Controllers
                 UserId = currentUserId,
             };
 
-            if (HttpContext.Session.GetString("Content") != null)
-            {
-                // Get view data from the session variable
-                var content = HttpContext.Session.GetString("Content");
-                postDetailViewModel.Comment.Content = content ?? string.Empty;
-
-                // Remove the session variable to prevent it from being used again
-                HttpContext.Session.Remove("Content");
-            }
-            else if (HttpContext.Session.GetString("NoContent") != null)
-            {
-                // Get view data from the session variable
-                var noContent = HttpContext.Session.GetString("NoContent");
-                ModelState.AddModelError("", noContent ?? "comment cannnot be empty");
-
-                // Remove the session variable to prevent it from being used again
-                HttpContext.Session.Remove("NoContent");
-            }
-
             return View(postDetailViewModel);
+        }
+
+        // GET: Post/Edit/{topic}/{slug}/{id}
+        public async Task<IActionResult> Edit(int id)
+        {
+            var post = await _postRepository
+                .GetPostByIdNoTracking(id);
+
+            if (post == null) return NotFound();
+
+            var topicId = post.TopicId;
+
+            var currentUserId = HttpContext.User
+              .FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var postViewModel = new PostViewModel()
+            {
+                Post = post,
+                TopicId = topicId,
+                Topics = new SelectList(await _topicRepository
+                .GetSubscribedTopics(currentUserId), "Id", "Name"),
+                DTUserId = currentUserId,
+            };
+
+            return View(postViewModel);
+        }
+
+        // POST: Post/Edit/{topic}/{slug}/{id}
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("Post,TopicId,Topics,DTUserId")] PostViewModel postViewModel)
+        {
+
+            if (ModelState.IsValid)
+            {
+                var post = await _postRepository
+                    .GetPostById(id);
+
+                if (post == null) return NotFound();
+
+                var topic = await _topicRepository
+                    .GetTopicById(post.TopicId);
+
+                if (topic == null) return NotFound();
+
+                SlugHelper helper = new SlugHelper();
+                string slug = helper.GenerateSlug(postViewModel.Post.Title);
+
+                post.Title = postViewModel.Post.Title;
+                post.Slug = slug;
+                post.Updated = DateTime.Now;
+                post.Content = postViewModel.Post.Content;
+                post.Image = postViewModel.Post.Image;
+                post.Video = postViewModel.Post.Video;
+
+                _postRepository.UpdatePost(post);
+                await _postRepository.SaveAsync();
+             
+                return RedirectToAction(nameof(Detail), new { Topic = topic.Name, Slug = slug, Id= post.Id });
+            }
+
+            return View(postViewModel);
+        }
+
+        // GET Post/Delete/{topic}/{slug}/{id}
+        public async Task<IActionResult> Delete(int id)
+        {
+            var post = await _postRepository
+                .GetPostByIdNoTracking(id);
+
+            if (post == null) return NotFound();
+
+            return View(post);
+        }
+
+        // POST Post/Delete/{topic}/{slug}/{id}
+        [ActionName("Delete")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var post = await _postRepository
+                .GetPostById(id);
+
+            if (post == null) return NotFound();
+
+            _postRepository.DeletePost(post);
+            await _postRepository.SaveAsync();
+
+            return RedirectToAction("Index", "Home");
         }
 
         [Route("{action}/{id}")]

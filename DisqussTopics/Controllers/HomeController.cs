@@ -14,22 +14,12 @@ namespace DisqussTopics.Controllers
     public class HomeController : Controller
     {
         private readonly IPostRepository _postRepository;
-        private readonly ITopicRepository _topicRepository;
-        private readonly ICommentRepository _commentRepository;
-        private readonly IUserRepository _userRepository;
 
         private readonly ILogger<HomeController> _logger;
-        public HomeController(ILogger<HomeController> logger,
-            IPostRepository postRepository,
-            ITopicRepository topicRepository,
-            ICommentRepository commentRepository,
-            IUserRepository userRepository)
+        public HomeController(ILogger<HomeController> logger, IPostRepository postRepository)
         {
             _logger = logger;
             _postRepository = postRepository;
-            _topicRepository = topicRepository;
-            _commentRepository = commentRepository;
-            _userRepository = userRepository;
         }
 
         // GET: Home

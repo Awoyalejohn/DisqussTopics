@@ -165,7 +165,11 @@ else
 
 @foreach (var item in Model.Comments)
 {
+
+
     <h4>@item.Content</h4>
+    <a asp-controller="Comment" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-dark">Edit Comment</a>
+    <a asp-controller="Comment" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete Comment</a>
     <p>@item.Created</p>
     <p>@item.Updated</p>
 

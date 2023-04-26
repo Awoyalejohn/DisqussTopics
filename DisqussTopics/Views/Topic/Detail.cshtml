@@ -70,7 +70,7 @@
                     </a>
                 </td>
                 <td>
-                    <a asp-action="Detail" asp-route-topic="@item.Topic.Name" asp-route-slug="@item.Slug" asp-route-id="@item.Id">Detail</a>|
+                    <a asp-controller="Post" asp-action="Detail" asp-route-topic="@item.Topic.Name" asp-route-slug="@item.Slug" asp-route-id="@item.Id">Detail</a>|
                     <a>Edit</a>|
                     <a>Delete</a>
                 </td>
@@ -84,6 +84,8 @@
 <h6>Rules</h6>
 @foreach (var item in Model.Topic.Rules)
 {
+    <a asp-controller="Topic" asp-action="EditRule" asp-route-slug="@item.Topic.Slug" asp-route-id="@item.Id" class="btn btn-sm btn-info">Edit Rule</a>
+    <a asp-controller="Topic" asp-action="DeleteRule" asp-route-slug="@item.Topic.Slug" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete Rule</a>
     <h6>@Html.DisplayFor(modelItem => item.Title)</h6>
     <p>@Html.DisplayFor(modelItem => item.Description)</p>
 }

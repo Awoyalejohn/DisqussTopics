@@ -12,7 +12,7 @@ namespace DisqussTopics.Repository
         Task<Post> GetPostByIdNoTracking(int id);
         void InsertPost(Post post);
         void UpdatePost(Post post);
-        void DeletePost(int id);
+        void DeletePost(Post post);
         Task SaveAsync();
         IQueryable<Post> GetPostsQuery();
     }

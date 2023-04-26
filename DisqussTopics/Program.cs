@@ -60,11 +60,12 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.MapControllerRoute("postSlugRoute", "{controller=Post}/{action=Detail}/{Topic}/{Slug}/{Id}");
+app.MapControllerRoute("postDetailRoute", "{controller=Post}/{action=Detail}/{Topic}/{Slug}/{Id}");
 
-app.MapControllerRoute("topicSlugRoute", "{controller=Topic}/{action=Detail}/{Slug}");
+app.MapControllerRoute("editRuleRoute", "{controller=Topic}/{action=EditRule}/{slug}/{id}");
 
-app.MapControllerRoute("ruleRoute", "{controller=Topic}/{action=CreateRule}/{slug}");
+app.MapControllerRoute("topicDetailRoute", "{controller=Topic}/{action=Detail}/{Slug}");
+
 
 app.MapDefaultControllerRoute();
 

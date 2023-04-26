@@ -13,9 +13,9 @@ namespace DisqussTopics.Repository
             _context = context;
         }
 
-        public void DeletePost(int id)
+        public void DeletePost(Post post)
         {
-            throw new NotImplementedException();
+            _context.Posts.Remove(post);
         }
 
         public Post GetPostBySlug(string slug, string topic)
@@ -74,7 +74,7 @@ namespace DisqussTopics.Repository
 
         public void UpdatePost(Post post)
         {
-            throw new NotImplementedException();
+            _context.Posts.Update(post);
         }
 
         public IQueryable<Post> GetPostsQuery()

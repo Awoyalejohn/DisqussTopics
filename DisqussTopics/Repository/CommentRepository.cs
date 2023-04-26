@@ -13,9 +13,9 @@ namespace DisqussTopics.Repository
             _context = context;
         }
 
-        public void DeleteComment(int id)
+        public void DeleteComment(Comment comment)
         {
-            throw new NotImplementedException();
+            _context.Comments.Remove(comment);
         }
 
         public async Task<Comment> GetCommentById(int id)
@@ -28,9 +28,13 @@ namespace DisqussTopics.Repository
             return comment;
         }
 
-        public Task<Comment> GetCommentByIdNoTracking(int id)
+        public async Task<Comment> GetCommentByIdNoTracking(int id)
         {
-            throw new NotImplementedException();
+            var comment = await _context.Comments
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            return comment;
         }
 
         public Task<IEnumerable<Comment>> GetComments()
@@ -72,7 +76,7 @@ namespace DisqussTopics.Repository
 
         public void UpdateComment(Comment comment)
         {
-            throw new NotImplementedException();
+            _context.Comments.Update(comment);
         }
     }
 }

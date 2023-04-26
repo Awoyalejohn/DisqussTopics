@@ -61,9 +61,9 @@
                     </a>
                 </td>
                 <td>
-                    <a asp-controller="Post" asp-action="Detail" asp-route-topic="@item.Topic.Name" asp-route-slug="@item.Slug" asp-route-id="@item.Id">Detail</a>|
-                    <a>Edit</a>|
-                    <a>Delete</a>
+                    <a asp-controller="Post" asp-action="Detail" asp-route-topic="@item.Topic.Name" asp-route-slug="@item.Slug" asp-route-id="@item.Id">View Post</a>|
+                    <a asp-controller="Post" asp-action="Edit" asp-route-topic="@item.Topic.Name" asp-route-slug="@item.Slug" asp-route-id="@item.Id">Edit</a>|
+                    <a asp-controller="Post" asp-action="Delete" asp-route-topic="@item.Topic.Name" asp-route-slug="@item.Slug" asp-route-id="@item.Id">Delete</a>
                 </td>
             </tr>
         }

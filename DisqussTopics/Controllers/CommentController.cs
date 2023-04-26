@@ -4,6 +4,7 @@ using DisqussTopics.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace DisqussTopics.Controllers
 {
@@ -71,6 +72,93 @@ namespace DisqussTopics.Controllers
 
             return View("~/Views/Post/Detail.cshtml", newPostDetailViewModel);
         }
+
+        // GET: Edit/Comment/{id}
+        [Route("Edit/Comment/{id}")]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var comment = await _commentRepository
+                .GetCommentByIdNoTracking(id);
+
+            return View(comment);
+        }
+
+        // POST: Edit/Comment/{id}
+        [Route("Edit/Comment/{id}")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id,
+            [Bind("Id,Content,Created,Updated,DTUserId,PostId")] Comment commentUpdate)
+        {
+            
+            if (ModelState.IsValid)
+            {
+                var comment = await _commentRepository.GetCommentById(id);
+
+                if (comment == null) { return View("Error"); }
+
+                comment.Content = commentUpdate.Content;
+                comment.Updated = DateTime.Now;
+
+                var post = await _postRepository.GetPostByIdNoTracking(commentUpdate.PostId);
+                var topic = post.Topic.Name;
+                var slug = post.Slug;
+                var postId = post.Id;
+
+                _commentRepository.UpdateComment(comment);
+                await _commentRepository.SaveAsync();
+
+                return RedirectToAction("Detail", "Post", new { Topic = topic, Slug = slug, Id = postId });
+
+            }
+
+            return View(commentUpdate);
+
+
+        }
+
+        // GET: Delete/Comment/{id}
+        [Route("Delete/Comment/{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var comment = await _commentRepository
+                .GetCommentByIdNoTracking(id);
+
+            if (comment == null) { return View("error"); }
+
+            var post = await _postRepository
+                .GetPostByIdNoTracking(comment.PostId);
+
+            if (post  == null) { return View("error"); } 
+            
+            comment.Post = post;
+
+            return View(comment);
+        }
+
+        // POST: Delete/Comment/{id}
+        [Route("Delete/Comment/{id}")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var comment = await _commentRepository
+                .GetCommentById(id);
+
+            if (comment == null) return NotFound();
+
+            var post = await _postRepository.GetPostByIdNoTracking(comment.PostId);
+            var postId = post.Id;
+            var slug = post.Slug;
+            var topic = post.Topic.Name;
+
+            _commentRepository.DeleteComment(comment);
+            await _commentRepository.SaveAsync();
+
+            return RedirectToAction("Detail", "Post", new { Topic = topic, Slug = slug, Id = postId });
+        }
+
 
         [Route("{action}/{id}")]
         [HttpPost]

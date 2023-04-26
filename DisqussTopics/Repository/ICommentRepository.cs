@@ -12,7 +12,7 @@ namespace DisqussTopics.Repository
         Task<Comment> GetCommentByIdNoTracking(int id);
         void InsertComment(Comment comment);
         void UpdateComment(Comment comment);
-        void DeleteComment(int id);
+        void DeleteComment(Comment comment);
         Task SaveAsync();
     }
 }
