@@ -96,6 +96,59 @@ namespace DisqussTopics.Controllers
             return View(topicViewModel);
         }
 
+        // GET: Topic/Edit/{slug}
+        public async Task<IActionResult> Edit(string slug) 
+        {
+            var topic = await _topicRepository
+                .GetTopicBySlugNoTrackng(slug);
+
+            return View(topic);
+        }
+
+        // POST: Topic/Edit/{slug}
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(string slug, [Bind("Id,Name,Slug,Created,About,Banner,Icon")] Topic topicUpdate)
+        {
+            if (ModelState.IsValid)
+            {
+                var topic = await _topicRepository
+                    .GetTopicBySlug(slug);
+
+                SlugHelper helper = new SlugHelper();
+                string updateSlug = helper.GenerateSlug(topicUpdate.Name);
+
+                var topics = await _topicRepository.GetTopics();
+                // checks if the topic already exists
+                bool topicExists = topics.Any(t => t.Slug == updateSlug);
+
+                // only allows topic to be dupicated if it is the same topic being updated
+                if (topicExists)
+                {
+                    var duplicateTopic = await _topicRepository
+                        .GetTopicBySlug(updateSlug);
+
+                    if (duplicateTopic.Id != topic.Id)
+                    {
+                        ModelState.AddModelError("", "Topic already exists!");
+                        return View(topicUpdate);
+                    }
+                }
+
+                topic.Name = topicUpdate.Name;
+                topic.Slug = updateSlug;
+                topic.About = topicUpdate.About;
+                topic.Banner = topicUpdate.Banner;
+                topic.Icon = topicUpdate.Icon;
+
+                _topicRepository.UpdateTopic(topic);
+                await _topicRepository.SaveAsync();
+                return RedirectToAction("Detail", "Topic", new { slug = updateSlug });
+            }
+            return View(topicUpdate);
+        }
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Subscribe(string slug)

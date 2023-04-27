@@ -58,7 +58,8 @@
                 <td>
                     <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Topic.Slug">
                         @Html.DisplayFor(modelItem => item.Topic.Name)
-                    </a>
+                    </a>|
+                    <a asp-controller="Topic" asp-action="Edit" asp-route-slug="@item.Topic.Slug">Edit topic</a>
                 </td>
                 <td>
                     <a asp-controller="Post" asp-action="Detail" asp-route-topic="@item.Topic.Name" asp-route-slug="@item.Slug" asp-route-id="@item.Id">View Post</a>|

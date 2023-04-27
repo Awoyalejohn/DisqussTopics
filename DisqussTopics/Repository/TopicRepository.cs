@@ -78,7 +78,7 @@ namespace DisqussTopics.Repository
 
         public void UpdateTopic(Topic topic)
         {
-            throw new NotImplementedException();
+            _context.Update(topic);
         }
 
     }
