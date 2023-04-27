@@ -13,9 +13,9 @@ namespace DisqussTopics.Repository
             _context = context;
         }
 
-        public void DeleteTopic(string slug)
+        public void DeleteTopic(Topic topic)
         {
-            throw new NotImplementedException();
+            _context.Topics.Remove(topic);
         }
 
         public async Task<IEnumerable<Topic>> GetSubscribedTopics(string userId)

@@ -21,6 +21,14 @@ namespace DisqussTopics.Controllers
             _userRepository = userRepository;
         }
 
+        // GET: Topic/Index
+        public async Task<IActionResult> Index()
+        {
+            var topics = await _topicRepository.GetTopics();
+
+            return View(topics);
+        }
+
         // GET: Topic/Create
         public IActionResult Create()
         {
@@ -147,6 +155,34 @@ namespace DisqussTopics.Controllers
             }
             return View(topicUpdate);
         }
+
+        // GET: Topic/Delete/{slug}
+        public async Task<IActionResult> Delete(string slug)
+        {
+            var topic = await _topicRepository
+                .GetTopicBySlugNoTrackng(slug);
+
+            if (topic == null) { return NotFound(); }
+
+            return View(topic);
+        }
+
+        // POST: Topic/Delete/{slug}
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirmed(string slug)
+        {
+            var topic = await _topicRepository
+                .GetTopicBySlugNoTrackng(slug);
+
+            if (topic == null) { return NotFound(); }
+
+            _topicRepository.DeleteTopic(topic);
+            await _topicRepository.SaveAsync();
+            return RedirectToAction("Index", "Home");
+        }
+
 
 
         [HttpPost]

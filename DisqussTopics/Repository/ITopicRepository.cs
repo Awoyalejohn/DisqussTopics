@@ -12,7 +12,7 @@ namespace DisqussTopics.Repository
         Task<Topic?> GetTopicByIdNoTracking(int id);
         void InsertTopic(Topic topic);
         void UpdateTopic(Topic topic);
-        void DeleteTopic(string slug);
+        void DeleteTopic(Topic topic);
         Task SaveAsync();
     }
 }
