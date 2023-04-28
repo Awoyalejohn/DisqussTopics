@@ -49,6 +49,27 @@
         </div>
     </nav>
 
+    <!-- Desktop and tablet navbar -->
+    <nav class="navbar bg-dark border-bottom box-shadow d-none d-md-block" data-bs-theme="dark">
+        <div class="container-fluid d-flex">
+            <div>
+                <a class="navbar-brand text-white" asp-area="" asp-controller="Home" asp-action="Index">DisqussTopics</a>
+            </div>
+            <form class="flex-grow-1" role="search">
+                <input class="form-control rounded-pill me-2" type="search" placeholder="Search" aria-label="Search">
+            </form>
+            <ul class="d-flex list-unstyled text-white mb-2">
+                <li class="nav-item">
+                    <a class="nav-link mx-2">Register</a>
+                </li>
+                <li class="nav-item mx-2">
+                    <a class="nav-link disabled">Login</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+
     <!-- Main Content -->
     <div class="container">
         <main role="main" class="pb-3">
