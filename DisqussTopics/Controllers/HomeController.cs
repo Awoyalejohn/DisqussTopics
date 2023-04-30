@@ -25,7 +25,18 @@ namespace DisqussTopics.Controllers
         // GET: Home
         public async Task<IActionResult> Index()
         {
-            return View(await _postRepository.GetPostsNoTracking());
+            var currentUserId = HttpContext.User
+                .FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var posts = await _postRepository.GetPosts();
+
+            var homeViewModel = new HomeViewModel()
+            {
+                Posts = posts,
+                CurrentUserId = currentUserId
+            };
+
+            return View(homeViewModel);
         }
 
         public IActionResult Privacy() => View();

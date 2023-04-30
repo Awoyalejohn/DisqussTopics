@@ -52,6 +52,7 @@ namespace DisqussTopics.Repository
             return await _context.Posts
                 .AsNoTracking()
                 .Include(p => p.Topic)
+                .Include(p => p.DTUser)
                 .ToListAsync();
         }
 
@@ -59,6 +60,10 @@ namespace DisqussTopics.Repository
         {
             return await _context.Posts
                 .Include(p => p.Topic)
+                .Include(p => p.DTUser)
+                .Include(p => p.Upvotes)
+                .Include(p => p.Downvotes)
+                .Include(p => p.Comments)
                 .ToListAsync();
         }
 

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<DisqussTopics.Models.Post>
+﻿@model DisqussTopics.Models.ViewModels.HomeViewModel
 
 @{
     ViewData["Title"] = "Home Page";
@@ -12,34 +12,34 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Title)
+                @Html.DisplayNameFor(model => model.Posts.First().Title)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Slug)
+                @Html.DisplayNameFor(model => model.Posts.First().Slug)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Created)
+                @Html.DisplayNameFor(model => model.Posts.First().Created)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Updated)
+                @Html.DisplayNameFor(model => model.Posts.First().Updated)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Content)
+                @Html.DisplayNameFor(model => model.Posts.First().Content)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Image)
+                @Html.DisplayNameFor(model => model.Posts.First().Image)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Video)
+                @Html.DisplayNameFor(model => model.Posts.First().Video)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Topic)
+                @Html.DisplayNameFor(model => model.Posts.First().Topic)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.Posts)
         {
             <tr>
                 <td>@Html.DisplayFor(modelItem => item.Title)</td>
@@ -71,3 +71,106 @@
         }
     </tbody>
 </table>
+
+
+<h6>Cards</h6>
+@foreach (var item in Model.Posts)
+{
+    // Bootstrap Card
+    <div class="card mb-2">
+        <div class="card-header">
+            Topic: 
+            <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Topic.Slug">
+                @Html.DisplayFor(modelItem => item.Topic.Name)
+            </a>
+            - Posted by
+            @Html.DisplayFor(modelItem => item.DTUser.DTUsername)
+            Time:
+            @Html.DisplayFor(modelItem => item.Created)
+        </div>
+        <svg class="bd-placeholder-img card-img-top" width="100%" height="180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Image cap" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#868e96"></rect><text x="50%" y="50%" fill="#dee2e6" dy=".3em">Content</text></svg>
+        <div class="card-body">
+            <a asp-controller="Post" asp-action="Detail" asp-route-topic="@item.Topic.Name" asp-route-slug="@item.Slug" asp-route-id="@item.Id">
+                <h5 class="card-title">@Html.DisplayFor(modelItem => item.Title)</h5>
+            </a>
+            <p class="card-text">@Html.DisplayFor(modelItem => item.Content)</p>
+        </div>
+        <div class="card-footer d-flex justify-content-between">
+            <div class="d-flex">
+                <!-- Vote variables -->
+                @{
+                    int upvotes = item.Upvotes?.Count ?? 0;
+                    int downvotes = item.Downvotes?.Count ?? 0;
+                    int voteCount = upvotes - downvotes;
+                }
+                <!-- Upvote button-->
+                @if (item.Upvotes != null)
+                {
+                    @if (item.Upvotes.Any(u => u.Id == Model.CurrentUserId))
+                    {
+                        <form asp-controller="Post" asp-action="RemoveUpvotePost" asp-route-id="@item.Id">
+                            <button type="submit" class="btn btn-success">
+                                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">
+                                    arrow_circle_up
+                                </span>
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form asp-controller="Post" asp-action="UpvotePost" asp-route-id="@item.Id">
+                            <button type="submit" class="btn btn-success">
+                                <span class="material-symbols-outlined">
+                                    arrow_circle_up
+                                </span>
+                            </button>
+                        </form>
+                    }
+                }
+                <!-- vote count -->
+                <span class="mx-3">@voteCount</span>
+
+                @if (item.Downvotes != null)
+                {
+                    if (item.Downvotes.Any(d => d.Id == Model.CurrentUserId))
+                    {
+                        <form asp-controller="Post" asp-action="RemoveDownvotePost" asp-route-id="@item.Id">
+                            <button type="submit" class="btn btn-danger">
+                                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">
+                                    arrow_circle_down
+                                </span>
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form asp-controller="Post" asp-action="DownvotePost" asp-action="DownvotePost" asp-route-id="@item.Id">
+                            <button type="submit" class="btn btn-danger">
+                                <span class="material-symbols-outlined">
+                                    arrow_circle_down
+                                </span>
+                            </button>
+                        </form>
+                    }
+                }
+
+            </div>
+            <!-- comments-->
+            <div>
+                <span class="material-symbols-outlined">
+                    chat_bubble
+                </span>
+                @if (item.Comments != null)
+                {
+                    @Html.DisplayFor(ModelItem => item.Comments.Count)
+                }
+                else
+                {
+                    <span>0</span>
+                }
+            </div>
+            <!-- share-->
+            <button type="button" class="btn btn-primary">Share</button>
+        </div>
+    </div>
+}
