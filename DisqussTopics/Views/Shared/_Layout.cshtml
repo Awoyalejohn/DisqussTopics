@@ -15,40 +15,6 @@
 
 <body class="d-flex flex-column min-vh-100">
 
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom box-shadow">
-        <div class="container-fluid">
-            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">DisqussTopics</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
-                <div class="offcanvas-header">
-                    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Offcanvas</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                </div>
-                <div class="offcanvas-body">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link active" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Link</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link disabled">Disabled</a>
-                        </li>
-                    </ul>
-                    <partial name="_LoginPartial" />
-                    <form class="d-flex" role="search">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                        <button class="btn btn-outline-success" type="submit">Search</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </nav>
-
     <!-- Desktop and tablet navbar -->
     <nav class="navbar bg-dark border-bottom box-shadow d-none d-md-block" data-bs-theme="dark">
         <div class="container-fluid d-flex">
@@ -59,16 +25,13 @@
                 <input class="form-control rounded-pill me-2" type="search" placeholder="Search" aria-label="Search">
             </form>
             <ul class="d-flex list-unstyled text-white mb-2">
-                <li class="nav-item">
-                    <a class="nav-link mx-2">Register</a>
-                </li>
-                <li class="nav-item mx-2">
-                    <a class="nav-link disabled">Login</a>
-                </li>
+                <partial name="_LoginPartial" />
             </ul>
         </div>
     </nav>
 
+    <!-- Mobile only navbar -->
+    <partial name="_MobileNavbarPartial" />
 
     <!-- Main Content -->
     <div class="container">

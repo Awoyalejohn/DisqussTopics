@@ -9,10 +9,12 @@
 
   <ItemGroup>
     <Content Remove="compilerconfig.json" />
+    <Content Remove="wwwroot\sass\_custom.scss" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="compilerconfig.json" />
+    <None Include="wwwroot\sass\_custom.scss" />
     <None Include="wwwroot\sass\site.scss" />
   </ItemGroup>
 
