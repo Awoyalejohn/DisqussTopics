@@ -6,6 +6,7 @@
         public string Content { get; set; } = string.Empty;
         public DateTime Created { get; set; }
         public DateTime Updated { get; set; }
+        public int Votes { get; set; }
 
         public ICollection<DTUser>? Upvotes { get; set; } // navigation property
         public ICollection<DTUser>? Downvotes { get; set; } // navigation property

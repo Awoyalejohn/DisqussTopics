@@ -183,6 +183,9 @@ namespace DisqussTopics.Controllers
             {
                 comment.Upvotes.Add(currentUser);
                 currentUser.CommentUpvotes.Add(comment);
+
+                // count to total comment votes
+                comment.Votes = (comment.Upvotes?.Count ?? 0) - (comment.Downvotes?.Count ?? 0);
                 await _commentRepository.SaveAsync();
                 return RedirectToAction("Detail", "Post", new { Topic = topic, Slug = slug, Id = postId });
             }
@@ -193,6 +196,9 @@ namespace DisqussTopics.Controllers
 
                 comment.Upvotes.Add(currentUser);
                 currentUser.CommentUpvotes.Add(comment);
+
+                // count to total comment votes
+                comment.Votes = (comment.Upvotes?.Count ?? 0) - (comment.Downvotes?.Count ?? 0);
 
                 await _commentRepository.SaveAsync();
                 return RedirectToAction("Detail", "Post", new { Topic = topic, Slug = slug, Id = postId });
@@ -220,6 +226,10 @@ namespace DisqussTopics.Controllers
 
             comment.Upvotes.Remove(currentUser);
             currentUser.CommentUpvotes.Remove(comment);
+
+            // count to total comment votes
+            comment.Votes = (comment.Upvotes?.Count ?? 0) - (comment.Downvotes?.Count ?? 0);
+
             await _commentRepository.SaveAsync();
             return RedirectToAction("Detail", "Post", new { Topic = topic, Slug = slug, Id = postId });
         }
@@ -247,6 +257,10 @@ namespace DisqussTopics.Controllers
             {
                 comment.Downvotes.Add(currentUser);
                 currentUser.CommentDownvotes.Add(comment);
+
+                // count to total comment votes
+                comment.Votes = (comment.Upvotes?.Count ?? 0) - (comment.Downvotes?.Count ?? 0);
+
                 await _commentRepository.SaveAsync();
                 return RedirectToAction("Detail", "Post", new { Topic = topic, Slug = slug, Id = postId });
             }
@@ -257,6 +271,10 @@ namespace DisqussTopics.Controllers
 
                 comment.Downvotes.Add(currentUser);
                 currentUser.CommentDownvotes.Add(comment);
+
+                // count to total comment votes
+                comment.Votes = (comment.Upvotes?.Count ?? 0) - (comment.Downvotes?.Count ?? 0);
+
                 await _commentRepository.SaveAsync();
                 return RedirectToAction("Detail", "Post", new { Topic = topic, Slug = slug, Id = postId });
             }
@@ -283,6 +301,10 @@ namespace DisqussTopics.Controllers
 
             comment.Downvotes.Remove(currentUser);
             currentUser.CommentDownvotes.Remove(comment);
+
+            // count to total comment votes
+            comment.Votes = (comment.Upvotes?.Count ?? 0) - (comment.Downvotes?.Count ?? 0);
+
             await _commentRepository.SaveAsync();
             return RedirectToAction("Detail", "Post", new { Topic = topic, Slug = slug, Id = postId });
         }

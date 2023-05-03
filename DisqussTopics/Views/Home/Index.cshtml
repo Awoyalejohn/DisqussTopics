@@ -98,11 +98,11 @@
         <div class="card-footer d-flex justify-content-between">
             <div class="d-flex">
                 <!-- Vote variables -->
-                @{
+             @*   @{
                     int upvotes = item.Upvotes?.Count ?? 0;
                     int downvotes = item.Downvotes?.Count ?? 0;
                     int voteCount = upvotes - downvotes;
-                }
+                }*@
                 <!-- Upvote button-->
                 @if (item.Upvotes != null)
                 {
@@ -128,7 +128,7 @@
                     }
                 }
                 <!-- vote count -->
-                <span class="mx-3">@voteCount</span>
+                <span class="mx-3">@item.Votes</span>
 
                 @if (item.Downvotes != null)
                 {

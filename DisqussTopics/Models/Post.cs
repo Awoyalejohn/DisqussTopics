@@ -10,6 +10,7 @@
         public string? Content { get; set; }
         public string? Image { get; set; }
         public string? Video { get; set; }
+        public int Votes { get; set; }
 
         public ICollection<DTUser>? Upvotes { get; set; } // navigation property
         public ICollection<DTUser>? Downvotes { get; set; } // navigation property

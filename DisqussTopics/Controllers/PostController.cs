@@ -236,6 +236,9 @@ namespace DisqussTopics.Controllers
             {
                 post.Upvotes.Add(currentUser);
                 currentUser.PostUpvotes.Add(post);
+
+                // count to total votes
+                post.Votes = (post.Upvotes?.Count ?? 0) - (post.Downvotes?.Count ?? 0);
                 await _postRepository.SaveAsync();
                 return RedirectToAction("Detail", "Post", new { Topic = topic, Slug = slug, Id = postId });
 
@@ -247,6 +250,9 @@ namespace DisqussTopics.Controllers
 
                 post.Upvotes.Add(currentUser);
                 currentUser.PostUpvotes.Add(post);
+
+                // count to total votes
+                post.Votes = (post.Upvotes?.Count ?? 0) - (post.Downvotes?.Count ?? 0);
 
                 await _postRepository.SaveAsync();
                 return RedirectToAction("Detail", "Post", new { Topic = topic, Slug = slug, Id = postId });
@@ -272,6 +278,9 @@ namespace DisqussTopics.Controllers
 
             post.Upvotes.Remove(currentUser);
             currentUser.PostUpvotes.Remove(post);
+
+            // count to total votes
+            post.Votes = (post.Upvotes?.Count ?? 0) - (post.Downvotes?.Count ?? 0);
             await _postRepository.SaveAsync();
             return RedirectToAction("Detail", "Post", new { Topic = topic, Slug = slug, Id = postId });
         }
@@ -297,6 +306,9 @@ namespace DisqussTopics.Controllers
             {
                 post.Downvotes.Add(currentUser);
                 currentUser.PostDownvotes.Add(post);
+
+                // count to total votes
+                post.Votes = (post.Upvotes?.Count ?? 0) - (post.Downvotes?.Count ?? 0);
                 await _postRepository.SaveAsync();
                 return RedirectToAction("Detail", "Post", new { Topic = topic, Slug = slug, Id = postId });
             }
@@ -307,6 +319,9 @@ namespace DisqussTopics.Controllers
 
                 post.Downvotes.Add(currentUser);
                 currentUser.PostDownvotes.Add(post);
+
+                // count to total votes
+                post.Votes = (post.Upvotes?.Count ?? 0) - (post.Downvotes?.Count ?? 0);
                 await _postRepository.SaveAsync();
                 return RedirectToAction("Detail", "Post", new { Topic = topic, Slug = slug, Id = postId });
             }
@@ -331,6 +346,9 @@ namespace DisqussTopics.Controllers
 
             post.Downvotes.Remove(currentUser);
             currentUser.PostDownvotes.Remove(post);
+
+            // count to total votes
+            post.Votes = (post.Upvotes?.Count ?? 0) - (post.Downvotes?.Count ?? 0);
             await _postRepository.SaveAsync();
             return RedirectToAction("Detail", "Post", new { Topic = topic, Slug = slug, Id = postId });
         }

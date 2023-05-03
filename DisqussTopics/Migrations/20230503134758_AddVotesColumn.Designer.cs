@@ -4,6 +4,7 @@ using DisqussTopics.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DisqussTopics.Migrations
 {
     [DbContext(typeof(DTContext))]
-    partial class DTContextModelSnapshot : ModelSnapshot
+    [Migration("20230503134758_AddVotesColumn")]
+    partial class AddVotesColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -120,9 +123,6 @@ namespace DisqussTopics.Migrations
 
                     b.Property<DateTime>("Updated")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("Votes")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
