@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Security.Claims;
 using Slugify;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
 
 namespace DisqussTopics.Controllers
 {
@@ -30,6 +31,20 @@ namespace DisqussTopics.Controllers
 
             var posts = await _postRepository.GetPosts();
 
+
+            //if (User.Identity.IsAuthenticated)
+            //{
+            //    posts = posts
+            //        .Where(p => p.Topic.DTUsers
+            //        .Any(u => u.Id == currentUserId));
+            //}
+
+            //if (!string.IsNullOrEmpty(mostUpvoted))
+            //{
+            //    posts = posts
+            //        .OrderBy(p => p.Upvotes?.Count ?? 0);
+            //}
+
             var homeViewModel = new HomeViewModel()
             {
                 Posts = posts,
@@ -37,6 +52,112 @@ namespace DisqussTopics.Controllers
             };
 
             return View(homeViewModel);
+        }
+
+        // GET: MostUpvoted
+        public async Task<IActionResult> MostUpvoted()
+        {
+            var currentUserId = HttpContext.User
+                .FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var posts = await _postRepository.GetPosts();
+
+            if (User.Identity.IsAuthenticated)
+            {
+                posts = posts
+                    .Where(p => p.Topic.DTUsers
+                    .Any(u => u.Id == currentUserId));
+            }
+            
+            posts = posts
+                .OrderByDescending(p => p.Votes);
+
+            var homeViewModel = new HomeViewModel()
+            {
+                Posts = posts,
+                CurrentUserId = currentUserId
+            };
+
+            return View("Index", homeViewModel);
+        }
+
+        // GET: MostUpvoted
+        public async Task<IActionResult> MostDiscussed()
+        {
+            var currentUserId = HttpContext.User
+                .FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var posts = await _postRepository.GetPosts();
+
+            if (User.Identity.IsAuthenticated)
+            {
+                posts = posts
+                    .Where(p => p.Topic.DTUsers
+                    .Any(u => u.Id == currentUserId));
+            }
+
+            posts = posts
+                .OrderByDescending(p => p.Comments?.Count ?? 0);
+
+            var homeViewModel = new HomeViewModel()
+            {
+                Posts = posts,
+                CurrentUserId = currentUserId
+            };
+
+            return View("Index", homeViewModel);
+        }
+
+        // GET: NewPosts
+        public async Task<IActionResult> NewPosts()
+        {
+            var currentUserId = HttpContext.User
+                .FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var posts = await _postRepository.GetPosts();
+
+            if (User.Identity.IsAuthenticated)
+            {
+                posts = posts
+                    .Where(p => p.Topic.DTUsers
+                    .Any(u => u.Id == currentUserId));
+            }
+
+            posts = posts
+                .OrderBy(p => p.Created)
+                .ThenByDescending(p => p.Created.TimeOfDay);
+
+
+            var homeViewModel = new HomeViewModel()
+            {
+                Posts = posts,
+                CurrentUserId = currentUserId
+            };
+
+            return View("Index", homeViewModel);
+        }
+
+        // GET: Explore
+        public async Task<IActionResult> Explore()
+        {
+            var currentUserId = HttpContext.User
+                .FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var posts = await _postRepository.GetPosts();
+
+            Random random = new Random();
+
+            // randomise posts
+            posts = posts
+                .OrderBy(p => random.Next());
+
+            var homeViewModel = new HomeViewModel()
+            {
+                Posts = posts,
+                CurrentUserId = currentUserId
+            };
+
+            return View("Index", homeViewModel);
         }
 
         public IActionResult Privacy() => View();

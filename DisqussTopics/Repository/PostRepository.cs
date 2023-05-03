@@ -60,6 +60,7 @@ namespace DisqussTopics.Repository
         {
             return await _context.Posts
                 .Include(p => p.Topic)
+                .ThenInclude(t => t.DTUsers)
                 .Include(p => p.DTUser)
                 .Include(p => p.Upvotes)
                 .Include(p => p.Downvotes)

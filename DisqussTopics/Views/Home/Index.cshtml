@@ -74,6 +74,55 @@
 
 
 <h6>Cards</h6>
+<div class="card text-center mb-2">
+    <div class="card-header">
+        <ul class="nav nav-pills card-header-pills">
+            <li class="nav-item">
+                <!--  Checks if the mostupvoted action method was selected-->
+                @if (ViewContext.RouteData.Values["action"].ToString() == "MostUpvoted" ||
+                    ViewContext.RouteData.Values["action"].ToString() == "Index")
+                {
+                    <a class="nav-link active" asp-action="MostUpvoted">Most Upvoted</a>
+                }
+                else
+                {
+                    <a class="nav-link" asp-action="MostUpvoted">Most Upvoted</a>
+                }
+            </li>
+            <li class="nav-item">
+                @if (ViewContext.RouteData.Values["action"].ToString() == "MostDiscussed")
+                {
+                    <a class="nav-link active" asp-action="MostDiscussed">Most Discussed</a>
+                }
+                else
+                {
+                    <a class="nav-link" asp-action="MostDiscussed">Most Discussed</a>
+                }
+            </li>
+            <li class="nav-item">
+                @if (ViewContext.RouteData.Values["action"].ToString() == "NewPosts")
+                {
+                    <a class="nav-link active" asp-action="NewPosts">New Posts</a>
+                }
+                else
+                {
+                    <a class="nav-link" asp-action="NewPosts">New Posts</a>
+                }
+            </li>
+            <li class="nav-item">
+                @if (ViewContext.RouteData.Values["action"].ToString() == "Explore")
+                {
+                    <a class="nav-link active" asp-action="Explore">Explore</a>
+                }
+                else
+                {
+                    <a class="nav-link" asp-action="Explore">Explore</a>
+                }
+            </li>
+        </ul>
+    </div>
+</div>
+
 @foreach (var item in Model.Posts)
 {
     // Bootstrap Card
@@ -97,12 +146,7 @@
         </div>
         <div class="card-footer d-flex justify-content-between">
             <div class="d-flex">
-                <!-- Vote variables -->
-             @*   @{
-                    int upvotes = item.Upvotes?.Count ?? 0;
-                    int downvotes = item.Downvotes?.Count ?? 0;
-                    int voteCount = upvotes - downvotes;
-                }*@
+
                 <!-- Upvote button-->
                 @if (item.Upvotes != null)
                 {
