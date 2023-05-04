@@ -56,7 +56,6 @@ namespace DisqussTopics.Controllers
                 Topics = topics
             };
             return View(serchViewModel);
-           
         }
     }
 }
