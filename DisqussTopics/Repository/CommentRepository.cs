@@ -37,9 +37,9 @@ namespace DisqussTopics.Repository
             return comment;
         }
 
-        public Task<IEnumerable<Comment>> GetComments()
+        public async Task<IEnumerable<Comment>> GetComments()
         {
-            throw new NotImplementedException();
+            return await _context.Comments.ToListAsync();
         }
 
         public Task<IEnumerable<Comment>> GetCommentsNoTracking()

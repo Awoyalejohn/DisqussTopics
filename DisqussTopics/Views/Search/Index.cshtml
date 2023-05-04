@@ -1,0 +1,72 @@
+﻿@model DisqussTopics.Models.ViewModels.SearchViewModel
+
+<div class="card text-bg-dark mb-3">
+    <div class="card-header">
+        <ul class="nav nav-pills card-header-pills">
+            <li class="nav-item">
+                @if((string)ViewData["Type"] == "posts")
+                {
+                    <a class="nav-link active" asp-action="Index" asp-route-searchString="@ViewData["SearchString"]" asp-route-type="posts">Posts</a>
+                }
+                else
+                {
+                    <a class="nav-link" asp-action="Index" asp-route-searchString="@ViewData["SearchString"]" asp-route-type="posts">Posts</a>
+                }
+            </li>
+            <li class="nav-item">
+                @if ((string)ViewData["Type"] == "comments")
+                {
+                    <a class="nav-link active" asp-action="Index" asp-route-searchString="@ViewData["SearchString"]" asp-route-type="comments">Comments</a>
+                }
+                else
+                {
+                    <a class="nav-link" asp-action="Index" asp-route-searchString="@ViewData["SearchString"]" asp-route-type="comments">Comments</a>
+                }
+               
+            </li>
+            <li class="nav-item">
+                @if ((string)ViewData["Type"] == "topics")
+                {
+                    <a class="nav-link active" asp-action="Index" asp-route-searchString="@ViewData["SearchString"]" asp-route-type="topics">Topics</a>
+                }
+                else
+                {
+                    <a class="nav-link" asp-action="Index" asp-route-searchString="@ViewData["SearchString"]" asp-route-type="topics">Topics</a>
+                }
+                
+            </li>
+        </ul>
+    </div>
+
+    @if ((string)ViewData["Type"] == "posts")
+    {
+        @foreach (var item in Model.Posts)
+        {
+            <div class="card-body border rounded">
+                <h5 class="card-title">@Html.DisplayFor(modelItem => item.Title)</h5>
+                <p class="card-text">@Html.DisplayFor(modelItem => item.Content)</p>
+            </div>
+        }
+    }
+
+    @if ((string)ViewData["Type"] == "comments")
+    {
+        @foreach (var item in Model.Comments)
+        {
+            <div class="card-body border rounded">
+                <p class="card-text">@Html.DisplayFor(modelItem => item.Content)</p>
+            </div>
+        }
+    }
+
+    @if ((string)ViewData["Type"] == "topics")
+    {
+        @foreach (var item in Model.Topics)
+        {
+            <div class="card-body border rounded">
+                <h5 class="card-title">@Html.DisplayFor(modelItem => item.Name)</h5>
+            </div>
+        }
+    }
+
+</div>
