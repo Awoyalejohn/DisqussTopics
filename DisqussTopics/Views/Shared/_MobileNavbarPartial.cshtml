@@ -1,7 +1,7 @@
 ﻿<!-- Mobile only navbar -->
 <nav class="navbar navbar-expand-lg bg-dark border-bottom box-shadow d-md-none" data-bs-theme="dark">
     <div class="container-fluid">
-        <a class="navbar-brand text-white" href="#">Discuss Topics</a>
+        <a class="navbar-brand text-white" asp-area="" asp-controller="Home" asp-action="Index">DisqussTopics</a>
         <button class="navbar-toggler border border-white" type="button" data-bs-toggle="offcanvas" data-bs-theme="dark" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -12,9 +12,10 @@
             </div>
             <div class="offcanvas-body bg-dark">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <form class="d-flex" role="search">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <form class="d-flex" role="search" asp-controller="Search" asp-action="Index" method="get">
+                        <input class="form-control me-2" name="SearchString" type="search" placeholder="Search" aria-label="Search">
                     </form>
+
                     <partial name="_LoginPartial" />
                 </ul>
             </div>

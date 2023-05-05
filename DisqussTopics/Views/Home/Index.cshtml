@@ -73,13 +73,16 @@
 
 <div class="row">
     <div class="col col-lg-8">
-        <div class="card text-bg-dark d-lg-none mb-2">
-            <div class="card-body">
-                <a asp-controller="Post" asp-action="Create" class="btn btn-primary">Create Post</a>
-                <a asp-controller="Topic" asp-action="Create" class="btn btn-success">Create Topic</a>
-                <a asp-controller="Topic" asp-action="Index" class="btn btn-info">View All Topics</a>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <div class="card text-bg-dark d-lg-none mb-2">
+                <div class="card-body">
+                    <a asp-controller="Post" asp-action="Create" class="btn btn-primary">Create Post</a>
+                    <a asp-controller="Topic" asp-action="Create" class="btn btn-success">Create Topic</a>
+                    <a asp-controller="Topic" asp-action="Index" class="btn btn-info">View All Topics</a>
+                </div>
             </div>
-        </div>
+        }
 
 
 
@@ -230,14 +233,30 @@
     </div>
 
     <div class="col-4 d-none d-lg-block">
-        <div class="card text-bg-dark">
-            <div class="card-body">
-                <h5 class="card-title">Home</h5>
-                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                <a asp-controller="Post" asp-action="Create" class="btn btn-primary">Create Post</a>
-                <a asp-controller="Topic" asp-action="Create" class="btn btn-success">Create Topic</a>
-                <a asp-controller="Topic" asp-action="Index" class="btn btn-info">View All Topics</a>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <!-- User logged in welcome card-->
+            <div class="card text-bg-dark">
+                <div class="card-body">
+                    <h5 class="card-title">Home</h5>
+                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                    <a asp-controller="Post" asp-action="Create" class="btn btn-primary">Create Post</a>
+                    <a asp-controller="Topic" asp-action="Create" class="btn btn-success">Create Topic</a>
+                    <a asp-controller="Topic" asp-action="Index" class="btn btn-info">View All Topics</a>
+                </div>
             </div>
-        </div>
+        }
+        else
+        {
+            <!-- User logged in welcome card-->
+            <div class="card text-bg-dark">
+                <div class="card-body">
+                    <h5 class="card-title">Home</h5>
+                    <p class="card-text">Welcome create an account or login to post</p>
+                    <a class="nav-link btn btn-primary w-50 mb-2"  id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
+                    <a class="nav-link btn btn-success w-50" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
+                </div>
+            </div>
+        }
     </div>
 </div>
