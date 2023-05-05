@@ -140,14 +140,41 @@
             // Bootstrap Card
             <div class="card text-bg-dark mb-2">
                 <div class="card-header">
-                    Topic:
-                    <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Topic.Slug">
-                        @Html.DisplayFor(modelItem => item.Topic.Name)
-                    </a>
-                    - Posted by
-                    @Html.DisplayFor(modelItem => item.DTUser.DTUsername)
-                    Time:
-                    @Html.DisplayFor(modelItem => item.Created)
+                    <div class="d-flex justify-content-between">
+                        <span>
+                            Topic:
+                            <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Topic.Slug">
+                                @Html.DisplayFor(modelItem => item.Topic.Name)
+                            </a>
+                            - Posted by
+                            @Html.DisplayFor(modelItem => item.DTUser.DTUsername)
+                            Time:
+                            @Html.DisplayFor(modelItem => item.Created)
+                        </span>
+
+                        <div class="dropdown">
+                            <span role="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="material-symbols-outlined">
+                                    more_vert
+                                </span>
+                            </span>
+                            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="dropdownMenuButton">
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Post" asp-action="Detail" asp-route-topic="@item.Topic.Name" asp-route-slug="@item.Slug" asp-route-id="@item.Id">View</a>
+                                </li>
+                                @if (User.IsInRole("Admin") || item.DTUser.Id == Model.CurrentUserId)
+                                {
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Post" asp-action="Edit" asp-route-topic="@item.Topic.Name" asp-route-slug="@item.Slug" asp-route-id="@item.Id">Edit</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Post" asp-action="Delete" asp-route-topic="@item.Topic.Name" asp-route-slug="@item.Slug" asp-route-id="@item.Id">Delete</a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                    
                 </div>
                 <svg class="bd-placeholder-img card-img-top" width="100%" height="180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Image cap" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#868e96"></rect><text x="50%" y="50%" fill="#dee2e6" dy=".3em">Content</text></svg>
                 <div class="card-body">
