@@ -1,6 +1,7 @@
 ﻿using DisqussTopics.Data;
 using DisqussTopics.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 
 namespace DisqussTopics.Repository
 {
@@ -47,9 +48,16 @@ namespace DisqussTopics.Repository
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Comment>> GetPostComments()
+        public async Task<IEnumerable<Comment>> GetPostComments(Post post)
         {
-            throw new NotImplementedException();
+            var comments = await _context.Comments
+                .Include(c => c.Upvotes)
+                .Include(c => c.Downvotes)
+                .Include(c => c.DTUser)
+                .Where(c => c.PostId == post.Id)
+                .ToListAsync();
+
+            return comments;
         }
 
         public async Task<IEnumerable<Comment>> GetPostCommentsNoTracking(Post post)

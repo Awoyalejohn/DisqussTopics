@@ -2,9 +2,11 @@
 using DisqussTopics.Models.ViewModels;
 using DisqussTopics.Repository;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace DisqussTopics.Controllers
 {
@@ -73,15 +75,61 @@ namespace DisqussTopics.Controllers
             return View("~/Views/Post/Detail.cshtml", newPostDetailViewModel);
         }
 
-        // GET: Edit/Comment/{id}
+        //// GET: Edit/Comment/{id}
+        //[Route("Edit/Comment/{id}")]
+        //public async Task<IActionResult> Edit(int id)
+        //{
+        //    var comment = await _commentRepository
+        //        .GetCommentByIdNoTracking(id);
+
+        //    return View(comment);
+        //}
+        
+        //// GET: Edit/Comment/{id}
         [Route("Edit/Comment/{id}")]
         public async Task<IActionResult> Edit(int id)
         {
             var comment = await _commentRepository
                 .GetCommentByIdNoTracking(id);
 
-            return View(comment);
+            ModelState.Clear();
+
+            return PartialView("~/Views/Post/_EditCommentPartial.cshtml", comment);
         }
+
+
+        // GET: Edit/Comment/{id}
+        //[Route("Edit/Comment/{id}")]
+        //public async Task<IActionResult> Edit(int id)
+        //{
+        //    var comment = await _commentRepository
+        //        .GetCommentByIdNoTracking(id);
+
+        //    if (comment == null) return NotFound();
+
+        //    var post = await _postRepository
+        //        .GetPostByIdNoTracking(comment.PostId);
+
+        //    var comments = await _commentRepository.GetPostComments(post);
+
+        //    var currentUserId = HttpContext.User
+        //        .FindFirstValue(ClaimTypes.NameIdentifier);
+
+        //    var postUpvoted = post.Upvotes.Any(u => u.Id == currentUserId);
+        //    var postDownvoted = post.Downvotes.Any(u => u.Id == currentUserId);
+
+        //    var postDetailViewModel = new PostDetailViewModel()
+        //    {
+        //        Post = post,
+        //        Comment = comment,
+        //        Comments = comments,
+        //        PostUpvoted = postUpvoted,
+        //        PostDownvoted = postDownvoted,
+        //        UserId = currentUserId,
+        //    };
+
+        //    return View("~/Views/Post/Detail.cshtml", postDetailViewModel);
+        //}
 
         // POST: Edit/Comment/{id}
         [Route("Edit/Comment/{id}")]
@@ -95,7 +143,7 @@ namespace DisqussTopics.Controllers
             {
                 var comment = await _commentRepository.GetCommentById(id);
 
-                if (comment == null) { return View("Error"); }
+                if (comment == null) return NotFound();
 
                 comment.Content = commentUpdate.Content;
                 comment.Updated = DateTime.Now;

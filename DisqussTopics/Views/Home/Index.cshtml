@@ -137,7 +137,7 @@
 
         @foreach (var item in Model.Posts)
         {
-            // Bootstrap Card
+                // Bootstrap Card
             <div class="card text-bg-dark mb-2">
                 <div class="card-header">
                     <div class="d-flex justify-content-between">
@@ -147,7 +147,9 @@
                                 @Html.DisplayFor(modelItem => item.Topic.Name)
                             </a>
                             - Posted by
-                            @Html.DisplayFor(modelItem => item.DTUser.DTUsername)
+                            <a href="#">
+                                @Html.DisplayFor(modelItem => item.DTUser.DTUsername)
+                            </a>
                             Time:
                             @Html.DisplayFor(modelItem => item.Created)
                         </span>
@@ -176,13 +178,18 @@
                             </ul>
                         </div>
                     </div>
-                    
+
                 </div>
-                <svg class="bd-placeholder-img card-img-top" width="100%" height="180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Image cap" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#868e96"></rect><text x="50%" y="50%" fill="#dee2e6" dy=".3em">Content</text></svg>
                 <div class="card-body">
                     <a asp-controller="Post" asp-action="Detail" asp-route-topic="@item.Topic.Name" asp-route-slug="@item.Slug" asp-route-id="@item.Id">
                         <h5 class="card-title">@Html.DisplayFor(modelItem => item.Title)</h5>
                     </a>
+                </div>
+                <div class="card-body">
+                    <img src="~/images/test2.png" class="img-fluid">
+                </div>
+                
+                <div class="card-body">
                     <p class="card-text">@Html.DisplayFor(modelItem => item.Content)</p>
                 </div>
                 <div class="card-footer d-flex justify-content-between">
@@ -303,7 +310,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Home</h5>
                     <p class="card-text">Welcome create an account or login to post</p>
-                    <a class="nav-link btn btn-primary w-50 mb-2"  id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
+                    <a class="nav-link btn btn-primary w-50 mb-2" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
                     <a class="nav-link btn btn-success w-50" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
                 </div>
             </div>

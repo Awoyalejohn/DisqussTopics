@@ -101,7 +101,7 @@ namespace DisqussTopics.Controllers
 
             if (post == null) return NotFound();
 
-            var comments = await _commentRepository.GetPostCommentsNoTracking(post);
+            var comments = await _commentRepository.GetPostComments(post);
 
             var currentUserId = HttpContext.User
                 .FindFirstValue(ClaimTypes.NameIdentifier);
