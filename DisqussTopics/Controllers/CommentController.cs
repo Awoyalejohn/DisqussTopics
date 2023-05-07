@@ -2,6 +2,7 @@
 using DisqussTopics.Models.ViewModels;
 using DisqussTopics.Repository;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
@@ -94,7 +95,9 @@ namespace DisqussTopics.Controllers
 
             ModelState.Clear();
 
-            return PartialView("~/Views/Post/_EditCommentPartial.cshtml", comment);
+            ViewData["CommentId"] = id;
+
+            return PartialView("~/Views/Shared/_EditCommentPartial.cshtml", comment);
         }
 
 
