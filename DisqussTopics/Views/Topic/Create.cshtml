@@ -10,35 +10,39 @@
 
 <hr />
 
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <input type="hidden" asp-for="DTUserId" />
-            <div asp-validation-summary="All" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Topic.Name" class="control-label"></label>
-                <input asp-for="Topic.Name" class="form-control" />
-                <span asp-validation-for="Topic.Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Topic.About" class="control-label"></label>
-                <input asp-for="Topic.About" class="form-control" />
-                <span asp-validation-for="Topic.About" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Topic.Banner" class="control-label"></label>
-                <input asp-for="Topic.Banner" class="form-control" />
-                <span asp-validation-for="Topic.Banner" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Topic.Icon" class="control-label"></label>
-                <input asp-for="Topic.Icon" class="form-control" />
-                <span asp-validation-for="Topic.Icon" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary">Create</button>
-            </div>
-        </form>
+<div class="col-sm-12 col-md-12 col-lg-8">
+    <div class="card text-bg-dark">
+        <div class="card-header">
+            <span>Create a Topic</span>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create">
+                <input type="hidden" asp-for="DTUserId" />
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Topic.Name" class="control-label"></label>
+                    <input asp-for="Topic.Name" class="form-control" />
+                    <span asp-validation-for="Topic.Name" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Topic.About" class="control-label"></label>
+                    <textarea asp-for="Topic.About" rows="3" class="form-control"></textarea>
+                    <span asp-validation-for="Topic.About" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Topic.Banner" class="control-label"></label>
+                    <input asp-for="Topic.Banner" class="form-control" />
+                    <span asp-validation-for="Topic.Banner" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Topic.Icon" class="control-label"></label>
+                    <input asp-for="Topic.Icon" class="form-control" />
+                    <span asp-validation-for="Topic.Icon" class="text-danger"></span>
+                </div>
+                <div class="form-group text-end">
+                    <button type="submit" class="btn btn-primary">Create Topic</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
