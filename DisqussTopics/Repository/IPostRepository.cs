@@ -6,6 +6,8 @@ namespace DisqussTopics.Repository
     {
         Task<IEnumerable<Post>> GetPosts();
         Task<IEnumerable<Post>> GetPostsNoTracking();
+        Task<IEnumerable<Post>> GetPostsByTopic();
+        Task<IEnumerable<Post>> GetPostsByTopicNoTracking();
         Post GetPostBySlug(string slug, string topic);
         Task<Post> GetPostBySlugNoTracking(string slug, string topic);
         Task<Post> GetPostById(int id);

@@ -27,23 +27,20 @@ namespace DisqussTopics.Controllers
         public async Task<IActionResult> Index()
         {
             var currentUserId = HttpContext.User
-                .FindFirstValue(ClaimTypes.NameIdentifier);
+              .FindFirstValue(ClaimTypes.NameIdentifier);
 
             var posts = await _postRepository.GetPosts();
 
+            // Queries posts to only posts the User is subscribed to
+            if (User.Identity.IsAuthenticated)
+            {
+                posts = posts
+                    .Where(p => p.Topic.DTUsers
+                    .Any(u => u.Id == currentUserId));
+            }
 
-            //if (User.Identity.IsAuthenticated)
-            //{
-            //    posts = posts
-            //        .Where(p => p.Topic.DTUsers
-            //        .Any(u => u.Id == currentUserId));
-            //}
-
-            //if (!string.IsNullOrEmpty(mostUpvoted))
-            //{
-            //    posts = posts
-            //        .OrderBy(p => p.Upvotes?.Count ?? 0);
-            //}
+            posts = posts
+                .OrderByDescending(p => p.Votes);
 
             var homeViewModel = new HomeViewModel()
             {
@@ -62,6 +59,7 @@ namespace DisqussTopics.Controllers
 
             var posts = await _postRepository.GetPosts();
 
+            // Queries posts to only posts the User is subscribed to
             if (User.Identity.IsAuthenticated)
             {
                 posts = posts
@@ -124,8 +122,8 @@ namespace DisqussTopics.Controllers
             }
 
             posts = posts
-                .OrderBy(p => p.Created)
-                .ThenByDescending(p => p.Created.TimeOfDay);
+                .OrderByDescending(p => p.Created)
+                .ThenBy(p => p.Created.TimeOfDay);
 
 
             var homeViewModel = new HomeViewModel()

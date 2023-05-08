@@ -14,11 +14,13 @@ namespace DisqussTopics.Controllers
     {
         private readonly ITopicRepository _topicRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IPostRepository _postRepository;
 
-        public TopicController(ITopicRepository topicRepository, IUserRepository userRepository)
+        public TopicController(ITopicRepository topicRepository, IUserRepository userRepository, IPostRepository postRepository)
         {
             _topicRepository = topicRepository;
             _userRepository = userRepository;
+            _postRepository = postRepository;
         }
 
         // GET: Topic/Index
@@ -88,21 +90,106 @@ namespace DisqussTopics.Controllers
         {
             var topic = await _topicRepository.GetTopicBySlugNoTrackng(slug);
 
-            var currentUserId = HttpContext.User
-                .FindFirstValue(ClaimTypes.NameIdentifier);
-
-            var topicViewModel = new TopicViewModel()
-            {
-                Topic = topic,
-                DTUserId = currentUserId
-            };
             if (topic == null)
             {
                 return NotFound();
             }
 
+            var currentUserId = HttpContext.User
+                .FindFirstValue(ClaimTypes.NameIdentifier);
+
+
+            var posts = topic.Posts.OrderByDescending(p => p.Votes);
+
+            var topicViewModel = new TopicViewModel()
+            {
+                Topic = topic,
+                DTUserId = currentUserId,
+                Posts = posts
+            };
+            
+
             return View(topicViewModel);
         }
+
+        // GET: Topic/MostUpvoted/{slug}
+        public async Task<IActionResult> MostUpvoted(string slug)
+        {
+            var topic = await _topicRepository.GetTopicBySlugNoTrackng(slug);
+
+            if (topic == null)
+            {
+                return NotFound();
+            }
+
+            var currentUserId = HttpContext.User
+                .FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var posts = topic.Posts.OrderByDescending(p => p.Votes);
+
+            var topicViewModel = new TopicViewModel()
+            {
+                Topic = topic,
+                DTUserId = currentUserId,
+                Posts = posts
+            };
+
+            return View("Detail", topicViewModel);
+        }
+
+        // GET: Topic/MostDiscussed/{slug}
+        public async Task<IActionResult> MostDiscussed(string slug)
+        {
+            var topic = await _topicRepository.GetTopicBySlugNoTrackng(slug);
+
+            if (topic == null)
+            {
+                return NotFound();
+            }
+
+            var currentUserId = HttpContext.User
+                .FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var posts = topic.Posts
+                .OrderByDescending(p => p.Comments?.Count ?? 0);
+
+            var topicViewModel = new TopicViewModel()
+            {
+                Topic = topic,
+                DTUserId = currentUserId,
+                Posts = posts
+            };
+
+            return View("Detail", topicViewModel);
+        }
+
+        // GET: Topic/NewPost/{slug}
+        public async Task<IActionResult> NewPosts(string slug)
+        {
+            var topic = await _topicRepository.GetTopicBySlugNoTrackng(slug);
+
+            if (topic == null)
+            {
+                return NotFound();
+            }
+
+            var currentUserId = HttpContext.User
+                .FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var posts = topic.Posts
+                .OrderByDescending(p => p.Created.Date)
+                .ThenByDescending(p => p.Created.TimeOfDay);
+
+            var topicViewModel = new TopicViewModel()
+            {
+                Topic = topic,
+                DTUserId = currentUserId,
+                Posts = posts
+            };
+
+            return View("Detail", topicViewModel);
+        }
+
 
         // GET: Topic/Edit/{slug}
         public async Task<IActionResult> Edit(string slug) 

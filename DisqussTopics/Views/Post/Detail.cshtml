@@ -365,17 +365,34 @@
                 <div class="card-header">
                     <span>Topic Rules</span>
                 </div>
-                <div class="card-body">
-                    <dl>
-                        @foreach (var item in Model.Post.Topic.Rules)
-                        {
-                            <dt>@Html.DisplayFor(modelItem => item.Title)</dt>
-                            <dd>@Html.DisplayFor(modelItem => item.Description)</dd>
-                        }
-                    </dl>
+
+                <div class="accordion accordion-flush" id="accordionExample">
+                    @{
+                        var count = 0;
+                    }
+                    @foreach (var item in Model.Post.Topic.Rules)
+                    {
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-rule-@item.Id" aria-expanded="false" aria-controls="collapseTwo">
+                                    @{
+                                        count += 1;
+                                    }
+                                    @count. @Html.DisplayFor(modelItem => item.Title)
+                                </button>
+                            </h2>
+                            <div id="collapse-rule-@item.Id" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <strong>@Html.DisplayFor(modelItem => item.Description)</strong>
+                                </div>
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
         }
+
+
 
         <div class="card text-bg-dark mb-2">
             <div class="card-header">

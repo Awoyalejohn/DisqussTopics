@@ -1,5 +1,13 @@
 
-// Custom styles
+/* Custom styles */
+
+// Bootstrap accordion
+$accordion-color: white;
+$accordion-bg: #212529;
+$accordion-button-active-bg: white;
+$accordion-button-active-color: #212529;
+
+
 
 // Import Bootstrap 5
 @import '../lib/bootstrap/scss/bootstrap.scss';

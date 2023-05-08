@@ -96,5 +96,15 @@ namespace DisqussTopics.Repository
 
             return posts;
         }
+
+        public Task<IEnumerable<Post>> GetPostsByTopic()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<Post>> GetPostsByTopicNoTracking()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

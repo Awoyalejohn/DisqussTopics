@@ -53,7 +53,15 @@ namespace DisqussTopics.Repository
             return await _context.Topics
                 .AsNoTracking()
                 .Include(t => t.Posts)
+                    .ThenInclude(p => p.DTUser)
+                .Include(t => t.Posts)
+                    .ThenInclude(p => p.Upvotes)
+                .Include(t => t.Posts)
+                    .ThenInclude(p => p.Downvotes)
+                .Include(t => t.Posts)
+                    .ThenInclude(p => p.Comments)
                 .Include(t => t.DTUsers)
+                .Include(t => t.DTUser)
                 .Include(t => t.Rules)
                 .FirstOrDefaultAsync(t => t.Slug == slug);
         }
