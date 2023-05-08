@@ -75,16 +75,6 @@ namespace DisqussTopics.Controllers
 
             return View("~/Views/Post/Detail.cshtml", newPostDetailViewModel);
         }
-
-        //// GET: Edit/Comment/{id}
-        //[Route("Edit/Comment/{id}")]
-        //public async Task<IActionResult> Edit(int id)
-        //{
-        //    var comment = await _commentRepository
-        //        .GetCommentByIdNoTracking(id);
-
-        //    return View(comment);
-        //}
         
         //// GET: Edit/Comment/{id}
         [Route("Edit/Comment/{id}")]
@@ -93,46 +83,12 @@ namespace DisqussTopics.Controllers
             var comment = await _commentRepository
                 .GetCommentByIdNoTracking(id);
 
-            ModelState.Clear();
-
-            ViewData["CommentId"] = id;
+            //ModelState.Clear();
 
             return PartialView("~/Views/Shared/_EditCommentPartial.cshtml", comment);
         }
 
 
-        // GET: Edit/Comment/{id}
-        //[Route("Edit/Comment/{id}")]
-        //public async Task<IActionResult> Edit(int id)
-        //{
-        //    var comment = await _commentRepository
-        //        .GetCommentByIdNoTracking(id);
-
-        //    if (comment == null) return NotFound();
-
-        //    var post = await _postRepository
-        //        .GetPostByIdNoTracking(comment.PostId);
-
-        //    var comments = await _commentRepository.GetPostComments(post);
-
-        //    var currentUserId = HttpContext.User
-        //        .FindFirstValue(ClaimTypes.NameIdentifier);
-
-        //    var postUpvoted = post.Upvotes.Any(u => u.Id == currentUserId);
-        //    var postDownvoted = post.Downvotes.Any(u => u.Id == currentUserId);
-
-        //    var postDetailViewModel = new PostDetailViewModel()
-        //    {
-        //        Post = post,
-        //        Comment = comment,
-        //        Comments = comments,
-        //        PostUpvoted = postUpvoted,
-        //        PostDownvoted = postDownvoted,
-        //        UserId = currentUserId,
-        //    };
-
-        //    return View("~/Views/Post/Detail.cshtml", postDetailViewModel);
-        //}
 
         // POST: Edit/Comment/{id}
         [Route("Edit/Comment/{id}")]

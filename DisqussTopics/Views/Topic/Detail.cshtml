@@ -106,7 +106,7 @@ else
 @if (User.Identity.IsAuthenticated)
 {
 
-    @if (Model.Topic.DTUsers.Any(u => u.Id == Model.DTUserId))
+    @if (Model.Topic.DTUsers != null && Model.Topic.DTUsers.Any(u => u.Id == Model.DTUserId))
     {
 
         <form asp-action="Unsubscribe" asp-route-slug="@Model.Topic.Slug">
