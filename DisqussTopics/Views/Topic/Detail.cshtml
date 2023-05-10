@@ -311,14 +311,6 @@
                                             </ul>
                                         </div>
                                     </div>
-                                   
-                                    @if (User.IsInRole("Admin") || Model.DTUserId == Model.Topic.DTUserId)
-                                    {
-                                       <p>
-                                            <a asp-controller="Topic" asp-action="EditRule" asp-route-slug="@item.Topic.Slug" asp-route-id="@item.Id" class="btn btn-sm btn-info">Edit Rule</a>
-                                            <a asp-controller="Topic" asp-action="DeleteRule" asp-route-slug="@item.Topic.Slug" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete Rule</a>
-                                       </p>
-                                    }
                                 </div>
                             </div>
                         </div>
@@ -353,9 +345,15 @@
                 {
                     <div class="card-footer">
                         <a asp-controller="Topic" asp-action="CreateRule" asp-route-slug="@Model.Topic.Slug" class="btn btn-primary">
-                            Add Rules
+                            Add Rule
                         </a>
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modal-add-rule">
+                            Add Rule
+                        </button>
                     </div>
+
+                    <!-- Rule edit Modal -->
+                    @await Html.PartialAsync("~/Views/Rule/_CreateRulePartial.cshtml", new Rule() {TopicId = Model.Topic.Id, Topic = Model.Topic})
                 }
 
             </div>
