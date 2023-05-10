@@ -83,12 +83,14 @@ namespace DisqussTopics.Controllers
                 };
                 _postRepository.InsertPost(post);
                 await _postRepository.SaveAsync();
+                TempData["Success"] = "Post created successfully";
                 return RedirectToAction("Index", "Home");
             }
 
             // If the model state is not valid, redisplay the form with validation errors
             postViewModel.Topics = new SelectList(await _topicRepository
                 .GetSubscribedTopics(currentUserId), "Id", "Name");
+            TempData["Error"] = "Error with form";
             return View(postViewModel);
         }
 

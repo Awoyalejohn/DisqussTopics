@@ -85,7 +85,7 @@ namespace DisqussTopics.Controllers
 
             //ModelState.Clear();
 
-            return PartialView("~/Views/Shared/_EditCommentPartial.cshtml", comment);
+            return PartialView("_EditCommentPartial", comment);
         }
 
 

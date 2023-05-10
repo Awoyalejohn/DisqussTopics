@@ -1,4 +1,4 @@
-
+// Modal pop up for comment edit form
 addEventListener("DOMContentLoaded", () => {
 
     // Get all the comment edit modals
@@ -37,3 +37,12 @@ addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+
+// Bootstrap toast
+if (document.getElementById('liveToast') != null) {
+    const toastLiveExample = document.getElementById('liveToast')
+
+    const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample)
+
+    toastBootstrap.show()
+}
