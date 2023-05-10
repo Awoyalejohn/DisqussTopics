@@ -260,6 +260,7 @@
 
         </div>
 
+        <!-- Rules Card-->
         @if (Model.Topic.Rules != null)
         {
             <div class="card text-bg-dark mb-2">
@@ -284,7 +285,33 @@
                             </h2>
                             <div id="collapse-rule-@item.Id" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
-                                    <strong>@Html.DisplayFor(modelItem => item.Description)</strong>
+                                    <div class="d-flex">
+                                        <strong>@Html.DisplayFor(modelItem => item.Description)</strong>
+                                        <!-- Rule options-->
+                                        <div class="dropdown">
+                                            <span role="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <span class="material-symbols-outlined">
+                                                    more_vert
+                                                </span>
+                                            </span>
+                                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton">
+                                                @if (User.IsInRole("Admin") || Model.DTUserId == Model.Topic.DTUserId)
+                                                {
+                                                    <li>
+                                                        <span role="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modal-edit-rule-@item.Id">
+                                                            Edit
+                                                        </span>
+                                                    </li>
+                                                    <li>
+                                                        <span role="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modal-delete-rule-@item.Id">
+                                                            Delete
+                                                        </span>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                   
                                     @if (User.IsInRole("Admin") || Model.DTUserId == Model.Topic.DTUserId)
                                     {
                                        <p>
@@ -292,6 +319,30 @@
                                             <a asp-controller="Topic" asp-action="DeleteRule" asp-route-slug="@item.Topic.Slug" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete Rule</a>
                                        </p>
                                     }
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Rule edit Modal -->
+                        @await Html.PartialAsync("~/Views/Rule/_EditRulePartial.cshtml", item)
+
+                        <!-- Rule delete Modal -->
+                        <div class="modal fade" id="modal-delete-rule-@item.Id" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content text-white bg-dark">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Delete Rule</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Are you sure you want to delete, "@Html.DisplayFor(modelItem => item.Title)"?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <form asp-controller="Rule" asp-action="DeleteRule" asp-route-slug="@Model.Topic.Slug" asp-route-id="@item.Id">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-danger">Confirm</button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
