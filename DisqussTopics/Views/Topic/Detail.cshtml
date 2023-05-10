@@ -344,9 +344,6 @@
                 @if (User.IsInRole("Admin") || Model.DTUserId == Model.Topic.DTUserId)
                 {
                     <div class="card-footer">
-                        <a asp-controller="Topic" asp-action="CreateRule" asp-route-slug="@Model.Topic.Slug" class="btn btn-primary">
-                            Add Rule
-                        </a>
                         <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modal-add-rule">
                             Add Rule
                         </button>
@@ -366,6 +363,24 @@
             <div class="card-body">
                 <p>@Html.DisplayFor(model => model.Topic.DTUser.DTUsername)</p>
             </div>
+            @if (User.IsInRole("Admin") || Model.DTUserId == Model.Topic.DTUserId)
+            {
+                <div class="card-footer">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-edit-topic">
+                        Edit Topic
+                    </button>
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal-delete-topic">
+                        Delete Topic
+                    </button>
+                </div>
+
+                <!-- Topic edit Modal -->
+                @await Html.PartialAsync("_EditTopicPartial", Model.Topic)
+
+                <!-- Topic delete Modal -->
+                @await Html.PartialAsync("_DeleteTopicPartial", Model.Topic)
+            }
+
         </div>
     </div>
 </div>

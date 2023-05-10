@@ -1,0 +1,45 @@
+﻿@model DisqussTopics.Models.Topic
+
+<div class="modal fade" id="modal-edit-topic" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content text-white bg-dark">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Delete Rule</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="Edit">
+                <div class="modal-body">
+                    <input type="hidden" asp-for="DTUserId" />
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="Name" class="control-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="About" class="control-label"></label>
+                        <textarea asp-for="About" rows="3" class="form-control"></textarea>
+                        <span asp-validation-for="About" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Banner" class="control-label"></label>
+                        <input asp-for="Banner" class="form-control" />
+                        <span asp-validation-for="Banner" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Icon" class="control-label"></label>
+                        <input asp-for="Icon" class="form-control" />
+                        <span asp-validation-for="Icon" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="form-group">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Edit Topic</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
