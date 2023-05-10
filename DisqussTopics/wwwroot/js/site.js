@@ -108,20 +108,19 @@ addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    if (document.querySelectorAll(".copy-link-button") != null) {
-        // Get copy link buttons
-        let copyLinkButtons = document.querySelectorAll(".copy-link-button");
-        console.log(copyLinkButtons);
-
-        for (let i = 0; i < copyLinkButtons.length; i++) {
-            copyLinkButtons[i].addEventListener("click", () => {
-                // Get the text input
-                //let copyText = document.querySelector(`.url-${postId}`);
-                //console.log(copyText);
-                console.log(copyLinkButtons[i]);
-            });
-        }
-
+    if (document.querySelector("#Post_Content") != null) {
+        const quill = new Quill('#Post_Content', {
+            modules: {
+                toolbar: [
+                    [{ header: [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline'],
+                    ['link', 'blockquote','code-block'],
+                    [{ list: 'ordered' }, { list: 'bullet' }]
+                ]
+            },
+            placeholder: 'Text (optional)',
+            theme: 'snow'  // or 'bubble'
+        });
     }
 
 });
