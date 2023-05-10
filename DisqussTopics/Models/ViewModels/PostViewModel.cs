@@ -8,6 +8,6 @@ namespace DisqussTopics.Models.ViewModels
         public int TopicId { get; set; }
         public SelectList? Topics { get; set; }
         public string? DTUserId { get; set; }
-
+        public string? URL { get; set; }
     }
 }

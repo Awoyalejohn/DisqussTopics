@@ -121,7 +121,7 @@
                 <div class="card-body">
                     <img src="~/images/test2.png" class="img-fluid">
                 </div>
-                
+
                 <div class="card-body">
                     <p class="card-text">@Html.DisplayFor(modelItem => item.Content)</p>
                 </div>
@@ -195,8 +195,13 @@
                         }
                     </div>
                     <!-- share-->
-                    <button type="button" class="btn btn-primary">Share</button>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-share-post-@item.Id">Share</button>
                 </div>
+            </div>
+
+            <!-- Post share Modal -->
+            <div class="modal fade post-share-modal" id="modal-share-post-@item.Id" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true" data-post-share-modal-id="@item.Id">
+                @await Html.PartialAsync("~/Views/Post/_SharePostPartial.cshtml", new PostViewModel() { Post = item })
             </div>
 
             <!-- Post delete Modal -->

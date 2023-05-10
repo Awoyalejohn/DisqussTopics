@@ -76,7 +76,7 @@ namespace DisqussTopics.Controllers
             return View("~/Views/Post/Detail.cshtml", newPostDetailViewModel);
         }
         
-        //// GET: Edit/Comment/{id}
+        // GET: Edit/Comment/{id}
         [Route("Edit/Comment/{id}")]
         public async Task<IActionResult> Edit(int id)
         {

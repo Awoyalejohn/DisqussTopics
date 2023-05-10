@@ -4,6 +4,7 @@ using DisqussTopics.Models;
 using DisqussTopics.Models.ViewModels;
 using DisqussTopics.Repository;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -215,6 +216,25 @@ namespace DisqussTopics.Controllers
             await _postRepository.SaveAsync();
 
             return RedirectToAction("Index", "Home");
+        }
+
+        // GET: Post/Share/Post/{id}
+        [Route("{controller=Post}/{action=Share}/{id}")]
+        public async Task<IActionResult> Share(int id)
+        {
+            var post = await _postRepository
+                .GetPostByIdNoTracking(id);
+            var topic = post.Topic.Name;
+            var postSlug = post.Slug;
+            var url = @$"{HttpContext.Request.Host}/Post/Detail/{topic}/{postSlug}/{id}";
+
+            var postViewModel = new PostViewModel()
+            {
+                Post = post,
+                URL = url,
+            };
+
+            return PartialView("_SharePostPartial", postViewModel);
         }
 
         [Route("{action}/{id}")]

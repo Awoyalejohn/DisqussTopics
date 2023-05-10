@@ -1,24 +1,21 @@
-﻿<!-- Mobile only navbar -->
-<nav class="navbar navbar-expand-lg bg-dark border-bottom box-shadow d-md-none" data-bs-theme="dark">
-    <div class="container-fluid">
-        <a class="navbar-brand text-white" asp-area="" asp-controller="Home" asp-action="Index">DisqussTopics</a>
-        <button class="navbar-toggler border border-white" type="button" data-bs-toggle="offcanvas" data-bs-theme="dark" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="offcanvas offcanvas-end bg-dark text-white" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
-            <div class="offcanvas-header">
-                <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Offcanvas</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
-            <div class="offcanvas-body bg-dark">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <form class="d-flex" role="search" asp-controller="Search" asp-action="Index" method="get">
-                        <input class="form-control me-2" name="SearchString" type="search" placeholder="Search" aria-label="Search">
-                    </form>
+﻿@model DisqussTopics.Models.ViewModels.PostViewModel
 
-                    <partial name="_LoginPartial" />
-                </ul>
+
+    <div class="modal-dialog">
+        <div class="modal-content text-white bg-dark">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalStaticBackdropLabel">Share post</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            <div class="form-group">
+                <label class="control-label">@Model.Post.Title</label>
+                <input asp-for="@Model.URL" class="form-control url-@Model.Post.Id" disabled />
+            </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary copy-link-button" data-bs-dismiss="modal">Copy Link</button>
             </div>
         </div>
     </div>
-</nav>
