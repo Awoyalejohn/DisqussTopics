@@ -7,8 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"] - DisqussTopics</title>
 
-    <!-- Styles -->
     <script src="https://cdn.ckeditor.com/ckeditor5/37.1.0/classic/ckeditor.js"></script>
+    <!-- Styles -->
     <link href="https://cdn.jsdelivr.net/npm/material-symbols@0.5.5/index.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
@@ -34,6 +34,9 @@
     <!-- Mobile only navbar -->
     <partial name="_MobileNavbarPartial" />
 
+    <!-- Banner for topics-->
+    @RenderSection("Banner", required: false)
+
     <!-- Main Content -->
     <div class="container">
         <main role="main" class="pb-3">
@@ -53,7 +56,6 @@
     <!-- Scripts -->
 
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
-    @RenderSection("ckEditor", required: false)
     <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("scripts", required: false)
 

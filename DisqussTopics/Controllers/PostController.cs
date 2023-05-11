@@ -3,6 +3,7 @@ using DisqussTopics.Data;
 using DisqussTopics.Models;
 using DisqussTopics.Models.ViewModels;
 using DisqussTopics.Repository;
+using DisqussTopics.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -20,15 +21,21 @@ namespace DisqussTopics.Controllers
         private readonly IUserRepository _userRepository;
         private readonly ITopicRepository _topicRepository;
         private readonly ICommentRepository _commentRepository;
+        private readonly IImageService _imageService;
+        private readonly IVideoService _videoService;
         public PostController(IPostRepository postRepository,
             IUserRepository userRepository,
             ITopicRepository topicRepository,
-            ICommentRepository commentRepository)
+            ICommentRepository commentRepository,
+            IImageService imageService,
+            IVideoService videoService)
         {
             _postRepository = postRepository;
             _userRepository = userRepository;
             _topicRepository = topicRepository;
             _commentRepository = commentRepository;
+            _imageService = imageService;
+            _videoService = videoService;
         }
 
         // GET: Post/Create
@@ -51,7 +58,7 @@ namespace DisqussTopics.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            [Bind("Post,TopicId,Topics,DTUserId")] PostViewModel postViewModel)
+            [Bind("Post,TopicId,Topics,DTUserId,UploadImage,UploadVideo")] PostViewModel postViewModel)
         {
             // Get the user Id 
             var currentUserId = HttpContext.User
@@ -68,6 +75,24 @@ namespace DisqussTopics.Controllers
                 var slug = helper.GenerateSlug(postViewModel.Post.Title);
 
 
+                // Get the image result
+                var imageResult = await _imageService.AddImageAsync(postViewModel.UploadImage);
+                string? imageResultURL = string.Empty;
+                if (imageResult.SecureUrl != null)
+                {
+                    imageResultURL = imageResult.SecureUrl.ToString();
+                }
+
+                // Get the video result 
+                var videoResult = await _videoService.AddVideoAsync(postViewModel.UploadVideo);
+                string? videoResultURL = string.Empty;
+                if (videoResult.SecureUrl != null)
+                {
+                    videoResultURL = videoResult.SecureUrl.ToString();
+                }
+
+
+
 
                 // Map the postViewModel properties to the post model
                 var post = new Post()
@@ -79,9 +104,10 @@ namespace DisqussTopics.Controllers
                     Created = DateTime.Now,
                     Updated = DateTime.Now,
                     Content = postViewModel.Post.Content,
-                    Image = postViewModel.Post.Image,
-                    Video = postViewModel.Post.Video,
+                    Image = imageResultURL,
+                    Video = videoResultURL,
                 };
+
                 _postRepository.InsertPost(post);
                 await _postRepository.SaveAsync();
                 TempData["Success"] = "Post created successfully";
@@ -156,11 +182,27 @@ namespace DisqussTopics.Controllers
         // POST: Post/Edit/{topic}/{slug}/{id}
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Post,TopicId,Topics,DTUserId")] PostViewModel postViewModel)
+        public async Task<IActionResult> Edit(int id, [Bind("Post,TopicId,Topics,DTUserId,UploadImage,UploadVideo")] PostViewModel postViewModel)
         {
 
             if (ModelState.IsValid)
             {
+                // Get the image result
+                var imageResult = await _imageService.AddImageAsync(postViewModel.UploadImage);
+                string? imageResultURL = string.Empty;
+                if (imageResult.SecureUrl != null)
+                {
+                    imageResultURL = imageResult.SecureUrl.ToString();
+                }
+
+                // Get the video result 
+                var videoResult = await _videoService.AddVideoAsync(postViewModel.UploadVideo);
+                string? videoResultURL = string.Empty;
+                if (videoResult.SecureUrl != null)
+                {
+                    videoResultURL = videoResult.SecureUrl.ToString();
+                }
+
                 var post = await _postRepository
                     .GetPostById(id);
 
@@ -174,12 +216,46 @@ namespace DisqussTopics.Controllers
                 SlugHelper helper = new SlugHelper();
                 string slug = helper.GenerateSlug(postViewModel.Post.Title);
 
+                if (post.Image != null && post.Image.Length > 5) 
+                {
+                    // try to delete the old image
+                    try
+                    {
+                        var fileInfo = new FileInfo(post.Image);
+                        var publicId = Path.GetFileNameWithoutExtension(fileInfo.FullName);
+                        await _imageService.DeleteImageAsync(publicId);
+                    }
+                    catch (Exception)
+                    {
+
+                        ModelState.AddModelError("", "Failed to edit image");
+                        return View(postViewModel);
+                    }
+                }
+
+                if (post.Video != null && post.Video.Length > 5)
+                {
+                    // try to delete the old video
+                    try
+                    {
+                        var fileInfo = new FileInfo(post.Video);
+                        var publicId = Path.GetFileNameWithoutExtension(fileInfo.FullName);
+                        await _videoService.DeleteVideoAsync(publicId);
+                    }
+                    catch (Exception)
+                    {
+
+                        ModelState.AddModelError("", "Failed to edit video");
+                        return View(postViewModel);
+                    }
+                }
+
                 post.Title = postViewModel.Post.Title;
                 post.Slug = slug;
                 post.Updated = DateTime.Now;
                 post.Content = postViewModel.Post.Content;
-                post.Image = postViewModel.Post.Image;
-                post.Video = postViewModel.Post.Video;
+                post.Image = imageResultURL;
+                post.Video = videoResultURL;
 
                 _postRepository.UpdatePost(post);
                 await _postRepository.SaveAsync();
@@ -211,6 +287,39 @@ namespace DisqussTopics.Controllers
                 .GetPostById(id);
 
             if (post == null) return NotFound();
+
+            if (post.Image != null && post.Image.Length > 5)
+            {
+                // try to delete the image
+                try
+                {
+                    var fileInfo = new FileInfo(post.Image);
+                    var publicId = Path.GetFileNameWithoutExtension(fileInfo.FullName);
+                    await _imageService.DeleteImageAsync(publicId);
+                }
+                catch (Exception)
+                {
+                    ModelState.AddModelError("", "Failed to delete image");
+                    return View("Delete", post);
+                }
+            }
+
+            if (post.Video != null && post.Video.Length > 5)
+            {
+                // try to delete the old video
+                try
+                {
+                    var fileInfo = new FileInfo(post.Video);
+                    var publicId = Path.GetFileNameWithoutExtension(fileInfo.FullName);
+                    await _videoService.DeleteVideoAsync(publicId);
+                }
+                catch (Exception)
+                {
+
+                    ModelState.AddModelError("", "Failed to edit video");
+                    return View("Delete", post);
+                }
+            }
 
             _postRepository.DeletePost(post);
             await _postRepository.SaveAsync();

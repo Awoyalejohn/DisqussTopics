@@ -70,7 +70,7 @@
 
         @foreach (var item in Model.Posts)
         {
-                // Bootstrap Card
+        // Bootstrap Card
             <div class="card text-bg-dark mb-2">
                 <div class="card-header">
                     <div class="d-flex justify-content-between">
@@ -119,7 +119,19 @@
                     </a>
                 </div>
                 <div class="card-body">
-                    <img src="~/images/test2.png" class="img-fluid">
+                    @if (item.Image != null && item.Image.Length > 5)
+                    {
+                        <img src="@item.Image" class="img-fluid">
+
+                    }
+                    else if (item.Video != null && item.Video.Length > 5)
+                    {
+                        <video src="@item.Video" height="300" width="300" controls></video>
+                    }
+                    else
+                    {
+                        <img src="~/images/test2.png" class="img-fluid">
+                    }
                 </div>
 
                 <div class="card-body">

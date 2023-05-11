@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using DisqussTopics.Data;
 using DisqussTopics.Models;
 using DisqussTopics.Repository;
+using DisqussTopics.Service;
+using DisqussTopics.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +32,12 @@ builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRuleRepository, RuleRepository>();
 
+// Add sevice for Cloudinary
+builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<IVideoService, VideoSevice>();
+builder.Services.Configure<CloudinarySettings>(
+    builder.Configuration.GetSection(nameof(CloudinarySettings))
+    );
 
 // service for sessions
 builder.Services.AddSession();

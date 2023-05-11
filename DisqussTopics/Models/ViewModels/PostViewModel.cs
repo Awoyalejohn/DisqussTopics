@@ -9,5 +9,7 @@ namespace DisqussTopics.Models.ViewModels
         public SelectList? Topics { get; set; }
         public string? DTUserId { get; set; }
         public string? URL { get; set; }
+        public IFormFile? UploadImage { get; set; }
+        public IFormFile? UploadVideo { get; set; }
     }
 }

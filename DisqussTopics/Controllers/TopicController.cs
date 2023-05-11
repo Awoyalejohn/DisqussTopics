@@ -1,6 +1,7 @@
 ﻿using DisqussTopics.Models;
 using DisqussTopics.Models.ViewModels;
 using DisqussTopics.Repository;
+using DisqussTopics.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -15,12 +16,14 @@ namespace DisqussTopics.Controllers
         private readonly ITopicRepository _topicRepository;
         private readonly IUserRepository _userRepository;
         private readonly IPostRepository _postRepository;
+        private readonly IImageService _imageService;
 
-        public TopicController(ITopicRepository topicRepository, IUserRepository userRepository, IPostRepository postRepository)
+        public TopicController(ITopicRepository topicRepository, IUserRepository userRepository, IPostRepository postRepository, IImageService imageService)
         {
             _topicRepository = topicRepository;
             _userRepository = userRepository;
             _postRepository = postRepository;
+            _imageService = imageService;
         }
 
         // GET: Topic/Index
