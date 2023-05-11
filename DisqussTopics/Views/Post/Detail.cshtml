@@ -63,7 +63,7 @@
             </div>
 
             <div class="card-body">
-                <p class="card-text">@Html.DisplayFor(model => model.Post.Content)</p>
+                @Html.Raw(Model.Post.Content)
             </div>
 
             <div class="card-footer d-flex justify-content-between">

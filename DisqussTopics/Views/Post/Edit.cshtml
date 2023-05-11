@@ -10,51 +10,49 @@
 
 <hr />
 
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
+<div class="col-sm-12 col-md-12 col-lg-8">
+    <div class="card text-bg-dark">
+        <div class="card-header">
+            <span>Edit Post</span>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit">
 
-            <input type="hidden" asp-for="DTUserId" />
-            <div asp-validation-summary="All" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Post.Title" class="control-label"></label>
-                <input asp-for="Post.Title" class="form-control" />
-                <span asp-validation-for="Post.Title" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Post.Content" class="control-label"></label>
-                @*                <textarea asp-for="Post.Content" rows="3" class="form-control"></textarea>
-                <textarea rows="3" class="form-control" id="Post_Content" name="Post.Content"></textarea>*@
-                <div id="Post_Content" class="Post_Content" name="Post.Content"></div>
-                <span asp-validation-for="Post.Content" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Post.Image" class="control-label"></label>
-                <input asp-for="Post.Image" class="form-control" />
-                <span asp-validation-for="Post.Image" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Post.Video" class="control-label"></label>
-                <input asp-for="Post.Video" class="form-control" />
-                <span asp-validation-for="Post.Video" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="hidden" asp-for="TopicId" />
-                <label asp-for="TopicId" class="control-label"></label>
-                <select asp-for="TopicId" asp-items="Model.Topics" disabled class="form-select">
-                    <option value="">-- Select a Topic --</option>
-                </select>
-                <span asp-validation-for="TopicId" class="text-danger"></span>
-            </div>
+                <input type="hidden" asp-for="DTUserId" />
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Post.Title" class="control-label"></label>
+                    <input asp-for="Post.Title" class="form-control" />
+                    <span asp-validation-for="Post.Title" class="text-danger"></span>
+                </div>
+                <div class="form-group text-black">
+                    <label asp-for="Post.Content" class="control-label text-white"></label>
+                    <textarea asp-for="Post.Content" rows="3" class="form-control"></textarea>
+                    <span asp-validation-for="Post.Content" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Post.Image" class="control-label"></label>
+                    <input asp-for="Post.Image" class="form-control" />
+                    <span asp-validation-for="Post.Image" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Post.Video" class="control-label"></label>
+                    <input asp-for="Post.Video" class="form-control" />
+                    <span asp-validation-for="Post.Video" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="hidden" asp-for="TopicId" />
+                    <label asp-for="TopicId" class="control-label"></label>
+                    <select asp-for="TopicId" asp-items="Model.Topics" disabled class="form-select">
+                        <option value="">-- Select a Topic --</option>
+                    </select>
+                    <span asp-validation-for="TopicId" class="text-danger"></span>
+                </div>
 
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary">Edit post</button>
-            </div>
-        </form>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Edit post</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
-
-@section quill
-    {
-    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
-}

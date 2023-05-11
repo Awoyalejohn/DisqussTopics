@@ -123,7 +123,7 @@
                 </div>
 
                 <div class="card-body">
-                    <p class="card-text">@Html.DisplayFor(modelItem => item.Content)</p>
+                    @Html.Raw(item.Content)
                 </div>
                 <div class="card-footer d-flex justify-content-between">
                     <div class="d-flex">

@@ -1,3 +1,4 @@
+
 addEventListener("DOMContentLoaded", () => {
 
     // Get all the comment edit modals
@@ -109,18 +110,22 @@ addEventListener("DOMContentLoaded", () => {
     }
 
     if (document.querySelector("#Post_Content") != null) {
-        const quill = new Quill('#Post_Content', {
-            modules: {
-                toolbar: [
-                    [{ header: [1, 2, 3, false] }],
-                    ['bold', 'italic', 'underline'],
-                    ['link', 'blockquote','code-block'],
-                    [{ list: 'ordered' }, { list: 'bullet' }]
-                ]
-            },
-            placeholder: 'Text (optional)',
-            theme: 'snow'  // or 'bubble'
-        });
+        ClassicEditor
+            .create(document.querySelector('#Post_Content'), {
+                toolbar: {
+                    items: [
+                        "heading",
+                        "|", "bold", "italic", "link",
+                        "|", "bulletedList", "numberedList",
+                        "|", "undo", "redo"
+                    ],
+                    shouldNotGroupWhenFull: true
+                }
+
+            })
+            .catch(error => {
+                console.error(error);
+            });
     }
 
 });
