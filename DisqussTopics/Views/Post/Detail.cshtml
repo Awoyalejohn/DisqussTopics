@@ -4,6 +4,12 @@
     ViewData["Title"] = "Detail";
 }
 
+@section Banner {
+    <div style="height: 20rem">
+        <img src="~/images/test-banner.png" style="width: 100%;height: 100%; object-fit:cover;" />
+    </div>
+}
+
 <h1>Detail</h1>
 
 <h4>Post</h4>
@@ -59,7 +65,19 @@
             </div>
 
             <div class="card-body">
-                <img src="~/images/test2.png" class="img-fluid">
+                @if (Model.Post.Image != null && Model.Post.Image.Length > 5)
+                {
+                    <img src="@Model.Post.Image" class="img-fluid">
+
+                }
+                else if (Model.Post.Video != null && Model.Post.Video.Length > 5)
+                {
+                    <video src="@Model.Post.Video" height="300" width="300" controls></video>
+                }
+                else
+                {
+                    <img src="~/images/test2.png" class="img-fluid">
+                }
             </div>
 
             <div class="card-body">

@@ -54,6 +54,7 @@ namespace DisqussTopics.Controllers
         }
 
         // POST: Post/Create
+        [RequestSizeLimit(100_000_000)]
         [Authorize(Roles = "User, Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]

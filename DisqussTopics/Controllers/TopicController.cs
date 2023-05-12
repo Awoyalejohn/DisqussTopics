@@ -42,7 +42,7 @@ namespace DisqussTopics.Controllers
 
             var topicViewModel = new TopicViewModel()
             {
-                DTUserId = currenUserId
+                DTUserId = currenUserId,
             };
             return View(topicViewModel);
         }

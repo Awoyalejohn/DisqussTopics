@@ -352,3 +352,4 @@ MigrationBackup/
 # library manager
 lib/
 /DisqussTopics/Data/Seed.cs
+/DisqussTopics/SomeExtraInfo.txt
