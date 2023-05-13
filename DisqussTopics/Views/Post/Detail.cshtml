@@ -5,10 +5,37 @@
 }
 
 @section Banner {
-    <div style="height: 20rem">
-        <img src="~/images/test-banner.png" style="width: 100%;height: 100%; object-fit:cover;" />
+    @if (!string.IsNullOrEmpty(Model.Post.Topic.Banner))
+    {
+        <div style="height: 10rem">
+            <img src="@Model.Post.Topic.Banner" style="width: 100%;height: 100%; object-fit:cover;" />
+        </div>
+    }
+    else
+    {
+        <div style="height: 10rem">
+            <img src="~/images/test-banner.png" style="width: 100%;height: 100%; object-fit:cover;" />
+        </div>
+    }
+
+    <div class="bg-dark d-flex align-items-center justify-content-center" style="height: 10rem">
+        <div class="d-flex">
+            @if (!string.IsNullOrEmpty(Model.Post.Topic.Icon))
+            {
+                <img class="mt-auto mb-auto" src="@Model.Post.Topic.Icon" alt="topic logo" width="75" height="75">
+
+            }
+            else
+            {
+                <img class="mt-auto mb-auto" src="~/images/No_image_available.png" alt="topic logo" width="75" height="75">
+            }
+            <div class="text-white mt-auto mb-auto text-wrap" style="margin-right: 35rem;width: 40rem;">
+                <h1>@Model.Post.Topic.Name</h1>
+            </div>
+        </div>
     </div>
 }
+
 
 <h1>Detail</h1>
 
@@ -64,25 +91,48 @@
                 <h5 class="card-title">@Html.DisplayFor(model => model.Post.Title)</h5>
             </div>
 
-            <div class="card-body">
-                @if (Model.Post.Image != null && Model.Post.Image.Length > 5)
-                {
-                    <img src="@Model.Post.Image" class="img-fluid">
+            @*       <div class="card-body">
+            @if (Model.Post.Image != null && Model.Post.Image.Length > 5)
+            {
+            <img src="@Model.Post.Image" class="img-fluid">
 
-                }
-                else if (Model.Post.Video != null && Model.Post.Video.Length > 5)
-                {
-                    <video src="@Model.Post.Video" height="300" width="300" controls></video>
-                }
-                else
-                {
-                    <img src="~/images/test2.png" class="img-fluid">
-                }
+            }
+            else if (Model.Post.Video != null && Model.Post.Video.Length > 5)
+            {
+            <video src="@Model.Post.Video" height="300" width="300" controls></video>
+            }
+            else
+            {
+            <img src="~/images/test2.png" class="img-fluid">
+            }
             </div>
 
             <div class="card-body">
-                @Html.Raw(Model.Post.Content)
+            @Html.Raw(Model.Post.Content)
             </div>
+
+            *@
+
+            <div class="card-body">
+                @if (!string.IsNullOrEmpty(Model.Post.Content))
+                {
+                    @Html.Raw(Model.Post.Content)
+                }
+                else if (!string.IsNullOrEmpty(Model.Post.Image))
+                {
+                    <div class="d-flex align-items-center justify-content-center">
+                        <img src="@Model.Post.Image" class="img-fluid">
+                    </div>
+                }
+                else if (!string.IsNullOrEmpty(Model.Post.Video))
+                {
+                    <div class="ratio ratio-16x9">
+                        <video src="@Model.Post.Video" height="300" width="300" allowfullscreen controls></video>
+                    </div>
+                }
+            </div>
+
+
 
             <div class="card-footer d-flex justify-content-between">
                 <div class="d-flex">

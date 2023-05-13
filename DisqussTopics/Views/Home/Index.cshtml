@@ -17,8 +17,6 @@
             </div>
         }
 
-
-
         <div class="card text-center text-bg-dark mb-2">
             <div class="card-header">
                 <ul class="nav nav-pills card-header-pills">
@@ -70,7 +68,7 @@
 
         @foreach (var item in Model.Posts)
         {
-        // Bootstrap Card
+                // Bootstrap Card
             <div class="card text-bg-dark mb-2">
                 <div class="card-header">
                     <div class="d-flex justify-content-between">
@@ -118,25 +116,46 @@
                         <h5 class="card-title">@Html.DisplayFor(modelItem => item.Title)</h5>
                     </a>
                 </div>
-                <div class="card-body">
-                    @if (item.Image != null && item.Image.Length > 5)
-                    {
-                        <img src="@item.Image" class="img-fluid">
 
-                    }
-                    else if (item.Video != null && item.Video.Length > 5)
+                @*       <div class="card-body">
+            @if (item.Image != null && item.Image.Length > 5)
+            {
+            <img src="@item.Image" class="img-fluid">
+
+            }
+            else if (item.Video != null && item.Video.Length > 5)
+            {
+            <video src="@item.Video" height="300" width="300" controls></video>
+            }
+            else
+            {
+            <img src="~/images/test2.png" class="img-fluid">
+            }
+            </div>
+
+            <div class="card-body">
+            @Html.Raw(item.Content)
+            </div>*@
+
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(item.Content))
                     {
-                        <video src="@item.Video" height="300" width="300" controls></video>
+                        @Html.Raw(item.Content)
                     }
-                    else
+                    else if (!string.IsNullOrEmpty(item.Image))
                     {
-                        <img src="~/images/test2.png" class="img-fluid">
+                        <div class="d-flex align-items-center justify-content-center">
+                            <img src="@item.Image" class="img-fluid">
+                        </div>
+                    }
+                    else if (!string.IsNullOrEmpty(item.Video))
+                    {
+                        <div class="ratio ratio-16x9">
+                            <video src="@item.Video" height="300" width="300" allowfullscreen controls></video>
+                        </div>
                     }
                 </div>
 
-                <div class="card-body">
-                    @Html.Raw(item.Content)
-                </div>
                 <div class="card-footer d-flex justify-content-between">
                     <div class="d-flex">
 
