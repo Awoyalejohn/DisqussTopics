@@ -3,14 +3,39 @@
     ViewData["Title"] = "Detail";
 }
 
-
-
-
 @section Banner {
-    <div style="height: 20rem">
-        <img src="~/images/test-banner.png" style="width: 100%;height: 100%; object-fit:cover;" />
+    @if (!string.IsNullOrEmpty(Model.Topic.Banner))
+    {
+        <div style="height: 10rem">
+            <img src="@Model.Topic.Banner" style="width: 100%;height: 100%; object-fit:cover;" />
+        </div>
+    }
+    else
+    {
+        <div style="height: 10rem">
+            <img src="~/images/test-banner.png" style="width: 100%;height: 100%; object-fit:cover;" />
+        </div>
+    }
+
+    <div class="bg-dark d-flex align-items-center justify-content-center" style="height: 10rem">
+        <div class="d-flex">
+            @if (!string.IsNullOrEmpty(Model.Topic.Icon))
+            {
+                <img class="mt-auto mb-auto" src="@Model.Topic.Icon" alt="topic logo" width="75" height="75">
+
+            }
+            else
+            {
+                <img class="mt-auto mb-auto" src="~/images/No_image_available.png" alt="topic logo" width="75" height="75">
+            }
+            <div class="text-white mt-auto mb-auto text-wrap" style="margin-right: 35rem;width: 40rem;">
+                <h1>@Model.Topic.Name</h1>
+            </div>
+        </div>
     </div>
 }
+
+
 
 <h4>@Html.DisplayFor(model => model.Topic.Name)</h4>
 

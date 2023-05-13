@@ -5,6 +5,7 @@ using DisqussTopics.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using Slugify;
 using System.Security.Claims;
 
@@ -200,13 +201,17 @@ namespace DisqussTopics.Controllers
             var topic = await _topicRepository
                 .GetTopicBySlugNoTrackng(slug);
 
-            return View(topic);
+            var topicViewModel = new TopicViewModel()
+            {
+                Topic = topic,
+            };
+            return View(topicViewModel);
         }
 
         // POST: Topic/Edit/{slug}
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string slug, [Bind("Id,Name,Slug,Created,About,Banner,Icon")] Topic topicUpdate)
+        public async Task<IActionResult> Edit(string slug, [Bind("Topic,DTUserId,Posts,BannerUpload,IconUpload")] TopicViewModel topicViewModel)
         {
             if (ModelState.IsValid)
             {
@@ -214,13 +219,13 @@ namespace DisqussTopics.Controllers
                     .GetTopicBySlug(slug);
 
                 SlugHelper helper = new SlugHelper();
-                string updateSlug = helper.GenerateSlug(topicUpdate.Name);
+                string updateSlug = helper.GenerateSlug(topicViewModel.Topic.Name);
 
                 var topics = await _topicRepository.GetTopics();
                 // checks if the topic already exists
                 bool topicExists = topics.Any(t => t.Slug == updateSlug);
 
-                // only allows topic to be dupicated if it is the same topic being updated
+                // only allows topic slug to be duplicated if it is the same topic being updated
                 if (topicExists)
                 {
                     var duplicateTopic = await _topicRepository
@@ -229,21 +234,77 @@ namespace DisqussTopics.Controllers
                     if (duplicateTopic.Id != topic.Id)
                     {
                         ModelState.AddModelError("", "Topic already exists!");
-                        return View(topicUpdate);
+                        return View(topicViewModel);
                     }
                 }
 
-                topic.Name = topicUpdate.Name;
+                // Get the Icon image result
+                var iconImageResult = await _imageService.AddImageAsync(topicViewModel.IconUpload);
+                string? iconImageResultURL = string.Empty;
+                if (iconImageResult.SecureUrl != null)
+                {
+                    iconImageResultURL = iconImageResult.SecureUrl.ToString();
+
+                    if (topic.Banner != null && topic.Banner.Length > 5)
+                    {
+                        // try to delete the old banner image
+                        try
+                        {
+                            var fileInfo = new FileInfo(topic.Banner);
+                            var publicId = Path.GetFileNameWithoutExtension(fileInfo.FullName);
+                            await _imageService.DeleteImageAsync(publicId);
+                        }
+                        catch (Exception)
+                        {
+                            ModelState.AddModelError("", "Failed to edit banner image");
+                            return View(topicViewModel);
+                        }
+                    }
+                }
+                else
+                {
+                    iconImageResultURL = topic.Icon;
+                }
+
+                // Get the Banner image result
+                var bannerImageResult = await _imageService.AddImageAsync(topicViewModel.BannerUpload);
+                string? bannerImageResultURL = string.Empty;
+                if (bannerImageResult.SecureUrl != null)
+                {
+                    bannerImageResultURL = bannerImageResult.SecureUrl.ToString();
+
+                    if (topic.Icon != null && topic.Icon.Length > 5)
+                    {
+                        // try to delete the old icon image
+                        try
+                        {
+                            var fileInfo = new FileInfo(topic.Icon);
+                            var publicId = Path.GetFileNameWithoutExtension(fileInfo.FullName);
+                            await _imageService.DeleteImageAsync(publicId);
+                        }
+                        catch (Exception)
+                        {
+                            ModelState.AddModelError("", "Failed to edit banner image");
+                            return View(topicViewModel);
+                        }
+                    }
+                }
+                else
+                {
+                    bannerImageResultURL = topic.Banner;
+                }
+
+                topic.Name = topicViewModel.Topic.Name;
                 topic.Slug = updateSlug;
-                topic.About = topicUpdate.About;
-                topic.Banner = topicUpdate.Banner;
-                topic.Icon = topicUpdate.Icon;
+                topic.About = topicViewModel.Topic.About;
+                topic.Icon = iconImageResultURL;
+                topic.Banner = bannerImageResultURL;
 
                 _topicRepository.UpdateTopic(topic);
                 await _topicRepository.SaveAsync();
                 return RedirectToAction("Detail", "Topic", new { slug = updateSlug });
             }
-            return View(topicUpdate);
+            return View(topicViewModel);
         }
 
         // GET: Topic/Delete/{slug}

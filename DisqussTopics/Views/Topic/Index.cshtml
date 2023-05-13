@@ -19,12 +19,12 @@
             <th>
                 @Html.DisplayNameFor(model => model.About)
             </th>
-            <th>
+@*            <th>
                 @Html.DisplayNameFor(model => model.Banner)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Icon)
-            </th>
+            </th>*@
             <th></th>
         </tr>
     </thead>
@@ -40,9 +40,9 @@
 
                 <td>@Html.DisplayFor(modelItem => item.About)</td>
 
-                <td>@Html.DisplayFor(modelItem => item.Banner)</td>
+@*                <td>@Html.DisplayFor(modelItem => item.Banner)</td>
 
-                <td>@Html.DisplayFor(modelItem => item.Icon)</td>
+                <td>@Html.DisplayFor(modelItem => item.Icon)</td>*@
 
                 <td>
                     <a asp-action="Detail" asp-route-slug="@item.Slug">View Topic</a>|
