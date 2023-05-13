@@ -1,4 +1,5 @@
 ﻿@model DisqussTopics.Models.ViewModels.HomeViewModel
+@using Humanizer;
 
 @{
     ViewData["Title"] = "Home Page";
@@ -68,32 +69,41 @@
 
         @foreach (var item in Model.Posts)
         {
-                // Bootstrap Card
+            // Bootstrap Card
             <div class="card text-bg-dark mb-2">
                 <div class="card-header">
                     <div class="d-flex justify-content-between">
                         <span>
-                            Topic:
-                            <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Topic.Slug">
+                            @if (!string.IsNullOrEmpty(item.Topic.Icon))
+                            {
+                                <img src="@item.Topic.Icon" alt="topic logo" width="25" height="25">
+                            }
+                            else
+                            {
+                                <img src="~/images/No_image_available.png" alt="topic logo" width="25" height="25">
+                            }
+                            <!-- Topic:-->
+                            <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Topic.Slug" style="position: relative; z-index: 2;">
                                 @Html.DisplayFor(modelItem => item.Topic.Name)
                             </a>
                             - Posted by
-                            <a href="#">
+                            <a href="#" style="position: relative; z-index: 2;">
                                 @Html.DisplayFor(modelItem => item.DTUser.DTUsername)
                             </a>
-                            Time:
-                            @Html.DisplayFor(modelItem => item.Created)
+                            <span>@item.Created.Humanize()</span>
+
+
                         </span>
 
                         <div class="dropdown">
-                            <span role="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span role="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="position: relative; z-index: 2;">
                                 <span class="material-symbols-outlined">
                                     more_vert
                                 </span>
                             </span>
                             <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="dropdownMenuButton">
                                 <li>
-                                    <a class="dropdown-item" asp-controller="Post" asp-action="Detail" asp-route-topic="@item.Topic.Name" asp-route-slug="@item.Slug" asp-route-id="@item.Id">View</a>
+                                    <a class="dropdown-item stretched-link" asp-controller="Post" asp-action="Detail" asp-route-topic="@item.Topic.Name" asp-route-slug="@item.Slug" asp-route-id="@item.Id" style="position: relative; z-index: 2;">View</a>
                                 </li>
                                 @if (User.IsInRole("Admin") || item.DTUser.Id == Model.CurrentUserId)
                                 {
@@ -112,8 +122,9 @@
 
                 </div>
                 <div class="card-body">
-                    <a asp-controller="Post" asp-action="Detail" asp-route-topic="@item.Topic.Name" asp-route-slug="@item.Slug" asp-route-id="@item.Id">
-                        <h5 class="card-title">@Html.DisplayFor(modelItem => item.Title)</h5>
+                    <a asp-controller="Post" asp-action="Detail" asp-route-topic="@item.Topic.Name" asp-route-slug="@item.Slug" asp-route-id="@item.Id"
+                       class="h5 stretched-link text-white" style="text-decoration: none">
+                       @Html.DisplayFor(modelItem => item.Title)
                     </a>
                 </div>
 
@@ -144,7 +155,7 @@
                         {
                             @if (item.Upvotes.Any(u => u.Id == Model.CurrentUserId))
                             {
-                                <form asp-controller="Post" asp-action="RemoveUpvotePost" asp-route-id="@item.Id">
+                                <form asp-controller="Post" asp-action="RemoveUpvotePost" asp-route-id="@item.Id" style="position: relative; z-index: 2;">
                                     <button type="submit" class="btn btn-success">
                                         <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">
                                             arrow_circle_up
@@ -154,7 +165,7 @@
                             }
                             else
                             {
-                                <form asp-controller="Post" asp-action="UpvotePost" asp-route-id="@item.Id">
+                                <form asp-controller="Post" asp-action="UpvotePost" asp-route-id="@item.Id" style="position: relative; z-index: 2;">
                                     <button type="submit" class="btn btn-success">
                                         <span class="material-symbols-outlined">
                                             arrow_circle_up
@@ -170,7 +181,7 @@
                         {
                             if (item.Downvotes.Any(d => d.Id == Model.CurrentUserId))
                             {
-                                <form asp-controller="Post" asp-action="RemoveDownvotePost" asp-route-id="@item.Id">
+                                <form asp-controller="Post" asp-action="RemoveDownvotePost" asp-route-id="@item.Id" style="position: relative; z-index: 2;">
                                     <button type="submit" class="btn btn-danger">
                                         <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">
                                             arrow_circle_down
@@ -180,7 +191,7 @@
                             }
                             else
                             {
-                                <form asp-controller="Post" asp-action="DownvotePost" asp-action="DownvotePost" asp-route-id="@item.Id">
+                                <form asp-controller="Post" asp-action="DownvotePost" asp-action="DownvotePost" asp-route-id="@item.Id" style="position: relative; z-index: 2;">
                                     <button type="submit" class="btn btn-danger">
                                         <span class="material-symbols-outlined">
                                             arrow_circle_down
@@ -206,7 +217,7 @@
                         }
                     </div>
                     <!-- share-->
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-share-post-@item.Id">Share</button>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-share-post-@item.Id" style="position: relative; z-index: 2;">Share</button>
                 </div>
             </div>
 
