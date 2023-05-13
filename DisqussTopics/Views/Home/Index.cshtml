@@ -117,26 +117,6 @@
                     </a>
                 </div>
 
-                @*       <div class="card-body">
-            @if (item.Image != null && item.Image.Length > 5)
-            {
-            <img src="@item.Image" class="img-fluid">
-
-            }
-            else if (item.Video != null && item.Video.Length > 5)
-            {
-            <video src="@item.Video" height="300" width="300" controls></video>
-            }
-            else
-            {
-            <img src="~/images/test2.png" class="img-fluid">
-            }
-            </div>
-
-            <div class="card-body">
-            @Html.Raw(item.Content)
-            </div>*@
-
                 <div class="card-body">
                     @if (!string.IsNullOrEmpty(item.Content))
                     {

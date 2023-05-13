@@ -2,8 +2,9 @@
 {
     public class SearchViewModel
     {
-        public IEnumerable<Post> Posts { get; set; }
-        public IEnumerable<Comment> Comments { get; set; }
-        public IEnumerable<Topic> Topics { get; set; }
+        public IEnumerable<Post> Posts { get; set; } = null!;
+        public IEnumerable<Comment> Comments { get; set; } = null!;
+        public IEnumerable<Topic> Topics { get; set; } = null!;
+        public string? CurrentUserId { get; set; }
     }
 }

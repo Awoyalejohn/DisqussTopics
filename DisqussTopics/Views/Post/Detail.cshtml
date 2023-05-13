@@ -204,8 +204,13 @@
                     }
                 </div>
                 <!-- share-->
-                <button type="button" class="btn btn-primary">Share</button>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-share-post-@Model.Post.Id">Share</button>
             </div>
+        </div>
+
+        <!-- Post share Modal -->
+        <div class="modal fade post-share-modal" id="modal-share-post-@Model.Post.Id" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true" data-post-share-modal-id="@Model.Post.Id">
+            @await Html.PartialAsync("~/Views/Post/_SharePostPartial.cshtml", new PostViewModel() { Post = Model.Post })
         </div>
 
         <!-- Bootstrap Card for comment area-->
@@ -254,7 +259,7 @@
                         @if (User.Identity.IsAuthenticated)
                         {
 
-                            @if (item.Upvotes.Any(c => c.Id == Model.UserId))
+                            @if (item.Upvotes != null && item.Upvotes.Any(c => c.Id == Model.UserId))
                             {
                                 <form asp-controller="Comment" asp-action="RemoveUpvoteComment" asp-route-id="@item.Id">
                                     <button type="submit" class="btn btn-info">
@@ -277,7 +282,7 @@
 
                             <span>@Html.DisplayFor(modelItem => item.Votes)</span>
 
-                            @if (item.Downvotes.Any(c => c.Id == Model.UserId))
+                            @if (item.Downvotes != null && item.Downvotes.Any(c => c.Id == Model.UserId))
                             {
                                 <form asp-controller="Comment" asp-action="RemoveDownvoteComment" asp-route-id="@item.Id">
                                     <button type="submit" class="btn btn-warning">

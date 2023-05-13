@@ -92,6 +92,12 @@ namespace DisqussTopics.Controllers
                     videoResultURL = videoResult.SecureUrl.ToString();
                 }
 
+                // remove null post content
+                if (postViewModel.Post.Content == null)
+                {
+                    postViewModel.Post.Content = string.Empty;
+                }
+
                 // Map the postViewModel properties to the post model
                 var post = new Post()
                 {
@@ -255,6 +261,12 @@ namespace DisqussTopics.Controllers
                 else
                 {
                     videoResultURL = post.Video;
+                }
+
+                // remove null post content
+                if (postViewModel.Post.Content == null)
+                {
+                    postViewModel.Post.Content = string.Empty;
                 }
 
                 post.Title = postViewModel.Post.Title;

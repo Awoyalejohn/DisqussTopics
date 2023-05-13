@@ -1,6 +1,7 @@
 ﻿using DisqussTopics.Models.ViewModels;
 using DisqussTopics.Repository;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace DisqussTopics.Controllers
 {
@@ -21,6 +22,9 @@ namespace DisqussTopics.Controllers
         {
             ViewData["SearchString"] = searchString;
 
+            var currentUserId = HttpContext.User
+                .FindFirstValue(ClaimTypes.NameIdentifier);
+
             var posts = await _postRepository.GetPosts();
             var comments = await _commentRepository.GetComments();
             var topics = await _topicRepository.GetTopics();
@@ -34,7 +38,10 @@ namespace DisqussTopics.Controllers
             if (!string.IsNullOrEmpty(searchString) && type == "posts")
             {
                 posts = posts.Where(p => p.Title.Contains(searchString) ||
-                    p.Content.Contains(searchString));
+                    p.Title.ToLower().Contains(searchString) ||
+                     p.Content.Contains(searchString) ||
+                       p.Content.ToLower().Contains(searchString)
+                       );
 
                 ViewData["Type"] = type;
             }
@@ -51,6 +58,7 @@ namespace DisqussTopics.Controllers
 
             var serchViewModel = new SearchViewModel()
             {
+                CurrentUserId = currentUserId,
                 Posts = posts,
                 Comments = comments,
                 Topics = topics
