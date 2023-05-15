@@ -1,1 +1,27 @@
 @use'custom';
+
+/** {
+    outline: 1px solid red;
+}*/
+
+// Post View Cards
+.post-card-link {
+    color: white !important;
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+.vote-button {
+    &:hover {
+        color: gray !important;
+    }
+}
+
+.options-hover {
+    &:hover {
+        background-color: gray !important;
+    }
+}

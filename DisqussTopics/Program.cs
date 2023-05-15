@@ -16,7 +16,7 @@ builder.Services.AddDbContext<DTContext>(options =>
 
 // Set up Indentity service
 builder.Services.AddDefaultIdentity<DTUser>(options => 
-options.SignIn.RequireConfirmedAccount = true)
+options.SignIn.RequireConfirmedAccount = false)
     .AddDefaultTokenProviders()
     .AddDefaultUI()
     .AddRoles<IdentityRole>()

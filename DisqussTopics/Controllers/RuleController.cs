@@ -52,11 +52,14 @@ namespace DisqussTopics.Controllers
 
                 _ruleRepository.InsertRule(rule);
                 await _ruleRepository.SaveAsync();
+
+                TempData["Success"] = "Rule created successfully!";
                 return RedirectToAction("Detail", "Topic", new { Slug = slug });
             }
 
             rule.Topic = topic;
 
+            TempData["Error"] = "Failed to create Rule!";
             return View(rule);
         }
 
@@ -95,9 +98,11 @@ namespace DisqussTopics.Controllers
 
                 var slugtopic = topic.Slug;
 
+                TempData["Success"] = "Rule edited successfully!";
                 return RedirectToAction("Detail", "Topic", new { Slug = slugtopic });
             }
 
+            TempData["Error"] = "Failed to edit Rule!";
             return View(ruleUpdate);
         }
 
@@ -127,6 +132,7 @@ namespace DisqussTopics.Controllers
             _ruleRepository.DeleteRule(rule);
             _ruleRepository.SaveAsync();
 
+            TempData["Success"] = "Rule deleted successfully!";
             return RedirectToAction("Detail", "Topic", new { Slug = slug });
         }
 

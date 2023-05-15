@@ -40,7 +40,10 @@ namespace DisqussTopics.Repository
 
         public async Task<IEnumerable<Comment>> GetComments()
         {
-            return await _context.Comments.ToListAsync();
+            return await _context.Comments
+                .Include(c => c.Upvotes)
+                .Include(c => c.Downvotes)
+                .ToListAsync();
         }
 
         public Task<IEnumerable<Comment>> GetCommentsNoTracking()

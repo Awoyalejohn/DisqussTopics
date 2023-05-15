@@ -11,14 +11,15 @@
         {
             <div class="card text-bg-dark d-lg-none mb-2">
                 <div class="card-body">
-                    <a asp-controller="Post" asp-action="Create" class="btn btn-primary">Create Post</a>
-                    <a asp-controller="Topic" asp-action="Create" class="btn btn-success">Create Topic</a>
+                    <a asp-controller="Post" asp-action="Create" class="btn btn-outline-light">Create Post</a>
+                    <a asp-controller="Topic" asp-action="Create" class="btn btn-outline-light">Create Topic</a>
                     <a asp-controller="Topic" asp-action="Index" class="btn btn-info">View All Topics</a>
                 </div>
             </div>
         }
 
-        <div class="card text-center text-bg-dark mb-2">
+        <!-- Post organiser Desktop view -->
+        <div class="card text-center text-bg-dark mb-2 d-none d-sm-block">
             <div class="card-header">
                 <ul class="nav nav-pills card-header-pills">
                     <li class="nav-item">
@@ -67,6 +68,53 @@
             </div>
         </div>
 
+        <!-- Post organiser Mobile view -->
+        <div class="card text-center text-bg-dark mb-2 d-sm-none">
+            <div class="card-body d-flex flex-column">
+                <!--  Checks if the mostupvoted action method was selected-->
+                @if (ViewContext.RouteData.Values["action"].ToString() == "MostUpvoted" ||
+                ViewContext.RouteData.Values["action"].ToString() == "Index")
+                {
+                    <!--  Active link-->
+                    <a class="btn btn-light" asp-action="MostUpvoted">Most Upvoted</a>
+                }
+                else
+                {
+                    <a class="nav-link" asp-action="MostUpvoted">Most Upvoted</a>
+                }
+
+                @if (ViewContext.RouteData.Values["action"].ToString() == "MostDiscussed")
+                {
+                    <!--  Active link-->
+                    <a class="btn btn-light" asp-action="MostDiscussed">Most Discussed</a>
+                }
+                else
+                {
+                    <a class="nav-link" asp-action="MostDiscussed">Most Discussed</a>
+                }
+
+                @if (ViewContext.RouteData.Values["action"].ToString() == "NewPosts")
+                {
+                    <!--  Active link-->
+                    <a class="btn btn-light" asp-action="NewPosts">New Posts</a>
+                }
+                else
+                {
+                    <a class="nav-link" asp-action="NewPosts">New Posts</a>
+                }
+
+                @if (ViewContext.RouteData.Values["action"].ToString() == "Explore")
+                {
+                    <!--  Active link-->
+                    <a class="btn btn-light" asp-action="Explore">Explore</a>
+                }
+                else
+                {
+                    <a class="nav-link" asp-action="Explore">Explore</a>
+                }
+            </div>
+        </div>
+
         @foreach (var item in Model.Posts)
         {
             // Bootstrap Card
@@ -76,26 +124,30 @@
                         <span>
                             @if (!string.IsNullOrEmpty(item.Topic.Icon))
                             {
-                                <img src="@item.Topic.Icon" alt="topic logo" width="25" height="25">
+                                <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Topic.Slug" style="position: relative; z-index: 2;text-decoration:none;">
+                                    <img src="@item.Topic.Icon" alt="topic logo" width="25" height="25">
+                                </a>
                             }
                             else
                             {
-                                <img src="~/images/No_image_available.png" alt="topic logo" width="25" height="25">
+                                <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Topic.Slug" style="position: relative; z-index: 2;text-decoration:none">
+                                    <img src="~/images/No_image_available.png" alt="topic logo" width="25" height="25">
+                                </a>
                             }
                             <!-- Topic:-->
-                            <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Topic.Slug" style="position: relative; z-index: 2;">
+                            <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Topic.Slug" style="position: relative; z-index: 2;"
+                               class="post-card-link">
                                 @Html.DisplayFor(modelItem => item.Topic.Name)
                             </a>
                             - Posted by
-                            <a href="#" style="position: relative; z-index: 2;">
+                            <a href="#" class="post-card-link" style="position: relative; z-index: 2;">
                                 @Html.DisplayFor(modelItem => item.DTUser.DTUsername)
                             </a>
                             <span>@item.Created.Humanize()</span>
 
-
                         </span>
 
-                        <div class="dropdown">
+                        <div class="dropdown options-hover">
                             <span role="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="position: relative; z-index: 2;">
                                 <span class="material-symbols-outlined">
                                     more_vert
@@ -121,17 +173,18 @@
                     </div>
 
                 </div>
+
                 <div class="card-body">
                     <a asp-controller="Post" asp-action="Detail" asp-route-topic="@item.Topic.Name" asp-route-slug="@item.Slug" asp-route-id="@item.Id"
                        class="h5 stretched-link text-white" style="text-decoration: none">
-                       @Html.DisplayFor(modelItem => item.Title)
+                        @Html.DisplayFor(modelItem => item.Title)
                     </a>
                 </div>
 
                 <div class="card-body">
                     @if (!string.IsNullOrEmpty(item.Content))
                     {
-                        @Html.Raw(item.Content)
+                        <span>@Html.Raw(item.Content)</span>
                     }
                     else if (!string.IsNullOrEmpty(item.Image))
                     {
@@ -156,8 +209,8 @@
                             @if (item.Upvotes.Any(u => u.Id == Model.CurrentUserId))
                             {
                                 <form asp-controller="Post" asp-action="RemoveUpvotePost" asp-route-id="@item.Id" style="position: relative; z-index: 2;">
-                                    <button type="submit" class="btn btn-success">
-                                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">
+                                    <button type="submit" class="text-white" style="border:none; background:none;">
+                                        <span class="material-symbols-outlined h3 vote-button" style="font-variation-settings: 'FILL' 1;">
                                             arrow_circle_up
                                         </span>
                                     </button>
@@ -166,8 +219,8 @@
                             else
                             {
                                 <form asp-controller="Post" asp-action="UpvotePost" asp-route-id="@item.Id" style="position: relative; z-index: 2;">
-                                    <button type="submit" class="btn btn-success">
-                                        <span class="material-symbols-outlined">
+                                    <button type="submit" class="text-white" style="border:none; background:none;">
+                                        <span class="material-symbols-outlined h3 vote-button">
                                             arrow_circle_up
                                         </span>
                                     </button>
@@ -182,8 +235,8 @@
                             if (item.Downvotes.Any(d => d.Id == Model.CurrentUserId))
                             {
                                 <form asp-controller="Post" asp-action="RemoveDownvotePost" asp-route-id="@item.Id" style="position: relative; z-index: 2;">
-                                    <button type="submit" class="btn btn-danger">
-                                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">
+                                    <button type="submit" class="text-white" style="border:none; background:none;">
+                                        <span class="material-symbols-outlined h3 vote-button" style="font-variation-settings: 'FILL' 1;">
                                             arrow_circle_down
                                         </span>
                                     </button>
@@ -192,8 +245,8 @@
                             else
                             {
                                 <form asp-controller="Post" asp-action="DownvotePost" asp-action="DownvotePost" asp-route-id="@item.Id" style="position: relative; z-index: 2;">
-                                    <button type="submit" class="btn btn-danger">
-                                        <span class="material-symbols-outlined">
+                                    <button type="submit" class="text-white" style="border:none; background:none;">
+                                        <span class="material-symbols-outlined h3 vote-button">
                                             arrow_circle_down
                                         </span>
                                     </button>
@@ -203,13 +256,13 @@
 
                     </div>
                     <!-- comments-->
-                    <div>
+                    <div class="d-flex gap-1">
                         <span class="material-symbols-outlined">
                             chat_bubble
                         </span>
                         @if (item.Comments != null)
                         {
-                            @Html.DisplayFor(ModelItem => item.Comments.Count)
+                            <span>@Html.DisplayFor(ModelItem => item.Comments.Count)</span>
                         }
                         else
                         {
@@ -217,7 +270,7 @@
                         }
                     </div>
                     <!-- share-->
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-share-post-@item.Id" style="position: relative; z-index: 2;">Share</button>
+                    <button type="button" class="btn btn-sm btn-light" data-bs-toggle="modal" data-bs-target="#modal-share-post-@item.Id" style="position: relative; z-index: 2;">Share</button>
                 </div>
             </div>
 
@@ -256,9 +309,9 @@
             <div class="card text-bg-dark">
                 <div class="card-body">
                     <h5 class="card-title">Home</h5>
-                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                    <a asp-controller="Post" asp-action="Create" class="btn btn-primary">Create Post</a>
-                    <a asp-controller="Topic" asp-action="Create" class="btn btn-success">Create Topic</a>
+                    <p class="card-text">Welcome to your personal DisqussTopics frontpage! This is the place where you can easily check in with all your favorite topics in one convenient location.</p>
+                    <a asp-controller="Post" asp-action="Create" class="btn btn-outline-light">Create Post</a>
+                    <a asp-controller="Topic" asp-action="Create" class="btn btn-outline-light">Create Topic</a>
                     <a asp-controller="Topic" asp-action="Index" class="btn btn-info">View All Topics</a>
                 </div>
             </div>
@@ -270,8 +323,8 @@
                 <div class="card-body">
                     <h5 class="card-title">Home</h5>
                     <p class="card-text">Welcome create an account or login to post</p>
-                    <a class="nav-link btn btn-primary w-50 mb-2" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
-                    <a class="nav-link btn btn-success w-50" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
+                    <a class="nav-link btn btn-light text-black w-50 mb-2" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
+                    <a class="nav-link btn btn-light text-black w-50" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
                 </div>
             </div>
         }

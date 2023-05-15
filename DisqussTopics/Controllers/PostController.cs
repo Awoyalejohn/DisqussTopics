@@ -1,20 +1,15 @@
-﻿using DisqussTopics.Constants;
-using DisqussTopics.Data;
-using DisqussTopics.Models;
+﻿using DisqussTopics.Models;
 using DisqussTopics.Models.ViewModels;
 using DisqussTopics.Repository;
 using DisqussTopics.Service;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using Slugify;
 using System.Security.Claims;
 
 namespace DisqussTopics.Controllers
 {
-    [Authorize(Roles = "User, Admin")]
     public class PostController : Controller
     {
         private readonly IPostRepository _postRepository;
@@ -112,21 +107,24 @@ namespace DisqussTopics.Controllers
                     Video = videoResultURL,
                 };
 
+                var topic = await _topicRepository.GetTopicById(post.TopicId);
+
                 _postRepository.InsertPost(post);
                 await _postRepository.SaveAsync();
-                TempData["Success"] = "Post created successfully";
-                return RedirectToAction("Index", "Home");
+                TempData["Success"] = "Post created successfully!";
+
+                return RedirectToAction(nameof(Detail), new { Topic = topic.Name, Slug = slug, Id = post.Id });
+                //return RedirectToAction("Index", "Home");
             }
 
             // If the model state is not valid, redisplay the form with validation errors
             postViewModel.Topics = new SelectList(await _topicRepository
                 .GetSubscribedTopics(currentUserId), "Id", "Name");
-            TempData["Error"] = "Error with form";
+            TempData["Error"] = "Failed to create Post!";
             return View(postViewModel);
         }
 
         //GET Post/{Topic}/{Slug}/{Id}
-        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Detail(int id)
         {
             var post = await _postRepository
@@ -159,6 +157,7 @@ namespace DisqussTopics.Controllers
         }
 
         // GET: Post/Edit/{topic}/{slug}/{id}
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Edit(int id)
         {
             var post = await _postRepository
@@ -184,6 +183,7 @@ namespace DisqussTopics.Controllers
         }
 
         // POST: Post/Edit/{topic}/{slug}/{id}
+        [Authorize(Roles = "User, Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Post,TopicId,Topics,DTUserId,UploadImage,UploadVideo")] PostViewModel postViewModel)
@@ -224,7 +224,8 @@ namespace DisqussTopics.Controllers
                         catch (Exception)
                         {
 
-                            ModelState.AddModelError("", "Failed to edit image");
+                            ModelState.AddModelError("", "Failed to edit image!");
+                            TempData["Error"] = "Failed to edit image!";
                             return View(postViewModel);
                         }
                     }
@@ -253,7 +254,8 @@ namespace DisqussTopics.Controllers
                         catch (Exception)
                         {
 
-                            ModelState.AddModelError("", "Failed to edit video");
+                            ModelState.AddModelError("", "Failed to edit video!");
+                            TempData["Error"] = "Failed to edit video!";
                             return View(postViewModel);
                         }
                     }
@@ -278,14 +280,18 @@ namespace DisqussTopics.Controllers
 
                 _postRepository.UpdatePost(post);
                 await _postRepository.SaveAsync();
-             
+
+
+                TempData["Success"] = "Post edited successfully!";
                 return RedirectToAction(nameof(Detail), new { Topic = topic.Name, Slug = slug, Id= post.Id });
             }
 
+            TempData["Error"] = "Failed to edit Post!";
             return View(postViewModel);
         }
 
         // GET Post/Delete/{topic}/{slug}/{id}
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var post = await _postRepository
@@ -297,6 +303,7 @@ namespace DisqussTopics.Controllers
         }
 
         // POST Post/Delete/{topic}/{slug}/{id}
+        [Authorize(Roles = "User, Admin")]
         [ActionName("Delete")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -318,7 +325,8 @@ namespace DisqussTopics.Controllers
                 }
                 catch (Exception)
                 {
-                    ModelState.AddModelError("", "Failed to delete image");
+                    ModelState.AddModelError("", "Failed to delete image!");
+                    TempData["Error"] = "Failed to delete image!";
                     return View("Delete", post);
                 }
             }
@@ -335,7 +343,8 @@ namespace DisqussTopics.Controllers
                 catch (Exception)
                 {
 
-                    ModelState.AddModelError("", "Failed to edit video");
+                    ModelState.AddModelError("", "Failed to edit video!");
+                    TempData["Error"] = "Failed to edit video!";
                     return View("Delete", post);
                 }
             }
@@ -343,6 +352,7 @@ namespace DisqussTopics.Controllers
             _postRepository.DeletePost(post);
             await _postRepository.SaveAsync();
 
+            TempData["Success"] = "Post deleted successfully!";
             return RedirectToAction("Index", "Home");
         }
 
@@ -365,6 +375,7 @@ namespace DisqussTopics.Controllers
             return PartialView("_SharePostPartial", postViewModel);
         }
 
+        [Authorize(Roles = "User, Admin")]
         [Route("{action}/{id}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -409,6 +420,7 @@ namespace DisqussTopics.Controllers
             }
         }
 
+        [Authorize(Roles = "User, Admin")]
         [Route("{action}/{id}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -435,6 +447,7 @@ namespace DisqussTopics.Controllers
             return RedirectToAction("Detail", "Post", new { Topic = topic, Slug = slug, Id = postId });
         }
 
+        [Authorize(Roles = "User, Admin")]
         [Route("{action}/{id}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -477,6 +490,7 @@ namespace DisqussTopics.Controllers
             }
         }
 
+        [Authorize(Roles = "User, Admin")]
         [Route("{action}/{id}")]
         [HttpPost]
         [ValidateAntiForgeryToken]

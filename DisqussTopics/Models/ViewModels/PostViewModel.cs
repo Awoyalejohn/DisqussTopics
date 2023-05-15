@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 
 namespace DisqussTopics.Models.ViewModels
 {
@@ -9,7 +10,11 @@ namespace DisqussTopics.Models.ViewModels
         public SelectList? Topics { get; set; }
         public string? DTUserId { get; set; }
         public string? URL { get; set; }
+
+        [Display(Name = "Upload Image")]
         public IFormFile? UploadImage { get; set; }
+
+        [Display(Name = "Upload Video")]
         public IFormFile? UploadVideo { get; set; }
     }
 }

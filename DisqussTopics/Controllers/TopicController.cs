@@ -3,15 +3,12 @@ using DisqussTopics.Models.ViewModels;
 using DisqussTopics.Repository;
 using DisqussTopics.Service;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Hosting;
 using Slugify;
 using System.Security.Claims;
 
 namespace DisqussTopics.Controllers
 {
-    [Authorize(Roles = "User, Admin")]
     public class TopicController : Controller
     {
         private readonly ITopicRepository _topicRepository;
@@ -36,6 +33,7 @@ namespace DisqussTopics.Controllers
         }
 
         // GET: Topic/Create
+        [Authorize(Roles = "User, Admin")]
         public IActionResult Create()
         {
             var currenUserId = HttpContext.User
@@ -49,6 +47,7 @@ namespace DisqussTopics.Controllers
         }
 
         // POST Topic/Create
+        [Authorize(Roles = "User, Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create([Bind("Topic, DTUserId")] TopicViewModel topicViewModel)
@@ -64,9 +63,12 @@ namespace DisqussTopics.Controllers
 
                 bool topicExists = topics.Any(t => t.Slug == slug);
 
+                var currentUser = await _userRepository.GetUserByIdAsync(topicViewModel.DTUserId);
+
                 if (topicExists)
                 {
                     ModelState.AddModelError("", "Topic already exists!");
+                    TempData["Error"] = "Failed to create Topic!";
                     return View(topicViewModel);
                 }
 
@@ -78,14 +80,21 @@ namespace DisqussTopics.Controllers
                     About = topicViewModel.Topic.About,
                     Banner = topicViewModel.Topic.Banner,
                     Icon = topicViewModel.Topic.Icon,
-                    DTUserId = topicViewModel.DTUserId
+                    DTUserId = topicViewModel.DTUserId,
+                    DTUsers = new[] { currentUser },
                 };
 
+                // Subscribe topic creator to topic
                 _topicRepository.InsertTopic(topic);
+                currentUser.SubscibedTopics.Add(topic);
+
                 await _topicRepository.SaveAsync();
-                return RedirectToAction("Index", "Home");
+                
+                TempData["Success"] = "Topic created successfully!";
+                return RedirectToAction("Detail", "Topic", new { slug = topic.Slug });
             }
 
+            TempData["Error"] = "Failed to create Topic!";
             return View(topicViewModel);
         }
 
@@ -196,6 +205,7 @@ namespace DisqussTopics.Controllers
 
 
         // GET: Topic/Edit/{slug}
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Edit(string slug) 
         {
             var topic = await _topicRepository
@@ -209,6 +219,7 @@ namespace DisqussTopics.Controllers
         }
 
         // POST: Topic/Edit/{slug}
+        [Authorize(Roles = "User, Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string slug, [Bind("Topic,DTUserId,Posts,BannerUpload,IconUpload")] TopicViewModel topicViewModel)
@@ -234,6 +245,7 @@ namespace DisqussTopics.Controllers
                     if (duplicateTopic.Id != topic.Id)
                     {
                         ModelState.AddModelError("", "Topic already exists!");
+                        TempData["Error"] = "Failed to edit Topic!";
                         return View(topicViewModel);
                     }
                 }
@@ -256,7 +268,8 @@ namespace DisqussTopics.Controllers
                         }
                         catch (Exception)
                         {
-                            ModelState.AddModelError("", "Failed to edit banner image");
+                            ModelState.AddModelError("", "Failed to edit banner image!");
+                            TempData["Error"] = "Failed to edit banner image!";
                             return View(topicViewModel);
                         }
                     }
@@ -284,7 +297,8 @@ namespace DisqussTopics.Controllers
                         }
                         catch (Exception)
                         {
-                            ModelState.AddModelError("", "Failed to edit banner image");
+                            ModelState.AddModelError("", "Failed to edit banner image!");
+                            TempData["Error"] = "Failed to edit banner image!";
                             return View(topicViewModel);
                         }
                     }
@@ -302,12 +316,17 @@ namespace DisqussTopics.Controllers
 
                 _topicRepository.UpdateTopic(topic);
                 await _topicRepository.SaveAsync();
+
+                TempData["Success"] = "Topic updated successfully!";
                 return RedirectToAction("Detail", "Topic", new { slug = updateSlug });
             }
+
+            TempData["Error"] = "Failed to edit Topic!";
             return View(topicViewModel);
         }
 
         // GET: Topic/Delete/{slug}
+        [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Delete(string slug)
         {
             var topic = await _topicRepository
@@ -319,6 +338,7 @@ namespace DisqussTopics.Controllers
         }
 
         // POST: Topic/Delete/{slug}
+        [Authorize(Roles = "User, Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("Delete")]
@@ -331,11 +351,13 @@ namespace DisqussTopics.Controllers
 
             _topicRepository.DeleteTopic(topic);
             await _topicRepository.SaveAsync();
+
+            TempData["Error"] = "Topic deleted successfully!";
             return RedirectToAction("Index", "Home");
         }
 
 
-
+        [Authorize(Roles = "User, Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Subscribe(string slug)
@@ -353,9 +375,11 @@ namespace DisqussTopics.Controllers
             currentUser.SubscibedTopics.Add(topic);
             await _topicRepository.SaveAsync();
 
+            TempData["Success"] = $"Subscribed to {topic.Name}!";
             return RedirectToAction("Detail", "Topic", new { Slug = slug });
         }
 
+        [Authorize(Roles = "User, Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Unsubscribe(string slug)
@@ -373,6 +397,7 @@ namespace DisqussTopics.Controllers
             currentUser.SubscibedTopics.Remove(topic);
             await _topicRepository.SaveAsync();
 
+            TempData["Success"] = $"Unsubscribed from {topic.Name}!";
             return RedirectToAction("Detail", "Topic", new { Slug = slug });
         }
     }

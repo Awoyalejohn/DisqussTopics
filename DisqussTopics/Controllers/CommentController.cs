@@ -2,12 +2,7 @@
 using DisqussTopics.Models.ViewModels;
 using DisqussTopics.Repository;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace DisqussTopics.Controllers
 {
@@ -54,6 +49,8 @@ namespace DisqussTopics.Controllers
             {
                 _commentRepository.InsertComment(comment);
                 await _commentRepository.SaveAsync();
+
+                TempData["Success"] = "Comment created successfully!";
                 return RedirectToAction("Detail", "Post", new { Topic = topic, Slug = slug, Id = postId });
             }
 
@@ -73,6 +70,7 @@ namespace DisqussTopics.Controllers
                 UserId = currentUserId
             };
 
+            TempData["Error"] = "Failed to create Comment!";
             return View("~/Views/Post/Detail.cshtml", newPostDetailViewModel);
         }
         
@@ -115,10 +113,12 @@ namespace DisqussTopics.Controllers
                 _commentRepository.UpdateComment(comment);
                 await _commentRepository.SaveAsync();
 
+                TempData["Success"] = "Comment edited successfully!";
                 return RedirectToAction("Detail", "Post", new { Topic = topic, Slug = slug, Id = postId });
 
             }
 
+            TempData["Error"] = "Failed to edit Comment!";
             return View(commentUpdate);
 
 
@@ -163,6 +163,7 @@ namespace DisqussTopics.Controllers
             _commentRepository.DeleteComment(comment);
             await _commentRepository.SaveAsync();
 
+            TempData["Success"] = "Comment deleted successfully!";
             return RedirectToAction("Detail", "Post", new { Topic = topic, Slug = slug, Id = postId });
         }
 

@@ -14,10 +14,10 @@
     <link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
 </head>
 
-<body class="d-flex flex-column min-vh-100">
+<body class="d-flex flex-column min-vh-100 bg-black">
 
     <!-- Desktop and tablet navbar -->
-    <nav class="navbar bg-dark border-bottom box-shadow d-none d-md-block" data-bs-theme="dark">
+    <nav class="navbar bg-dark border-bottom box-shadow d-none d-md-block mb-2" data-bs-theme="dark">
         <div class="container-fluid d-flex">
             <div>
                 <a class="navbar-brand text-white" asp-area="" asp-controller="Home" asp-action="Index">DisqussTopics</a>
@@ -49,7 +49,7 @@
     <!-- Footer Copyright -->
     <footer class="py-4 bg-dark text-white mt-auto">
         <div class="container text-center">
-            <small>Copyright &copy; 2023 DisqussTopics - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a></small>
+            <small>Copyright &copy; 2023 DisqussTopics - <a class="text-white" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a></small>
         </div>
     </footer>
 

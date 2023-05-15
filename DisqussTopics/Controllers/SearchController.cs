@@ -23,7 +23,7 @@ namespace DisqussTopics.Controllers
             ViewData["SearchString"] = searchString;
 
             var currentUserId = HttpContext.User
-                .FindFirstValue(ClaimTypes.NameIdentifier);
+               .FindFirstValue(ClaimTypes.NameIdentifier);
 
             var posts = await _postRepository.GetPosts();
             var comments = await _commentRepository.GetComments();

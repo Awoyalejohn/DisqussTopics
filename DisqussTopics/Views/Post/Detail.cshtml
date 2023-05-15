@@ -1,4 +1,5 @@
 ﻿@model DisqussTopics.Models.ViewModels.PostDetailViewModel
+@using Humanizer;
 
 @{
     ViewData["Title"] = "Detail";
@@ -18,52 +19,52 @@
         </div>
     }
 
-    <div class="bg-dark d-flex align-items-center justify-content-center" style="height: 10rem">
-        <div class="d-flex">
-            @if (!string.IsNullOrEmpty(Model.Post.Topic.Icon))
-            {
-                <img class="mt-auto mb-auto" src="@Model.Post.Topic.Icon" alt="topic logo" width="75" height="75">
-
-            }
-            else
-            {
-                <img class="mt-auto mb-auto" src="~/images/No_image_available.png" alt="topic logo" width="75" height="75">
-            }
-            <div class="text-white mt-auto mb-auto text-wrap" style="margin-right: 35rem;width: 40rem;">
-                <h1>@Model.Post.Topic.Name</h1>
+    <div class="bg-dark d-flex align-items-center justify-content-start mb-2 py-2">
+        <div class="container">
+            <div class="bg-dark d-flex align-items-center justify-content-start mb-2 py-2">
+                <div class="d-flex ">
+                    @if (!string.IsNullOrEmpty(Model.Post.Topic.Icon))
+                    {
+                        <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@Model.Post.Topic.Slug">
+                            <img class="mt-auto mb-auto align-self-center" src="@Model.Post.Topic.Icon" alt="topic logo" height="75">
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@Model.Post.Topic.Slug">
+                            <img class="mt-auto mb-auto" src="~/images/No_image_available.png" alt="topic logo" height="75" style="width: 100%;">
+                        </a>
+                    }
+                    <div class="text-white mt-auto mb-auto text-wrap" style="max-width: 40rem;">
+                        <a class="post-card-link" asp-controller="Topic" asp-action="Detail" asp-route-slug="@Model.Post.Topic.Slug">
+                            <span class="h1">@Html.DisplayFor(model => model.Post.Topic.Name)</span>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
+
     </div>
+
 }
 
-
-<h1>Detail</h1>
-
-<h4>Post</h4>
-<hr />
-
 <div class="row">
-    <div class="col-9">
+    <div class="col col-lg-9">
         <!-- Bootstrap Card for post area-->
         <div class="card text-bg-dark mb-2">
             <div class="card-header">
                 <div class="d-flex justify-content-between">
                     <span>
-                        Topic:
-                        <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@Model.Post.Topic.Slug">
-                            @Html.DisplayFor(model => model.Post.Topic.Slug)
-                        </a>
-                        - Posted by
-                        <a href="#">
+                        Posted by
+                        <a href="#" class="post-card-link">
                             @Html.DisplayFor(model => model.Post.DTUser.DTUsername)
                         </a>
-                        Time:
-                        @Html.DisplayFor(model => model.Post.Created)
+                        @Model.Post.Created.Humanize()
                     </span>
 
                     @if (User.IsInRole("Admin") || Model.Post.DTUserId == Model.UserId)
                     {
-                        <div class="dropdown">
+                        <div class="dropdown options-hover">
                             <span role="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                                 <span class="material-symbols-outlined">
                                     more_vert
@@ -90,28 +91,6 @@
             <div class="card-body">
                 <h5 class="card-title">@Html.DisplayFor(model => model.Post.Title)</h5>
             </div>
-
-            @*       <div class="card-body">
-            @if (Model.Post.Image != null && Model.Post.Image.Length > 5)
-            {
-            <img src="@Model.Post.Image" class="img-fluid">
-
-            }
-            else if (Model.Post.Video != null && Model.Post.Video.Length > 5)
-            {
-            <video src="@Model.Post.Video" height="300" width="300" controls></video>
-            }
-            else
-            {
-            <img src="~/images/test2.png" class="img-fluid">
-            }
-            </div>
-
-            <div class="card-body">
-            @Html.Raw(Model.Post.Content)
-            </div>
-
-            *@
 
             <div class="card-body">
                 @if (!string.IsNullOrEmpty(Model.Post.Content))
@@ -143,8 +122,8 @@
                         @if (Model.Post.Upvotes.Any(u => u.Id == Model.UserId))
                         {
                             <form asp-controller="Post" asp-action="RemoveUpvotePost" asp-route-id="@Model.Post.Id">
-                                <button type="submit" class="btn btn-success">
-                                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">
+                                <button type="submit" class="text-white" style="border:none; background:none;">
+                                    <span class="material-symbols-outlined h3 vote-button" style="font-variation-settings: 'FILL' 1;">
                                         arrow_circle_up
                                     </span>
                                 </button>
@@ -153,8 +132,8 @@
                         else
                         {
                             <form asp-controller="Post" asp-action="UpvotePost" asp-route-id="@Model.Post.Id">
-                                <button type="submit" class="btn btn-success">
-                                    <span class="material-symbols-outlined">
+                                <button type="submit" class="text-white" style="border:none; background:none;">
+                                    <span class="material-symbols-outlined h3 vote-button">
                                         arrow_circle_up
                                     </span>
                                 </button>
@@ -169,8 +148,8 @@
                         if (Model.Post.Downvotes.Any(d => d.Id == Model.UserId))
                         {
                             <form asp-controller="Post" asp-action="RemoveDownvotePost" asp-route-id="@Model.Post.Id">
-                                <button type="submit" class="btn btn-danger">
-                                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">
+                                <button type="submit" class="text-white" style="border:none; background:none;">
+                                    <span class="material-symbols-outlined h3 vote-button" style="font-variation-settings: 'FILL' 1;">
                                         arrow_circle_down
                                     </span>
                                 </button>
@@ -179,8 +158,8 @@
                         else
                         {
                             <form asp-controller="Post" asp-action="DownvotePost" asp-action="DownvotePost" asp-route-id="@Model.Post.Id">
-                                <button type="submit" class="btn btn-danger">
-                                    <span class="material-symbols-outlined">
+                                <button type="submit" class="text-white" style="border:none; background:none;">
+                                    <span class="material-symbols-outlined h3 vote-button">
                                         arrow_circle_down
                                     </span>
                                 </button>
@@ -190,13 +169,13 @@
 
                 </div>
                 <!-- comments-->
-                <div>
+                <div class="d-flex gap-1">
                     <span class="material-symbols-outlined">
                         chat_bubble
                     </span>
                     @if (Model.Post.Comments != null)
                     {
-                        @Html.DisplayFor(ModelItem => Model.Post.Comments.Count)
+                        <span>@Html.DisplayFor(ModelItem => Model.Post.Comments.Count)</span>
                     }
                     else
                     {
@@ -204,7 +183,7 @@
                     }
                 </div>
                 <!-- share-->
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-share-post-@Model.Post.Id">Share</button>
+                <button type="button" class="btn btn-sm btn-light" data-bs-toggle="modal" data-bs-target="#modal-share-post-@Model.Post.Id">Share</button>
             </div>
         </div>
 
@@ -218,25 +197,28 @@
             <div class="card-body">
                 <h4>Comment</h4>
 
-                @if (User.Identity.IsAuthenticated)
-                {
-                    <form asp-controller="Post" asp-action="Detail">
-                        <input type="hidden" asp-for="Post.Id" />
-                        <div asp-validation-summary="All" class="text-danger"></div>
-                        <div class="form-group">
-                            <input type="hidden" asp-for="Comment.PostId" />
-                            <textarea asp-for="Comment.Content" rows="4" class="form-control"></textarea>
-                            <span asp-validation-for="Comment.Content" class="text-danger"></span>
-                        </div>
-                        <div class="text-end">
-                            <button type="submit" class="btn btn-primary">Comment</button>
-                        </div>
-                    </form>
-                }
-                else
-                {
-                    <p>You need to login to comment on a post!</p>
-                }
+                <form asp-controller="Post" asp-action="Detail">
+                    <input type="hidden" asp-for="Post.Id" />
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="form-group">
+                        <input type="hidden" asp-for="Comment.PostId" />
+                        <textarea asp-for="Comment.Content" rows="4" class="form-control" placeholder="What are your thoughts?"></textarea>
+                        <span asp-validation-for="Comment.Content" class="text-danger"></span>
+                    </div>
+                    <div class="text-end mt-2">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <button type="submit" class="btn btn-light">Comment</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-light" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Login to Comment!">
+                                Comment
+                            </button>
+                        }
+                    </div>
+                </form>
+
 
             </div>
 
@@ -245,16 +227,20 @@
                 <div class="card-footer">
                     <div>
                         <span>
-                            <small>@Html.DisplayFor(modelItem => item.DTUser.DTUsername)</small>
+                            <a href="#" class="post-card-link">
+                                <img src="~/images/No_image_available.png" width="30" height="30">
+                                <small>@Html.DisplayFor(modelItem => item.DTUser.DTUsername)</small>
+                            </a>
                         </span>
+                        <span>-</span>
                         <span>
-                            <small>@Html.DisplayFor(modelItem => item.Created)</small>
+                            <small>@item.Created.Humanize()</small>
                         </span>
                     </div>
 
-                    <div>@Html.DisplayFor(modelItem => item.Content)</div>
+                    <div class="ps-4">@Html.DisplayFor(modelItem => item.Content)</div>
 
-                    <div class="d-flex gap-2">
+                    <div class="ps-4 d-flex gap-2">
 
                         @if (User.Identity.IsAuthenticated)
                         {
@@ -262,8 +248,8 @@
                             @if (item.Upvotes != null && item.Upvotes.Any(c => c.Id == Model.UserId))
                             {
                                 <form asp-controller="Comment" asp-action="RemoveUpvoteComment" asp-route-id="@item.Id">
-                                    <button type="submit" class="btn btn-info">
-                                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">
+                                    <button type="submit" class="text-white" style="border:none; background:none;">
+                                        <span class="material-symbols-outlined vote-button" style="font-variation-settings: 'FILL' 1;">
                                             arrow_circle_up
                                         </span>
                                     </button>
@@ -272,8 +258,8 @@
                             else
                             {
                                 <form asp-controller="Comment" asp-action="UpvoteComment" asp-route-id="@item.Id">
-                                    <button type="submit" class="btn btn-info">
-                                        <span class="material-symbols-outlined">
+                                    <button type="submit" class="text-white" style="border:none; background:none;">
+                                        <span class="material-symbols-outlined vote-button">
                                             arrow_circle_up
                                         </span>
                                     </button>
@@ -285,8 +271,8 @@
                             @if (item.Downvotes != null && item.Downvotes.Any(c => c.Id == Model.UserId))
                             {
                                 <form asp-controller="Comment" asp-action="RemoveDownvoteComment" asp-route-id="@item.Id">
-                                    <button type="submit" class="btn btn-warning">
-                                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">
+                                    <button type="submit" class="text-white" style="border:none; background:none;">
+                                        <span class="material-symbols-outlined vote-button" style="font-variation-settings: 'FILL' 1;">
                                             arrow_circle_down
                                         </span>
                                     </button>
@@ -295,7 +281,7 @@
                             else
                             {
                                 <form asp-controller="Comment" asp-action="DownvoteComment" asp-route-id="@item.Id">
-                                    <button type="submit" class="btn btn-warning">
+                                    <button type="submit" class="text-white vote-button" style="border:none; background:none;">
                                         <span class="material-symbols-outlined">
                                             arrow_circle_down
                                         </span>
@@ -305,15 +291,17 @@
                         }
                         else
                         {
-                            <button type="submit" class="btn btn-info">
+                            <button type="button" class="text-white" style="border:none; background:none;"
+                            data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Login to Upvote!">
                                 <span class="material-symbols-outlined">
                                     arrow_circle_up
                                 </span>
                             </button>
 
-                            <span>Login to upvote</span>
+                            <span>@Html.DisplayFor(modelItem => item.Votes)</span>
 
-                            <button type="submit" class="btn btn-warning">
+                            <button type="button" class="text-white" style="border:none; background:none;"
+                                    data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Login to Downvote!">
                                 <span class="material-symbols-outlined">
                                     arrow_circle_down
                                 </span>
@@ -322,7 +310,7 @@
 
                         @if (User.IsInRole("Admin") || item.DTUserId == Model.UserId)
                         {
-                            <div class="dropdown">
+                            <div class="dropdown options-hover">
                                 <span role="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                                     <span class="material-symbols-outlined">
                                         more_vert
@@ -379,15 +367,39 @@
         </div>
     </div>
 
-    <div class="col">
+    <div class="col-3 d-none d-lg-block">
         <div class="card text-bg-dark mb-2">
             <div class="card-header">
                 <span>About Topic</span>
             </div>
             <div class="card-body">
-                <p>Topic Name: @Html.DisplayFor(model => model.Post.Topic.Name)</p>
-                <p>Topic Description/About: @Html.DisplayFor(model => model.Post.Topic.About)</p>
-                <span>Created: @Html.DisplayFor(model => model.Post.Topic.Created)</span>
+                <div class="d-flex gap-2">
+                    <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@Model.Post.Topic.Slug">
+                        @if (!string.IsNullOrEmpty(Model.Post.Topic.Icon))
+                        {
+                            <img class="mb-auto mt-auto" src="@Model.Post.Topic.Icon" alt="topic logo" width="40" height="40">
+                        }
+                        else
+                        {
+                            <img class="mb-auto mt-auto" src="~/images/No_image_available.png" alt="topic logo" width="40" height="40">
+                        }
+                    </a>
+
+                    <a class="post-card-link" asp-controller="Topic" asp-action="Detail" asp-route-slug="@Model.Post.Topic.Slug">
+                        <span class="fw-bold fs-3">@Html.DisplayFor(model => model.Post.Topic.Name)</span>
+                    </a>
+                </div>
+
+                <p> <small>@Html.DisplayFor(model => model.Post.Topic.About)</small></p>
+
+                <span class="d-flex gap-2">
+                    <span class="material-symbols-outlined">
+                        calendar_month
+                    </span>
+                    <span>
+                        Created @Model.Post.Topic.Created.Humanize()
+                    </span>
+                </span>
                 <hr />
                 <span>Members:</span>
                 @if (Model.Post.Topic.DTUsers != null)
@@ -403,22 +415,24 @@
 
                 @if (User.Identity.IsAuthenticated)
                 {
-                    @if (Model.Post.Topic.DTUsers != null && Model.Post.Topic.DTUsers.Any(u => u.Id == Model.UserId))
-                    {
-                        <form asp-controller="Topic" asp-action="Unsubscribe" asp-route-slug="@Model.Post.Topic.Slug">
-                            @*<input type="hidden" asp-for="Topic.Id"/>*@
-                            <button type="submit" class="btn btn-danger">Unsubscribe</button>
-                        </form>
+                    <div class="d-flex gap-2">
+                        @if (Model.Post.Topic.DTUsers != null && Model.Post.Topic.DTUsers.Any(u => u.Id == Model.UserId))
+                        {
+                            <form asp-controller="Topic" asp-action="Unsubscribe" asp-route-slug="@Model.Post.Topic.Slug">
+                                @*<input type="hidden" asp-for="Topic.Id"/>*@
+                                <button type="submit" class="btn btn-outline-light">Unsubscribe</button>
+                            </form>
 
-                        <a class="btn btn-success" asp-action="Create">Create Post</a>
-                    }
-                    else
-                    {
-                        <form asp-controller="Topic" asp-action="Subscribe" asp-route-slug="@Model.Post.Topic.Slug">
-                            @*<input type="hidden" asp-for="Topic.Id" />*@
-                            <button type="submit" class="btn btn-primary">Subscribe</button>
-                        </form>
-                    }
+                            <a class="btn btn-outline-light" asp-action="Create">Create Post</a>
+                        }
+                        else
+                        {
+                            <form asp-controller="Topic" asp-action="Subscribe" asp-route-slug="@Model.Post.Topic.Slug">
+                                @*<input type="hidden" asp-for="Topic.Id" />*@
+                                <button type="submit" class="btn btn-outline-light">Subscribe</button>
+                            </form>
+                        }
+                    </div>
                 }
                 else
                 {
@@ -472,7 +486,7 @@
                 <span>Topic Creator</span>
             </div>
             <div class="card-body">
-                <p>@Html.DisplayFor(model => model.Post.Topic.DTUser.DTUsername)</p>
+                <p class="fw-bold">@Html.DisplayFor(model => model.Post.Topic.DTUser.DTUsername)</p>
             </div>
         </div>
     </div>

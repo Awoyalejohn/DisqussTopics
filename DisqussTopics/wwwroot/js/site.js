@@ -46,6 +46,10 @@ addEventListener("DOMContentLoaded", () => {
         toastBootstrap.show()
     }
 
+    // Bootstrap tooltips
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
     // Modal pop up for post share
     if (document.querySelectorAll(".post-share-modal") != null) {
         // Get all the post share modals

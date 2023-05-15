@@ -4,16 +4,10 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
-
-<h4>Topic</h4>
-
-<hr />
-
-<div class="col-sm-12 col-md-12 col-lg-8">
+<div class="col-sm-12 col-md-12 col-lg-8 mt-2">
     <div class="card text-bg-dark">
         <div class="card-header">
-            <span>Create a Topic</span>
+            <span class="h1">Create a Topic</span>
         </div>
         <div class="card-body">
             <form asp-action="Create" enctype="multipart/form-data">
@@ -29,8 +23,8 @@
                     <textarea asp-for="Topic.About" rows="3" class="form-control"></textarea>
                     <span asp-validation-for="Topic.About" class="text-danger"></span>
                 </div>
-                <div class="form-group text-end">
-                    <button type="submit" class="btn btn-primary">Create Topic</button>
+                <div class="form-group text-end mt-2">
+                    <button type="submit" class="btn btn-light">Create Topic</button>
                 </div>
             </form>
         </div>

@@ -1,4 +1,5 @@
 ﻿@model DisqussTopics.Models.ViewModels.SearchViewModel
+@using Humanizer;
 
 <div class="card text-bg-dark mb-3">
     <div class="card-header">
@@ -41,311 +42,402 @@
 
     @if ((string)ViewData["Type"] == "posts")
     {
-        @foreach (var item in Model.Posts)
+        @if (Model.Posts != null && Model.Posts.Count() > 0)
         {
-            // Bootstrap Card
-            <div class="card text-bg-dark mb-2">
-                <div class="card-header">
-                    <div class="d-flex justify-content-between">
-                        <span>
-                            Topic:
-                            <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Topic.Slug">
-                                @Html.DisplayFor(modelItem => item.Topic.Name)
-                            </a>
-                            - Posted by
-                            <a href="#">
-                                @Html.DisplayFor(modelItem => item.DTUser.DTUsername)
-                            </a>
-                            Time:
-                            @Html.DisplayFor(modelItem => item.Created)
-                        </span>
-
-                        <div class="dropdown">
-                            <span role="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                <span class="material-symbols-outlined">
-                                    more_vert
-                                </span>
-                            </span>
-                            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="dropdownMenuButton">
-                                <li>
-                                    <a class="dropdown-item" asp-controller="Post" asp-action="Detail" asp-route-topic="@item.Topic.Name" asp-route-slug="@item.Slug" asp-route-id="@item.Id">View</a>
-                                </li>
-                                @if (User.IsInRole("Admin") || item.DTUser.Id == Model.CurrentUserId)
+            @foreach (var item in Model.Posts)
+            {
+                // Bootstrap Card
+                <div class="card text-bg-dark border rounded">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between">
+                            <span>
+                                @if (!string.IsNullOrEmpty(item.Topic.Icon))
                                 {
-                                    <li>
-                                        <a class="dropdown-item" asp-controller="Post" asp-action="Edit" asp-route-topic="@item.Topic.Name" asp-route-slug="@item.Slug" asp-route-id="@item.Id">Edit</a>
-                                    </li>
-                                    <li>
-                                        <span role="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#modal-@item.Id">
-                                            Delete
-                                        </span>
-                                    </li>
+                                    <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Topic.Slug" style="position: relative; z-index: 2;text-decoration:none;">
+                                        <img src="@item.Topic.Icon" alt="topic logo" width="25" height="25">
+                                    </a>
                                 }
-                            </ul>
+                                else
+                                {
+                                    <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Topic.Slug" style="position: relative; z-index: 2;text-decoration:none">
+                                        <img src="~/images/No_image_available.png" alt="topic logo" width="25" height="25">
+                                    </a>
+                                }
+                                <!-- Topic:-->
+                                <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Topic.Slug" style="position: relative; z-index: 2;"
+                                   class="post-card-link">
+                                    @Html.DisplayFor(modelItem => item.Topic.Name)
+                                </a>
+                                - Posted by
+                                <a href="#" class="post-card-link" style="position: relative; z-index: 2;">
+                                    @Html.DisplayFor(modelItem => item.DTUser.DTUsername)
+                                </a>
+                                <span>@item.Created.Humanize()</span>
+
+                            </span>
+
+                            <div class="dropdown options-hover">
+                                <span role="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span class="material-symbols-outlined">
+                                        more_vert
+                                    </span>
+                                </span>
+                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="dropdownMenuButton">
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Post" asp-action="Detail" asp-route-topic="@item.Topic.Name" asp-route-slug="@item.Slug" asp-route-id="@item.Id">View</a>
+                                    </li>
+                                    @if (User.IsInRole("Admin") || item.DTUser.Id == Model.CurrentUserId)
+                                    {
+                                        <li>
+                                            <a class="dropdown-item" asp-controller="Post" asp-action="Edit" asp-route-topic="@item.Topic.Name" asp-route-slug="@item.Slug" asp-route-id="@item.Id">Edit</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" asp-controller="Post" asp-action="Delete" asp-route-topic="@item.Topic.Name" asp-route-slug="@item.Slug" asp-route-id="@item.Id">Delete</a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+
+                            <!-- Post delete Modal -->
+                            <div class="modal fade" id="modal-@item.Id" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content text-white bg-dark">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Delete Post</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Are you sure you want to delete, "@item.Title"?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <form asp-controller="Post" asp-action="Delete" asp-route-topic="@item.Topic.Name" asp-route-slug="@item.Slug" asp-route-id="@item.Id">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn btn-danger">Confirm</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
                         </div>
+
+                    </div>
+                    <div class="card-body">
+                        <a asp-controller="Post" asp-action="Detail" asp-route-topic="@item.Topic.Name" asp-route-slug="@item.Slug" asp-route-id="@item.Id"
+                           class="h5 post-card-link">
+                            @Html.DisplayFor(modelItem => item.Title)
+                        </a>
                     </div>
 
-                </div>
-                <div class="card-body">
-                    <a asp-controller="Post" asp-action="Detail" asp-route-topic="@item.Topic.Name" asp-route-slug="@item.Slug" asp-route-id="@item.Id">
-                        <h5 class="card-title">@Html.DisplayFor(modelItem => item.Title)</h5>
-                    </a>
-                </div>
-
-                <div class="card-body">
-                    @if (!string.IsNullOrEmpty(item.Content))
-                    {
-                        @Html.Raw(item.Content)
-                    }
-                    else if (!string.IsNullOrEmpty(item.Image))
-                    {
-                        <div class="d-flex align-items-center justify-content-center">
-                            <img src="@item.Image" class="img-fluid">
-                        </div>
-                    }
-                    else if (!string.IsNullOrEmpty(item.Video))
-                    {
-                        <div class="ratio ratio-16x9">
-                            <video src="@item.Video" height="300" width="300" allowfullscreen controls></video>
-                        </div>
-                    }
-                </div>
-
-                <div class="card-footer d-flex justify-content-between">
-                    <div class="d-flex">
-
-                        <!-- Upvote button-->
-                        @if (item.Upvotes != null)
+                    <div class="card-body">
+                        @if (!string.IsNullOrEmpty(item.Content))
                         {
-                            @if (item.Upvotes.Any(u => u.Id == Model.CurrentUserId))
+                            @Html.Raw(item.Content)
+                        }
+                        else if (!string.IsNullOrEmpty(item.Image))
+                        {
+                            <div class="d-flex align-items-center justify-content-center">
+                                <img src="@item.Image" class="img-fluid">
+                            </div>
+                        }
+                        else if (!string.IsNullOrEmpty(item.Video))
+                        {
+                            <div class="ratio ratio-16x9">
+                                <video src="@item.Video" height="300" width="300" allowfullscreen controls></video>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="card-footer d-flex justify-content-between">
+                        <div class="d-flex">
+
+                            <!-- Upvote button-->
+                            @if (item.Upvotes != null)
                             {
-                                <form asp-controller="Post" asp-action="RemoveUpvotePost" asp-route-id="@item.Id">
-                                    <button type="submit" class="btn btn-success">
-                                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">
-                                            arrow_circle_up
-                                        </span>
-                                    </button>
-                                </form>
+                                @if (item.Upvotes.Any(u => u.Id == Model.CurrentUserId))
+                                {
+                                    <form asp-controller="Post" asp-action="RemoveUpvotePost" asp-route-id="@item.Id">
+                                        <button type="submit" class="text-white" style="border:none; background:none;">
+                                            <span class="material-symbols-outlined vote-button" style="font-variation-settings: 'FILL' 1;">
+                                                arrow_circle_up
+                                            </span>
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-controller="Post" asp-action="UpvotePost" asp-route-id="@item.Id">
+                                        <button type="submit" class="text-white" style="border:none; background:none;">
+                                            <span class="material-symbols-outlined vote-button">
+                                                arrow_circle_up
+                                            </span>
+                                        </button>
+                                    </form>
+                                }
+                            }
+                            <!-- vote count -->
+                            <span class="mx-3">@item.Votes</span>
+
+                            @if (item.Downvotes != null)
+                            {
+                                if (item.Downvotes.Any(d => d.Id == Model.CurrentUserId))
+                                {
+                                    <form asp-controller="Post" asp-action="RemoveDownvotePost" asp-route-id="@item.Id">
+                                        <button type="submit" class="text-white" style="border:none; background:none;">
+                                            <span class="material-symbols-outlined vote-button" style="font-variation-settings: 'FILL' 1;">
+                                                arrow_circle_down
+                                            </span>
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-controller="Post" asp-action="DownvotePost" asp-action="DownvotePost" asp-route-id="@item.Id">
+                                        <button type="submit" class="text-white" style="border:none; background:none;">
+                                            <span class="material-symbols-outlined vote-button">
+                                                arrow_circle_down
+                                            </span>
+                                        </button>
+                                    </form>
+                                }
+                            }
+
+                        </div>
+
+                        <!-- comments-->
+                        <div class="d-flex gap-1">
+                            <span class="material-symbols-outlined">
+                                chat_bubble
+                            </span>
+                            @if (item.Comments != null)
+                            {
+                                <span>@Html.DisplayFor(ModelItem => item.Comments.Count)</span>
                             }
                             else
                             {
-                                <form asp-controller="Post" asp-action="UpvotePost" asp-route-id="@item.Id">
-                                    <button type="submit" class="btn btn-success">
-                                        <span class="material-symbols-outlined">
-                                            arrow_circle_up
-                                        </span>
-                                    </button>
-                                </form>
+                                <span>0</span>
                             }
-                        }
-                        <!-- vote count -->
-                        <span class="mx-3">@item.Votes</span>
+                        </div>
 
-                        @if (item.Downvotes != null)
-                        {
-                            if (item.Downvotes.Any(d => d.Id == Model.CurrentUserId))
-                            {
-                                <form asp-controller="Post" asp-action="RemoveDownvotePost" asp-route-id="@item.Id">
-                                    <button type="submit" class="btn btn-danger">
-                                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">
-                                            arrow_circle_down
-                                        </span>
-                                    </button>
-                                </form>
-                            }
-                            else
-                            {
-                                <form asp-controller="Post" asp-action="DownvotePost" asp-action="DownvotePost" asp-route-id="@item.Id">
-                                    <button type="submit" class="btn btn-danger">
-                                        <span class="material-symbols-outlined">
-                                            arrow_circle_down
-                                        </span>
-                                    </button>
-                                </form>
-                            }
-                        }
-
+                        <!-- share-->
+                        <button type="button" class="btn btn-sm btn-light" data-bs-toggle="modal" data-bs-target="#modal-share-post-@item.Id">Share</button>
                     </div>
-                    <!-- comments-->
-                    <div>
-                        <span class="material-symbols-outlined">
-                            chat_bubble
-                        </span>
-                        @if (item.Comments != null)
-                        {
-                            @Html.DisplayFor(ModelItem => item.Comments.Count)
-                        }
-                        else
-                        {
-                            <span>0</span>
-                        }
-                    </div>
-                    <!-- share-->
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-share-post-@item.Id">Share</button>
                 </div>
+
+                <!-- Post share Modal -->
+                <div class="modal fade post-share-modal" id="modal-share-post-@item.Id" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true" data-post-share-modal-id="@item.Id">
+                    @await Html.PartialAsync("~/Views/Post/_SharePostPartial.cshtml", new PostViewModel() { Post = item })
+                </div>
+
+            }
+
+        }
+        else
+        {
+            <div class="card-body text-center">
+                <h1>Sorry! No Posts found with that search critera</h1>
+                <h2>Try using simpler search terms</h2>
             </div>
-
         }
     }
 
     @if ((string)ViewData["Type"] == "comments")
     {
-        @foreach (var item in Model.Comments)
+        @if (Model.Comments != null && Model.Comments.Count() > 0)
         {
-            <div class="card-footer">
-                <div>
-                    <span>
-                        <small>@Html.DisplayFor(modelItem => item.DTUser.DTUsername)</small>
-                    </span>
-                    <span>
-                        <small>@Html.DisplayFor(modelItem => item.Created)</small>
-                    </span>
-                </div>
+            @foreach (var item in Model.Comments)
+            {
+                <div class="card-footer border rounded">
+                    <div>
+                        <span>
+                            <a href="#" class="post-card-link">
+                                <img src="~/images/No_image_available.png" width="30" height="30">
+                                <small>@Html.DisplayFor(modelItem => item.DTUser.DTUsername)</small>
+                            </a>
+                        </span>
+                        <span>-</span>
+                        <span>
+                            <small>@item.Created.Humanize()</small>
+                        </span>
+                    </div>
 
-                <div>@Html.DisplayFor(modelItem => item.Content)</div>
+                    <div class="ps-4">@Html.DisplayFor(modelItem => item.Content)</div>
 
-                <div class="d-flex gap-2">
+                    <div class="ps-4 d-flex gap-2">
 
-                    @if (User.Identity.IsAuthenticated)
-                    {
-
-                        @if (item.Upvotes != null && item.Upvotes.Any(c => c.Id == Model.CurrentUserId))
+                        @if (User.Identity.IsAuthenticated)
                         {
-                            <form asp-controller="Comment" asp-action="RemoveUpvoteComment" asp-route-id="@item.Id">
-                                <button type="submit" class="btn btn-info">
-                                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">
-                                        arrow_circle_up
-                                    </span>
-                                </button>
-                            </form>
+
+                            @if (item.Upvotes != null && item.Upvotes.Any(c => c.Id == Model.CurrentUserId))
+                            {
+                                <form asp-controller="Comment" asp-action="RemoveUpvoteComment" asp-route-id="@item.Id">
+                                    <button type="submit" class="text-white" style="border:none; background:none;">
+                                        <span class="material-symbols-outlined vote-button" style="font-variation-settings: 'FILL' 1;">
+                                            arrow_circle_up
+                                        </span>
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <form asp-controller="Comment" asp-action="UpvoteComment" asp-route-id="@item.Id">
+                                    <button type="submit" class="text-white" style="border:none; background:none;">
+                                        <span class="material-symbols-outlined vote-button">
+                                            arrow_circle_up
+                                        </span>
+                                    </button>
+                                </form>
+                            }
+
+                            <span>@Html.DisplayFor(modelItem => item.Votes)</span>
+
+                            @if (item.Downvotes != null && item.Downvotes.Any(c => c.Id == Model.CurrentUserId))
+                            {
+                                <form asp-controller="Comment" asp-action="RemoveDownvoteComment" asp-route-id="@item.Id">
+                                    <button type="submit" class="text-white" style="border:none; background:none;">
+                                        <span class="material-symbols-outlined vote-button" style="font-variation-settings: 'FILL' 1;">
+                                            arrow_circle_down
+                                        </span>
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <form asp-controller="Comment" asp-action="DownvoteComment" asp-route-id="@item.Id">
+                                    <button type="submit" class="text-white vote-button" style="border:none; background:none;">
+                                        <span class="material-symbols-outlined">
+                                            arrow_circle_down
+                                        </span>
+                                    </button>
+                                </form>
+                            }
                         }
                         else
                         {
-                            <form asp-controller="Comment" asp-action="UpvoteComment" asp-route-id="@item.Id">
-                                <button type="submit" class="btn btn-info">
-                                    <span class="material-symbols-outlined">
-                                        arrow_circle_up
-                                    </span>
-                                </button>
-                            </form>
-                        }
-
-                        <span>@Html.DisplayFor(modelItem => item.Votes)</span>
-
-                        @if (item.Downvotes != null && item.Downvotes.Any(c => c.Id == Model.CurrentUserId))
-                        {
-                            <form asp-controller="Comment" asp-action="RemoveDownvoteComment" asp-route-id="@item.Id">
-                                <button type="submit" class="btn btn-warning">
-                                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">
-                                        arrow_circle_down
-                                    </span>
-                                </button>
-                            </form>
-                        }
-                        else
-                        {
-                            <form asp-controller="Comment" asp-action="DownvoteComment" asp-route-id="@item.Id">
-                                <button type="submit" class="btn btn-warning">
-                                    <span class="material-symbols-outlined">
-                                        arrow_circle_down
-                                    </span>
-                                </button>
-                            </form>
-                        }
-                    }
-                    else
-                    {
-                        <button type="submit" class="btn btn-info">
-                            <span class="material-symbols-outlined">
-                                arrow_circle_up
-                            </span>
-                        </button>
-
-                        <span>Login to upvote</span>
-
-                        <button type="submit" class="btn btn-warning">
-                            <span class="material-symbols-outlined">
-                                arrow_circle_down
-                            </span>
-                        </button>
-                    }
-
-                    @if (User.IsInRole("Admin") || item.DTUserId == Model.CurrentUserId)
-                    {
-                        <div class="dropdown">
-                            <span role="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button type="button" class="text-white vote-button" style="border:none; background:none;" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Login to Upvote!">
                                 <span class="material-symbols-outlined">
-                                    more_vert
+                                    arrow_circle_up
                                 </span>
-                            </span>
-                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton">
-                                <li>
-                                    <span role="button" class="dropdown-item comment-edit" data-comment-id="@item.Id" data-bs-toggle="modal" data-bs-target="#comment-edit-modal-@item.Id">
-                                        Edit
-                                    </span>
-                                </li>
-                                <li>
-                                    <span role="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#comment-delete-modal-@item.Id" data-url="@Url.Action($"Edit/Comment/{item.Id}")">
-                                        Delete
-                                    </span>
-                                </li>
-                            </ul>
-                        </div>
-                    }
+                            </button>
 
+                            <span>@Html.DisplayFor(modelItem => item.Votes)</span>
+
+                            <button type="button" class="text-white vote-button" style="border:none; background:none;" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Login to Downvote!">
+                                <span class="material-symbols-outlined">
+                                    arrow_circle_down
+                                </span>
+                            </button>
+                        }
+
+                        @if (User.IsInRole("Admin") || item.DTUserId == Model.CurrentUserId)
+                        {
+                            <div class="dropdown">
+                                <span role="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span class="material-symbols-outlined">
+                                        more_vert
+                                    </span>
+                                </span>
+                                <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton">
+                                    <li>
+                                        <span role="button" class="dropdown-item comment-edit" data-comment-id="@item.Id" data-bs-toggle="modal" data-bs-target="#comment-edit-modal-@item.Id">
+                                            Edit
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span role="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#comment-delete-modal-@item.Id" data-url="@Url.Action($"Edit/Comment/{item.Id}")">
+                                            Delete
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
+
+
+                    </div>
+                    <div class="text-start">
+                        <a asp-controller="Post" asp-action="Detail" asp-route-topic="@item.Post.Topic.Name" asp-route-slug="@item.Post.Slug" asp-route-id="@item.Post.Id"
+                           class="btn btn-sm btn-light">
+                            Go to Post
+                        </a>
+                    </div>
                 </div>
+
+
+            }
+        }
+        else
+        {
+            <div class="card-body text-center">
+                <h1>Sorry! No Comments found with that search critera</h1>
+                <h2>Try using simpler search terms</h2>
             </div>
         }
     }
 
     @if ((string)ViewData["Type"] == "topics")
     {
-        @foreach (var item in Model.Topics)
+        @if (Model.Topics != null && Model.Topics.Count() > 0)
         {
-            <div class="card-body border rounded">
-                <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Slug">
-                    <h5 class="card-title">@Html.DisplayFor(modelItem => item.Name)</h5>
-                </a>
-                <p>@item.About</p>
-                @if (item.DTUsers != null && item.DTUsers.Count >= 1)
-                {
-                    string members = "";
-
-                    if (item.DTUsers.Count > 1)
+            @foreach (var item in Model.Topics)
+            {
+                <div class="card-body border rounded">
+                    <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Slug"
+                       class="h5 post-card-link">
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </a>
+                    <p>@item.About</p>
+                    @if (item.DTUsers != null && item.DTUsers.Count >= 1)
                     {
-                        members = "Members";
+                        string members = "";
+
+                        if (item.DTUsers.Count > 1)
+                        {
+                            members = "Members";
+                        }
+                        else
+                        {
+                            members = "Member";
+                        }
+
+                        <span>@item.DTUsers.Count @members</span>
                     }
                     else
                     {
-                        members = "Member";
+                        <span>0 Members</span>
                     }
-                    
-                    <span>@item.DTUsers.Count @members</span>
-                }
-                else
-                {
-                    <span>0 Members</span>
-                }
-                @if (User.Identity.IsAuthenticated)
-                {
-                    @if (item.DTUsers != null && item.DTUsers.Any(u => u.Id == item.DTUserId))
+
+                    @if (item.DTUsers != null && item.DTUsers.Any(u => u.Id == Model.CurrentUserId))
                     {
                         <form asp-controller="Topic" asp-action="Unsubscribe" asp-route-slug="@item.Slug">
-                            <button type="submit" class="btn btn-danger">Unsubscribe</button>
+                            <button type="submit" class="btn btn-outline-light">Unsubscribe</button>
                         </form>
                     }
                     else
                     {
                         <form asp-controller="Topic" asp-action="Subscribe" asp-route-slug="@item.Slug">
-                            <button type="submit" class="btn btn-primary">Subscribe</button>
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <button type="submit" class="btn btn-outline-light">Subscribe</button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-outline-light" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Login to Subscribe!">
+                                    Subscribe
+                                </button>
+                            }
                         </form>
                     }
-                }
-                else
-                {
-                    <p>You need to login to subscribe</p>
-                }
 
+
+                </div>
+            }
+        }
+        else
+        {
+            <div class="card-body text-center">
+                <h1>Sorry! No Topics found with that search critera</h1>
+                <h2>Try using simpler search terms</h2>
             </div>
         }
     }
