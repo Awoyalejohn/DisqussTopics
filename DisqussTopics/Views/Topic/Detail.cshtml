@@ -26,13 +26,13 @@
                     @if (!string.IsNullOrEmpty(Model.Topic.Icon))
                     {
                         <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@Model.Topic.Slug">
-                            <img class="mt-auto mb-auto" src="@Model.Topic.Icon" alt="topic logo" height="75" style="align-self: start;">
+                            <img src="@Model.Topic.Icon" alt="topic logo" class="mt-auto mb-auto align-self-center rounded-circle img-fluid" width="100" />
                         </a>
                     }
                     else
                     {
                         <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@Model.Topic.Slug">
-                            <img class="mt-auto mb-auto" src="~/images/No_image_available.png" alt="topic logo" height="75" style="align-self: start;">
+                            <img src="~/images/No_image_available.png" alt="topic logo" class="mt-auto mb-auto align-self-center rounded-circle img-fluid" width="100">
                         </a>
                     }
                     <div class="text-white mt-auto mb-auto text-wrap" style="max-width: 40rem;">
@@ -315,11 +315,13 @@
                     <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@Model.Topic.Slug">
                         @if (!string.IsNullOrEmpty(Model.Topic.Icon))
                         {
-                            <img class="mb-auto mt-auto" src="@Model.Topic.Icon" alt="topic logo" width="40" height="40">
+                            <img src="@Model.Topic.Icon" alt="topic logo" class="mt-auto mb-auto align-self-center rounded-circle" width="40">
+                            @*<img class="mb-auto mt-auto" src="@Model.Topic.Icon" alt="topic logo" width="40" height="40">*@
                         }
                         else
                         {
-                            <img class="mb-auto mt-auto" src="~/images/No_image_available.png" alt="topic logo" width="40" height="40">
+                            <img src="~/images/No_image_available.png" alt="topic logo" class="mt-auto mb-auto align-self-center rounded-circle" width="40">
+                            @*<img class="mb-auto mt-auto" src="~/images/No_image_available.png" alt="topic logo" width="40" height="40">*@
                         }
                     </a>
 
@@ -490,9 +492,30 @@
             <div class="card-header">
                 <span>Topic Creator</span>
             </div>
-            <div class="card-body">
+           @* <div class="card-body">
                 <p>@Html.DisplayFor(model => model.Topic.DTUser.DTUsername)</p>
+            </div>*@
+            <div class="card-body text-center">
+                @if (!string.IsNullOrEmpty(Model.Topic.DTUser.Avatar))
+                {
+
+                    <a asp-controller="Profile" asp-action="Detail" asp-route-id="@Model.Topic.DTUserId">
+                        <img src="@Model.Topic.DTUser.Avatar" alt="avatar"
+                             class="rounded-circle img-fluid" style="width: 150px;">
+                    </a>
+                }
+                else
+                {
+                    <a asp-controller="Profile" asp-action="Detail" asp-route-id="@Model.Topic.DTUserId">
+                        <img src="~/images/No_image_available.png" alt="avatar"
+                             class="rounded-circle img-fluid" style="width: 150px;">
+                    </a>
+                }
+                <div>
+                    <a asp-controller="Profile" asp-action="Detail" asp-route-id="@Model.Topic.DTUserId" class="h4 post-card-link">@Html.DisplayFor(model => model.Topic.DTUser.DTUsername)</a>
+                </div>
             </div>
+
             @if (User.IsInRole("Admin") || Model.DTUserId == Model.Topic.DTUserId)
             {
                 <div class="card-footer">

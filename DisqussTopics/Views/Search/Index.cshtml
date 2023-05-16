@@ -54,13 +54,16 @@
                                 @if (!string.IsNullOrEmpty(item.Topic.Icon))
                                 {
                                     <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Topic.Slug" style="position: relative; z-index: 2;text-decoration:none;">
-                                        <img src="@item.Topic.Icon" alt="topic logo" width="25" height="25">
+                                        @*<img src="@item.Topic.Icon" alt="topic logo" width="25" height="25">*@
+                                        <img src="@item.Topic.Icon" alt="topic logo" class="rounded-circle" width="25">
                                     </a>
                                 }
                                 else
                                 {
                                     <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Topic.Slug" style="position: relative; z-index: 2;text-decoration:none">
-                                        <img src="~/images/No_image_available.png" alt="topic logo" width="25" height="25">
+                                        @*<img src="~/images/No_image_available.png" alt="topic logo" width="25" height="25">*@
+                                        <img src="~/images/No_image_available.png" alt="topic logo" class="rounded-circle" width="25">
+
                                     </a>
                                 }
                                 <!-- Topic:-->
@@ -69,7 +72,7 @@
                                     @Html.DisplayFor(modelItem => item.Topic.Name)
                                 </a>
                                 - Posted by
-                                <a href="#" class="post-card-link" style="position: relative; z-index: 2;">
+                                <a asp-controller="Profile" asp-action="Detail" asp-route-id="@item.DTUserId" class="post-card-link" style="position: relative; z-index: 2;">
                                     @Html.DisplayFor(modelItem => item.DTUser.DTUsername)
                                 </a>
                                 <span>@item.Created.Humanize()</span>
@@ -251,8 +254,16 @@
                 <div class="card-footer border rounded">
                     <div>
                         <span>
-                            <a href="#" class="post-card-link">
-                                <img src="~/images/No_image_available.png" width="30" height="30">
+                            <a asp-controller="Profile" asp-action="Detail" asp-route-id="@item.DTUserId" class="post-card-link">
+                                @if (item.DTUser.Avatar != null)
+                                {
+                                    <img src="@item.DTUser.Avatar" width="30" class="rounded-circle">
+
+                                }
+                                else
+                                {
+                                    <img src="~/images/No_image_available.png" width="30" class="rounded-circle">
+                                }
                                 <small>@Html.DisplayFor(modelItem => item.DTUser.DTUsername)</small>
                             </a>
                         </span>
@@ -382,10 +393,26 @@
             @foreach (var item in Model.Topics)
             {
                 <div class="card-body border rounded">
-                    <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Slug"
-                       class="h5 post-card-link">
-                        @Html.DisplayFor(modelItem => item.Name)
-                    </a>
+
+                    <div class="dlex">
+                        @if (!string.IsNullOrEmpty(item.Icon))
+                        {
+                                <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Slug">
+                                    <img src="@item.Icon" alt="topic logo" class="mt-auto mb-auto align-self-center rounded-circle img-fluid" width="50" />
+                                </a>
+                        }
+                        else
+                        {
+                                <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Slug">
+                                    <img src="~/images/No_image_available.png" alt="topic logo" class="mt-auto mb-auto align-self-center rounded-circle img-fluid" width="50" />
+                                </a>
+                        }
+                            <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Slug"
+                               class="h5 post-card-link">
+                                @Html.DisplayFor(modelItem => item.Name)
+                            </a>
+                   
+                    </div>
                     <p>@item.About</p>
                     @if (item.DTUsers != null && item.DTUsers.Count >= 1)
                     {

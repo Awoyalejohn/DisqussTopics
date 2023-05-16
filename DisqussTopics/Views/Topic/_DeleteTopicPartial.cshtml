@@ -7,7 +7,7 @@
                 <h1 class="modal-title fs-5" id="staticBackdropLabel">Delete Rule</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form asp-action="Delete" asp-route-slug="@Model.Slug">
+            <form asp-controller="Topic" asp-action="Delete" asp-route-slug="@Model.Slug">
                 <div class="modal-body">
                     Are you sure you want to delete, "@Html.DisplayFor(model => model.Name)"?
                 </div>

@@ -7,7 +7,9 @@
         </button>
         <div class="offcanvas offcanvas-end bg-dark text-white" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
             <div class="offcanvas-header">
-                <h5 class="offcanvas-title" id="offcanvasNavbarLabel">DisqussTopics</h5>
+                <a asp-controller="Home" class="nav-link text-white" asp-action="Index">
+                    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">DisqussTopics</h5>
+                </a>
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
             <div class="offcanvas-body bg-dark">
@@ -15,6 +17,31 @@
                     <form class="d-flex" role="search" asp-controller="Search" asp-action="Index" method="get">
                         <input class="form-control me-2" name="SearchString" type="search" placeholder="Search" aria-label="Search">
                     </form>
+
+                    <li class="nav-item">
+                        <a asp-controller="Home" asp-action="Index" class="d-flex nav-link text-white">
+                            Home
+                            <span class="material-symbols-outlined">
+                                home
+                            </span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-controller="Post" asp-action="Create" class="d-flex nav-link text-white">
+                            Create a Post
+                            <span class="material-symbols-outlined">
+                                add
+                            </span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-controller="Topic" asp-action="Create" class="d-flex nav-link text-white">
+                            Create a Topic
+                            <span class="material-symbols-outlined">
+                                add
+                            </span>
+                        </a>
+                    </li>
 
                     <partial name="_LoginPartial" />
                 </ul>

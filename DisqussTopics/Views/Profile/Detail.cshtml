@@ -75,7 +75,7 @@
         <div class="tab-content" id="nav-tabContent">
             <div class="tab-pane fade show active" id="nav-posts" role="tabpanel" aria-labelledby="nav-posts-tab" tabindex="0">
 
-                @if (Model?.Posts != null)
+                @if (Model?.Posts != null || Model.Posts.Count > 0)
                 {
 
                     @foreach (var item in Model.Posts)
@@ -88,13 +88,13 @@
                                         @if (!string.IsNullOrEmpty(item.Topic?.Icon))
                                         {
                                             <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Topic.Slug" style="position: relative; z-index: 2;text-decoration:none;">
-                                                <img src="@item.Topic.Icon" alt="topic logo" width="25" height="25">
+                                                <img src="@item.Topic.Icon" alt="topic logo" class="rounded-circle" width="25" height="25">
                                             </a>
                                         }
                                         else
                                         {
                                             <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Topic.Slug" style="position: relative; z-index: 2;text-decoration:none">
-                                                <img src="~/images/No_image_available.png" alt="topic logo" width="25" height="25">
+                                                <img src="~/images/No_image_available.png" class="rounded-circle" alt="topic logo" width="25" height="25">
                                             </a>
                                         }
                                         <!-- Topic:-->
@@ -264,13 +264,26 @@
                         </div>
                     }
                 }
+                else
+                {
+                    <div class="card text-bg-dark">
+                        <div class="card-body text-center">
+                            <h1>No Posts Created!</h1>
+                            @if (User.Identity.IsAuthenticated && Model.Id == UserManager.GetUserId(User))
+                            {
+                                <h2>You should create some posts to make your profile more lively!</h2>
+                                <a asp-controller="Post" asp-action="Create" class="btn btn-light">Create</a>
+                            }
+                        </div>
+                    </div>
+                }
 
 
             </div>
             <!-- Comments section -->
             <div class="tab-pane fade" id="nav-comments" role="tabpanel" aria-labelledby="nav-comments-tab" tabindex="0">
 
-                @if (Model.Comments != null)
+                @if (Model.Comments != null && Model.Comments.Count > 0)
                 {
                     @foreach (var item in Model.Comments)
                     {
@@ -278,8 +291,15 @@
                             <div class="card-body">
                                 <div>
                                     <span>
-                                        <a href="#" class="post-card-link">
-                                            <img src="~/images/No_image_available.png" width="30" height="30">
+                                        <a asp-controller="Profile" asp-action="Detail" asp-route-id="@item.DTUserId" class="post-card-link">
+                                            @if (!string.IsNullOrEmpty(item.DTUser.Avatar))
+                                            {
+                                                <img src="@item.DTUser.Avatar" width="30" height="30" class="rounded-circle" />
+                                            }
+                                            else
+                                            {
+                                                <img src="~/images/No_image_available.png" width="30" height="30" class="rounded-circle" />
+                                            }
                                             <small>@Html.DisplayFor(modelItem => item.DTUser.DTUsername)</small>
                                         </a>
                                     </span>
@@ -415,21 +435,52 @@
 
                     }
                 }
+                else
+                {
+                    <div class="card text-bg-dark">
+                        <div class="card-body text-center">
+                            <h1>No Comments Created!</h1>
+                            @if (User.Identity.IsAuthenticated && Model.Id == UserManager.GetUserId(User))
+                            {
+                                <h2>You should comment on posts to make your profile more lively!</h2>
+                                <a asp-controller="Home" asp-action="Index" class="btn btn-light">Go to Home</a>
+                            }
+                        </div>
+                    </div>
+                }
 
             </div>
             <!-- Topics section -->
             <div class="tab-pane fade" id="nav-topics" role="tabpanel" aria-labelledby="nav-topics-tab" tabindex="0">
 
-                @if (Model.CreatedTopics != null)
+                @if (Model.CreatedTopics != null && Model.CreatedTopics.Count > 0)
                 {
                     @foreach (var item in Model.CreatedTopics)
                     {
                         <div class="card text-bg-dark mb-2">
                             <div class="card-body">
-                                <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Slug"
-                                   class="h5 post-card-link">
-                                    @Html.DisplayFor(modelItem => item.Name)
-                                </a>
+                                <div class="flex">
+
+                                    @if (!string.IsNullOrEmpty(item.Icon))
+                                    {
+                                        <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Slug"
+                                           class="post-card-link">
+                                            <img src="@item.Icon" class="rounded-circle" width="40" />
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Slug"
+                                           class="post-card-link">
+                                            <img src="~/images/No_image_available.png" class="rounded-circle" width="40" />
+                                        </a>
+                                    }
+
+                                    <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Slug"
+                                       class="h5 post-card-link">
+                                        @Html.DisplayFor(modelItem => item.Name)
+                                    </a>
+                                </div>
                                 <p>@item.About</p>
                                 @if (item.DTUsers != null && item.DTUsers.Count >= 1)
                                 {
@@ -455,6 +506,12 @@
                                 {
                                     <form asp-controller="Topic" asp-action="Unsubscribe" asp-route-slug="@item.Slug">
                                         <button type="submit" class="btn btn-outline-light">Unsubscribe</button>
+                                        @if (User.IsInRole("Admin") || item.DTUserId == UserManager.GetUserId(User))
+                                        {
+                                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal-delete-topic">
+                                                Delete Topic
+                                            </button>
+                                        }
                                     </form>
                                 }
                                 else
@@ -463,27 +520,47 @@
                                         @if (User.Identity.IsAuthenticated)
                                         {
                                             <button type="submit" class="btn btn-outline-light">Subscribe</button>
+
                                         }
                                         else
                                         {
                                             <button type="button" class="btn btn-outline-light" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Login to Subscribe!">
                                                 Subscribe
                                             </button>
+
                                         }
+
+
                                     </form>
                                 }
 
 
+
                             </div>
                         </div>
+                        <!-- Topic delete Modal -->
+                        @await Html.PartialAsync("~/Views/Topic/_DeleteTopicPartial.cshtml", item)
                     }
+                }
+                else
+                {
+                    <div class="card text-bg-dark">
+                        <div class="card-body text-center">
+                            <h1>Not Subscribed to any Topics!</h1>
+                            @if (User.Identity.IsAuthenticated && Model.Id == UserManager.GetUserId(User))
+                            {
+                                <h2>You should subscribe to some topics to make your profile more lively!</h2>
+                                <a asp-controller="Home" asp-action="Index" class="btn btn-light">Go to Home</a>
+                            }
+                        </div>
+                    </div>
                 }
 
             </div>
 
             <!-- Upvoted section -->
             <div class="tab-pane fade" id="nav-upvoted" role="tabpanel" aria-labelledby="nav-upvoted-tab" tabindex="0">
-                @if (Model.PostUpvotes != null)
+                @if (Model.PostUpvotes != null && Model.PostUpvotes.Count > 0)
                 {
                     @foreach (var item in Model.PostUpvotes)
                     {
@@ -495,13 +572,13 @@
                                         @if (!string.IsNullOrEmpty(item.Topic?.Icon))
                                         {
                                             <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Topic.Slug" style="position: relative; z-index: 2;text-decoration:none;">
-                                                <img src="@item.Topic.Icon" alt="topic logo" width="25" height="25">
+                                                <img src="@item.Topic.Icon" alt="topic logo" width="25" height="25" class="rounded-circle">
                                             </a>
                                         }
                                         else
                                         {
                                             <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Topic.Slug" style="position: relative; z-index: 2;text-decoration:none">
-                                                <img src="~/images/No_image_available.png" alt="topic logo" width="25" height="25">
+                                                <img src="~/images/No_image_available.png" alt="topic logo" width="25" height="25" class="rounded-circle">
                                             </a>
                                         }
                                         <!-- Topic:-->
@@ -527,7 +604,7 @@
                                             <li>
                                                 <a class="dropdown-item stretched-link" asp-controller="Post" asp-action="Detail" asp-route-topic="@item.Topic.Name" asp-route-slug="@item.Slug" asp-route-id="@item.Id" style="position: relative; z-index: 2;">View</a>
                                             </li>
-                                            @if (User.IsInRole("Admin") || item.DTUser.Id == @UserManager.GetUserId(User))
+                                            @if (User.IsInRole("Admin") || item.DTUserId == @UserManager.GetUserId(User))
                                             {
                                                 <li>
                                                     <a class="dropdown-item" asp-controller="Post" asp-action="Edit" asp-route-topic="@item.Topic.Name" asp-route-slug="@item.Slug" asp-route-id="@item.Id">Edit</a>
@@ -671,12 +748,25 @@
                         </div>
                     }
                 }
+                else
+                {
+                    <div class="card text-bg-dark">
+                        <div class="card-body text-center">
+                            <h1>No Posts Upvoted!</h1>
+                            @if (User.Identity.IsAuthenticated && Model.Id == UserManager.GetUserId(User))
+                            {
+                                <h2>You should Upvote some Posts to make your profile more lively!</h2>
+                                <a asp-controller="Home" asp-action="Index" class="btn btn-light">Go to Home</a>
+                            }
+                        </div>
+                    </div>
+                }
             </div>
 
             <!-- Downvoted section -->
 
             <div class="tab-pane fade" id="nav-downvoted" role="tabpanel" aria-labelledby="nav-downvoted-tab" tabindex="0">
-                @if (Model.PostDownvotes != null)
+                @if (Model.PostDownvotes != null && Model.PostDownvotes.Count > 0)
                 {
                     @foreach (var item in Model.PostDownvotes)
                     {
@@ -688,13 +778,13 @@
                                         @if (!string.IsNullOrEmpty(item.Topic?.Icon))
                                         {
                                             <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Topic.Slug" style="position: relative; z-index: 2;text-decoration:none;">
-                                                <img src="@item.Topic.Icon" alt="topic logo" width="25" height="25">
+                                                <img src="@item.Topic.Icon" alt="topic logo" width="25" height="25" class="rounded-circle">
                                             </a>
                                         }
                                         else
                                         {
                                             <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@item.Topic.Slug" style="position: relative; z-index: 2;text-decoration:none">
-                                                <img src="~/images/No_image_available.png" alt="topic logo" width="25" height="25">
+                                                <img src="~/images/No_image_available.png" alt="topic logo" width="25" height="25" class="rounded-circle">
                                             </a>
                                         }
                                         <!-- Topic:-->
@@ -720,7 +810,7 @@
                                             <li>
                                                 <a class="dropdown-item stretched-link" asp-controller="Post" asp-action="Detail" asp-route-topic="@item.Topic.Name" asp-route-slug="@item.Slug" asp-route-id="@item.Id" style="position: relative; z-index: 2;">View</a>
                                             </li>
-                                            @if (User.IsInRole("Admin") || item.DTUser.Id == @UserManager.GetUserId(User))
+                                            @if (User.IsInRole("Admin") || item.DTUserId == @UserManager.GetUserId(User))
                                             {
                                                 <li>
                                                     <a class="dropdown-item" asp-controller="Post" asp-action="Edit" asp-route-topic="@item.Topic.Name" asp-route-slug="@item.Slug" asp-route-id="@item.Id">Edit</a>
@@ -864,12 +954,25 @@
                         </div>
                     }
                 }
+                else
+                {
+                    <div class="card text-bg-dark">
+                        <div class="card-body text-center">
+                            <h1>No Posts Downvoted!</h1>
+                            @if (User.Identity.IsAuthenticated && Model.Id == UserManager.GetUserId(User))
+                            {
+                                <h2>You should Downvote some Posts to make your profile more lively!</h2>
+                                <a asp-controller="Home" asp-action="Index" class="btn btn-light">Go to Home</a>
+                            }
+                        </div>
+                    </div>
+                }
             </div>
 
         </div>
     </div>
 
- 
+
 
 
 
@@ -912,7 +1015,8 @@
                     @if (Model?.Id != null && Model.Id == UserManager.GetUserId(User))
                     {
                         <div class="d-flex justify-content-center mb-2">
-                            <a asp-controller="Profile" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-light">Edit profile</a>
+                            @*<a asp-controller="Profile" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-light">Edit profile</a>*@
+                            <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#modal-edit-profile">Edit Profile</button>
                         </div>
                     }
                 </div>
@@ -924,3 +1028,11 @@
     </div>
 
 </div>
+
+
+<!-- Profile edit Modal -->
+@await Html.PartialAsync("_EditProfilePartial", new DTUserViewModel()
+{
+    DTUsername = Model.DTUsername,
+    Bio = Model.Bio
+})

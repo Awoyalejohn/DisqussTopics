@@ -26,13 +26,13 @@
                     @if (!string.IsNullOrEmpty(Model.Post.Topic.Icon))
                     {
                         <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@Model.Post.Topic.Slug">
-                            <img class="mt-auto mb-auto align-self-center" src="@Model.Post.Topic.Icon" alt="topic logo" height="75">
+                            <img src="@Model.Post.Topic.Icon" alt="topic logo" class="mt-auto mb-auto align-self-center rounded-circle img-fluid" width="100" />
                         </a>
                     }
                     else
                     {
                         <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@Model.Post.Topic.Slug">
-                            <img class="mt-auto mb-auto" src="~/images/No_image_available.png" alt="topic logo" height="75" style="width: 100%;">
+                            <img src="~/images/No_image_available.png" alt="topic logo" class="mt-auto mb-auto align-self-center rounded-circle img-fluid" width="100">
                         </a>
                     }
                     <div class="text-white mt-auto mb-auto text-wrap" style="max-width: 40rem;">
@@ -56,7 +56,7 @@
                 <div class="d-flex justify-content-between">
                     <span>
                         Posted by
-                        <a href="#" class="post-card-link">
+                        <a asp-controller="Profile" asp-action="Detail" asp-route-id="@Model.Post.DTUserId" class="post-card-link">
                             @Html.DisplayFor(model => model.Post.DTUser.DTUsername)
                         </a>
                         @Model.Post.Created.Humanize()
@@ -227,8 +227,17 @@
                 <div class="card-footer">
                     <div>
                         <span>
-                            <a href="#" class="post-card-link">
-                                <img src="~/images/No_image_available.png" width="30" height="30">
+                            <a asp-controller="Profile" asp-action="Detail" asp-route-id="@item.DTUserId" class="post-card-link">
+                                @if (item.DTUser.Avatar != null)
+                                {
+                                    @*<img src="@item.DTUser.Avatar" width="30" height="30">*@
+                                    <img src="@item.DTUser.Avatar" alt="avatar"
+                                         class="rounded-circle img-fluid" width="30" />
+                                }
+                                else
+                                {
+                                    <img src="~/images/No_image_available.png" width="30" height="30">
+                                }
                                 <small>@Html.DisplayFor(modelItem => item.DTUser.DTUsername)</small>
                             </a>
                         </span>
@@ -292,7 +301,7 @@
                         else
                         {
                             <button type="button" class="text-white" style="border:none; background:none;"
-                            data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Login to Upvote!">
+                                    data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Login to Upvote!">
                                 <span class="material-symbols-outlined">
                                     arrow_circle_up
                                 </span>
@@ -377,11 +386,13 @@
                     <a asp-controller="Topic" asp-action="Detail" asp-route-slug="@Model.Post.Topic.Slug">
                         @if (!string.IsNullOrEmpty(Model.Post.Topic.Icon))
                         {
-                            <img class="mb-auto mt-auto" src="@Model.Post.Topic.Icon" alt="topic logo" width="40" height="40">
+                            @*<img class="mb-auto mt-auto" src="@Model.Post.Topic.Icon" alt="topic logo" width="40" height="40">*@
+                            <img src="@Model.Post.Topic.Icon" alt="topic logo" class="mt-auto mb-auto align-self-center rounded-circle" width="40">
                         }
                         else
                         {
-                            <img class="mb-auto mt-auto" src="~/images/No_image_available.png" alt="topic logo" width="40" height="40">
+                            <img src="~/images/No_image_available.png" alt="topic logo" class="mt-auto mb-auto align-self-center rounded-circle" width="40">
+                            @*<img class="mb-auto mt-auto" src="~/images/No_image_available.png" alt="topic logo" width="40" height="40">*@
                         }
                     </a>
 
@@ -439,14 +450,11 @@
                     <p>You need to login to subscribe</p>
                 }
 
-
-
-
             </div>
 
         </div>
 
-        @if (Model.Post.Topic.Rules != null)
+        @if (Model.Post.Topic.Rules != null && Model.Post.Topic.Rules.Count > 0)
         {
             <div class="card text-bg-dark mb-2">
                 <div class="card-header">
@@ -485,8 +493,25 @@
             <div class="card-header">
                 <span>Topic Creator</span>
             </div>
-            <div class="card-body">
-                <p class="fw-bold">@Html.DisplayFor(model => model.Post.Topic.DTUser.DTUsername)</p>
+            <div class="card-body text-center">
+                @if (!string.IsNullOrEmpty(Model.Post.Topic.DTUser.Avatar))
+                {
+
+                    <a asp-controller="Profile" asp-action="Detail" asp-route-id="@Model.Post.Topic.DTUserId">
+                        <img src="@Model.Post.Topic.DTUser.Avatar" alt="avatar"
+                             class="rounded-circle img-fluid" style="width: 150px;">
+                    </a>
+                }
+                else
+                {
+                    <a asp-controller="Profile" asp-action="Detail" asp-route-id="@Model.Post.Topic.DTUserId">
+                        <img src="~/images/No_image_available.png" alt="avatar"
+                             class="rounded-circle img-fluid" style="width: 150px;">
+                    </a>
+                }
+                <div>
+                    <a asp-controller="Profile" asp-action="Detail" asp-route-id="@Model.Post.Topic.DTUserId" class="h4 post-card-link">@Html.DisplayFor(model => model.Post.Topic.DTUser.DTUsername)</a>
+                </div>
             </div>
         </div>
     </div>

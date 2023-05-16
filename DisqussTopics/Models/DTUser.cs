@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Build.Framework;
 
 namespace DisqussTopics.Models
 {
     public class DTUser : IdentityUser
     {
+        [Required]
         public string? DTUsername { get; set; }
         public string? Bio { get; set; }
         public string? Avatar { get; set; }

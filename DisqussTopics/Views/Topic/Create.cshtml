@@ -24,10 +24,13 @@
                     <span asp-validation-for="Topic.About" class="text-danger"></span>
                 </div>
                 <div class="form-group text-end mt-2">
-                    <button type="submit" class="btn btn-light">Create Topic</button>
+                    <button type="submit" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#loading-modal">Create Topic</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<!-- Modal for spinner-->
+<partial name="_SpinnerPartial" />
 

@@ -36,13 +36,18 @@ namespace DisqussTopics.Controllers
             var currentUserId = HttpContext.User
                 .FindFirstValue(ClaimTypes.NameIdentifier);
 
+            var currentUser = await _userRepository
+                .GetUserByIdAsync(currentUserId);
+
             var comment = new Comment()
             {
                 Content = postDetailViewModel.Comment.Content,
                 Created = DateTime.Now,
                 Updated = DateTime.Now,
                 PostId = postId,
-                DTUserId = currentUserId
+                DTUserId = currentUserId,
+                Upvotes = new[] { currentUser },
+                Votes = 1
             };
 
             if (ModelState.IsValid)

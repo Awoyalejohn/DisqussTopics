@@ -39,6 +39,12 @@ namespace DisqussTopics.Repository
                 .FirstOrDefaultAsync(t => t.Id == id);
         }
 
+        public async Task<Topic?> GetTopicBySlugAsync(string slug)
+        {
+            return await _context.Topics
+               .FirstOrDefaultAsync(t => t.Slug == slug);
+        }
+
         public async Task<Topic?> GetTopicBySlug(string slug)
         {
             return await _context.Topics
@@ -69,6 +75,7 @@ namespace DisqussTopics.Repository
         public async Task<IEnumerable<Topic>> GetTopics()
         {
             var topics = await _context.Topics
+                .Include(t => t.DTUsers)
                 .ToListAsync();
 
             return topics;

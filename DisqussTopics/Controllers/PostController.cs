@@ -60,6 +60,9 @@ namespace DisqussTopics.Controllers
             var currentUserId = HttpContext.User
                 .FindFirstValue(ClaimTypes.NameIdentifier);
 
+            var currentUser = await _userRepository
+                .GetUserByIdAsync(currentUserId);
+
             if (ModelState.IsValid)
             {
                 // Get the topic Id from the form data
@@ -105,6 +108,9 @@ namespace DisqussTopics.Controllers
                     Content = postViewModel.Post.Content,
                     Image = imageResultURL,
                     Video = videoResultURL,
+                    Upvotes = new[] { currentUser },
+                    Votes = 1
+                    
                 };
 
                 var topic = await _topicRepository.GetTopicById(post.TopicId);

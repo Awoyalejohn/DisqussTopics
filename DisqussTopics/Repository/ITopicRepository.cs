@@ -10,6 +10,7 @@ namespace DisqussTopics.Repository
         Task<Topic?> GetTopicBySlugNoTrackng(string slug);
         Task<Topic?> GetTopicById(int id);
         Task<Topic?> GetTopicByIdNoTracking(int id);
+        Task<Topic?> GetTopicBySlugAsync(string slug);
         void InsertTopic(Topic topic);
         void UpdateTopic(Topic topic);
         void DeleteTopic(Topic topic);

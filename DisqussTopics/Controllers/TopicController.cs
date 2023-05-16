@@ -78,8 +78,8 @@ namespace DisqussTopics.Controllers
                     Slug = slug,
                     Created = DateTime.Now,
                     About = topicViewModel.Topic.About,
-                    Banner = topicViewModel.Topic.Banner,
-                    Icon = topicViewModel.Topic.Icon,
+                    Banner = string.Empty,
+                    Icon = string.Empty,
                     DTUserId = topicViewModel.DTUserId,
                     DTUsers = new[] { currentUser },
                 };
@@ -332,7 +332,16 @@ namespace DisqussTopics.Controllers
             var topic = await _topicRepository
                 .GetTopicBySlugNoTrackng(slug);
 
+            var currentUserId = HttpContext.User
+                .FindFirstValue(ClaimTypes.NameIdentifier);
+
             if (topic == null) { return NotFound(); }
+
+            if (!User.IsInRole("Admin")  && currentUserId != topic.DTUserId) 
+            {
+                return NotFound();
+            }
+
 
             return View(topic);
         }
@@ -345,14 +354,22 @@ namespace DisqussTopics.Controllers
         public async Task<IActionResult> DeleteConfirmed(string slug)
         {
             var topic = await _topicRepository
-                .GetTopicBySlugNoTrackng(slug);
+                .GetTopicBySlugAsync(slug);
+
+            var currentUserId = HttpContext.User
+                .FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (topic == null) { return NotFound(); }
+
+            if (!User.IsInRole("Admin") && currentUserId != topic.DTUserId)
+            {
+                return NotFound();
+            }
 
             _topicRepository.DeleteTopic(topic);
             await _topicRepository.SaveAsync();
 
-            TempData["Error"] = "Topic deleted successfully!";
+            TempData["Success"] = "Topic deleted successfully!";
             return RedirectToAction("Index", "Home");
         }
 
