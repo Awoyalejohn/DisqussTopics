@@ -27,6 +27,12 @@ namespace DisqussTopics.Repository
         public async Task<DTUser> GetUserByIdAsync(string userId)
         {
             var currentUser = await _context.Users
+                .Include(u => u.Posts)
+                    .ThenInclude(p => p.Topic)
+                .Include(u => u.Posts)
+                    .ThenInclude(p => p.Upvotes)
+                .Include(u => u.Posts)
+                    .ThenInclude(p => p.Downvotes)
                 .Include(u => u.PostUpvotes)
                 .Include(u => u.PostDownvotes)
                 .Include(u => u.CommentUpvotes)
