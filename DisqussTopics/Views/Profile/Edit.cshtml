@@ -1,0 +1,39 @@
+﻿@model DisqussTopics.Models.ViewModels.DTUserViewModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<div class="col-md-12 col-sm-12 col-lg-8 mt-2">
+    <div class="card text-bg-dark">
+        <div class="card-header">
+            <span class="h1">Edit Profile</span>
+        </div>
+        <div class="card-body">
+            <form asp-controller="Profile" asp-action="Edit" enctype="multipart/form-data" method="post">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="DTUsername" class="control-label"></label>
+                    <input asp-for="DTUsername" class="form-control" />
+                    <span asp-validation-for="DTUsername" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Bio" class="control-label"></label>
+                    <textarea asp-for="Bio" rows="3" class="form-control"></textarea>
+                    <span asp-validation-for="Bio" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="AvatarUpload" class="control-label"></label>
+                    <input asp-for="AvatarUpload" class="form-control" />
+                    <span asp-validation-for="AvatarUpload" class="text-danger"></span>
+                </div>
+                <div class="form-group text-end">
+                    <button type="submit" class="btn btn-light mt-2" data-bs-toggle="modal" data-bs-target="#loading-modal">Edit Profile</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for spinner-->
+<partial name="_SpinnerPartial" />

@@ -28,6 +28,7 @@ namespace DisqussTopics.Repository
         {
             var currentUser = await _context.Users
                 .Include(u => u.Posts)
+                .Include(u => u.Posts)
                     .ThenInclude(p => p.Topic)
                 .Include(u => u.Posts)
                     .ThenInclude(p => p.Upvotes)
@@ -41,6 +42,16 @@ namespace DisqussTopics.Repository
                 .FirstOrDefaultAsync(u => u.Id == userId);
 
             return currentUser;
+        }
+
+        public void UpdateUser(DTUser user)
+        {
+            _context.Users.Update(user);
+        }
+
+        public async Task SaveAsync()
+        {
+            await _context.SaveChangesAsync();
         }
     }
 }

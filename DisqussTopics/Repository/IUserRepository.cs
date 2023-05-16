@@ -6,5 +6,7 @@ namespace DisqussTopics.Repository
     {
         string GetUserId();
         Task<DTUser> GetUserByIdAsync(string userId);
+        void UpdateUser(DTUser user);
+        Task SaveAsync();
     }
 }
