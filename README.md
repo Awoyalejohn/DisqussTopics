@@ -3,4 +3,4 @@ Disquss Topics is a website dedicated to engaging discussions. Here, you can dis
 
 The live link can be found here - https://disqusstopics.bsite.net/
 
-![DT mockup]((https://github.com/Awoyalejohn/DisqussTopics/blob/main/DisqussTopics/wwwroot/images/website-mockup.png))
+![DT mockup](https://github.com/Awoyalejohn/DisqussTopics/blob/main/DisqussTopics/wwwroot/images/website-mockup.png)
