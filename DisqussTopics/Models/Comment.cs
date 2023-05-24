@@ -1,8 +1,13 @@
-﻿namespace DisqussTopics.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DisqussTopics.Models
 {
     public class Comment
     {
         public int Id { get; set; }
+
+        [Required(ErrorMessage = "Comment cannot be empty!")]
+        [StringLength(500)]
         public string Content { get; set; } = string.Empty;
         public DateTime Created { get; set; }
         public DateTime Updated { get; set; }

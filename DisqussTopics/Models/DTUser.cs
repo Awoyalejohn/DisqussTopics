@@ -1,13 +1,19 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.Build.Framework;
+using System.ComponentModel.DataAnnotations;
 
 namespace DisqussTopics.Models
 {
     public class DTUser : IdentityUser
     {
-        [Required]
+        [StringLength(50)]
+        [Required(ErrorMessage = "Please enter a Username!")]
+        [Display(Name = "Username")]
         public string? DTUsername { get; set; }
+
+        [StringLength(250)]
         public string? Bio { get; set; }
+
+        [StringLength(250)]
         public string? Avatar { get; set; }
 
         public ICollection<Post>? Posts { get; set; } // navigation property

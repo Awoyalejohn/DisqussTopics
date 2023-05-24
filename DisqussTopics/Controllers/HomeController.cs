@@ -26,27 +26,30 @@ namespace DisqussTopics.Controllers
         // GET: Home
         public async Task<IActionResult> Index()
         {
-            var currentUserId = HttpContext.User
-              .FindFirstValue(ClaimTypes.NameIdentifier);
-
             var posts = await _postRepository.GetPosts();
-
-            // Queries posts to only posts the User is subscribed to
-            if (User.Identity.IsAuthenticated)
-            {
-                posts = posts
-                    .Where(p => p.Topic.DTUsers
-                    .Any(u => u.Id == currentUserId));
-            }
 
             posts = posts
                 .OrderByDescending(p => p.Votes);
 
             var homeViewModel = new HomeViewModel()
             {
-                Posts = posts,
-                CurrentUserId = currentUserId
+                Posts = posts
             };
+
+            // Queries posts to only posts the User is subscribed to
+            if (User != null && User.Identity.IsAuthenticated)
+            {
+                var currentUserId = HttpContext.User
+                .FindFirstValue(ClaimTypes.NameIdentifier);
+
+                posts = posts
+                    .Where(p => p.Topic.DTUsers
+                    .Any(u => u.Id == currentUserId));
+
+
+                homeViewModel.Posts = posts;
+                homeViewModel.CurrentUserId = currentUserId;
+            }
 
             return View(homeViewModel);
         }

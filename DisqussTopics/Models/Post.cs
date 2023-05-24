@@ -1,14 +1,24 @@
-﻿namespace DisqussTopics.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DisqussTopics.Models
 {
     public class Post
     {
         public int Id { get; set; }
+
+        [StringLength(250)]
         public string Title { get; set; } = string.Empty;
+
+        [StringLength(250)]
         public string? Slug { get; set; }
         public DateTime Created { get; set; }
         public DateTime Updated { get; set; }
         public string? Content { get; set; }
+
+        [StringLength(250)]
         public string? Image { get; set; }
+
+        [StringLength(250)]
         public string? Video { get; set; }
         public int Votes { get; set; }
 
