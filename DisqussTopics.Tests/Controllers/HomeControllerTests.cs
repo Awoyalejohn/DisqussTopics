@@ -21,7 +21,7 @@ namespace DisqussTopics.Tests.Controllers
         private readonly Mock<ILogger<HomeController>> _loggerMock;
         private readonly Mock<IPostRepository> _postRepositoryMock;
         private readonly HomeController _controller;
-        
+
         public HomeControllerTests()
         {
             _loggerMock = new Mock<ILogger<HomeController>>();
@@ -44,11 +44,11 @@ namespace DisqussTopics.Tests.Controllers
         {
             // Arrange
             _postRepositoryMock.Setup(repo => repo.GetPosts())
-                .ReturnsAsync(new List<Post>() { 
-                    new Post(), 
+                .ReturnsAsync(new List<Post>() {
+                    new Post(),
                     new Post(),
                     new Post()
-                } 
+                }
                 );
 
             // Act
@@ -58,7 +58,7 @@ namespace DisqussTopics.Tests.Controllers
             var viewResult = Assert.IsType<ViewResult>(result);
             var viewModel = Assert.IsType<HomeViewModel>(viewResult.Model);
             Assert.Equal(3, viewModel.Posts.Count());
-           
+
         }
 
         [Fact]
@@ -69,7 +69,7 @@ namespace DisqussTopics.Tests.Controllers
             {
                 new Claim(ClaimTypes.Name, "example name"),
                 new Claim(ClaimTypes.NameIdentifier, "1"),
-                new Claim("custom-claim", "example claim value"), 
+                new Claim("custom-claim", "example claim value"),
             }, "mock"));
 
             _postRepositoryMock.Setup(repo => repo.GetPosts())
@@ -93,6 +93,66 @@ namespace DisqussTopics.Tests.Controllers
             var viewmodel = Assert.IsType<HomeViewModel>(viewResult.Model);
             Assert.Equal(2, viewmodel.Posts.Count());
         }
+
+        [Fact]
+        public async Task MostUpvoted_ReturnsHomeViewModelWithPostsAndIndexView()
+        {
+            // Arrange
+            _postRepositoryMock.Setup(repo => repo.GetPosts())
+            .ReturnsAsync(new List<Post>() {
+                    new Post(),
+                    new Post(),
+                    new Post()
+            }
+            );
+
+            // Act
+            var result = await _controller.MostUpvoted();
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var viewModel = Assert.IsType<HomeViewModel>(viewResult.Model);
+            Assert.Equal(3, viewModel.Posts.Count());
+            Assert.Equal("Index", viewResult.ViewName);
+
+        }
+
+        [Fact]
+        public async Task MostUpvoted_ReturnsHomeViewModelWithPostsTheUserIsSubsribedToAndIndexView()
+        {
+            // Arrange
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
+            {
+                new Claim(ClaimTypes.Name, "example name"),
+                new Claim(ClaimTypes.NameIdentifier, "1"),
+                new Claim("custom-claim", "example claim value"),
+            }, "mock"));
+
+            _postRepositoryMock.Setup(repo => repo.GetPosts())
+                .ReturnsAsync(new List<Post>()
+                {
+                    new Post(){ Topic = new Topic { DTUsers = new[] { new DTUser() { Id = "1"} } } },
+                    new Post(){ Topic = new Topic { DTUsers = new[] { new DTUser() { Id = "1"} } } },
+                    new Post(){ Topic = new Topic { DTUsers = new[] { new DTUser() { Id = "2"} } } },
+                    new Post(){ Topic = new Topic { DTUsers = new[] { new DTUser() { Id = "3"} } } },
+                });
+
+            // Act
+            _controller.ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext() { User = user }
+            };
+            var result = await _controller.MostUpvoted();
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var viewModel = Assert.IsType<HomeViewModel>(viewResult.Model);
+            Assert.Equal(2, viewModel.Posts.Count());
+            Assert.Equal("Index", viewResult.ViewName);
+
+        }
+
+
 
 
     }
