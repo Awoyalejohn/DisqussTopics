@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
+using NuGet.ContentModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -152,8 +153,174 @@ namespace DisqussTopics.Tests.Controllers
 
         }
 
+        [Fact]
+        public async Task MostDiscussed_ReturnsHomeViewModelWithPostsAndIndexView()
+        {
+            // Arrange
+            _postRepositoryMock.Setup(repo => repo.GetPosts())
+                .ReturnsAsync(new List<Post>()
+                {
+                    new Post(),
+                    new Post(),
+                    new Post()
+                });
 
+            // Act
+            var result = await _controller.MostDiscussed();
 
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var viewModel = Assert.IsType<HomeViewModel>(viewResult.Model);
+            Assert.Equal(3, viewModel.Posts.Count());
+            Assert.Equal("Index", viewResult.ViewName);
+        }
+
+        [Fact]
+        public async Task MostDiscussed_ReturnsHomeViewModelWithPostsTheUserIsSubsribedToAndIndexView()
+        {
+            // Arrange
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
+            {
+                new Claim(ClaimTypes.Name, "example name"),
+                new Claim(ClaimTypes.NameIdentifier, "1"),
+                new Claim("custom-claim", "example claim value"),
+            }, "mock"));
+
+            _postRepositoryMock.Setup(repo => repo.GetPosts())
+                .ReturnsAsync(new List<Post>()
+                {
+                    new Post(){ Topic = new Topic { DTUsers = new[] { new DTUser() { Id = "1"} } } },
+                    new Post(){ Topic = new Topic { DTUsers = new[] { new DTUser() { Id = "1"} } } },
+                    new Post(){ Topic = new Topic { DTUsers = new[] { new DTUser() { Id = "2"} } } },
+                    new Post(){ Topic = new Topic { DTUsers = new[] { new DTUser() { Id = "3"} } } },
+                });
+
+            // Act
+            _controller.ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext() { User = user }
+            };
+            var result = await _controller.MostDiscussed();
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var viewModel = Assert.IsType<HomeViewModel>(viewResult.Model);
+            Assert.Equal(2, viewModel.Posts.Count());
+            Assert.Equal("Index", viewResult.ViewName);
+        }
+
+        [Fact]
+        public async Task NewPosts_ReturnsHomeViewModelWithPostsAndIndexView()
+        {
+            // Arrange
+            _postRepositoryMock.Setup(repo => repo.GetPosts())
+                .ReturnsAsync(new List<Post>()
+                {
+                    new Post(),
+                    new Post(),
+                    new Post()
+                });
+
+            // Act
+            var result = await _controller.NewPosts();
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var viewModel = Assert.IsType<HomeViewModel>(viewResult.Model);
+            Assert.Equal(3, viewModel.Posts.Count());
+            Assert.Equal("Index", viewResult.ViewName);
+        }
+
+        [Fact]
+        public async Task NewPosts_ReturnsHomeViewModelWithPostsTheUserIsSubsribedToAndIndexView()
+        {
+            // Arrange
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
+            {
+                new Claim(ClaimTypes.Name, "example name"),
+                new Claim(ClaimTypes.NameIdentifier, "1"),
+                new Claim("custom-claim", "example claim value"),
+            }, "mock"));
+
+            _postRepositoryMock.Setup(repo => repo.GetPosts())
+                .ReturnsAsync(new List<Post>()
+                {
+                    new Post(){ Topic = new Topic { DTUsers = new[] { new DTUser() { Id = "1"} } } },
+                    new Post(){ Topic = new Topic { DTUsers = new[] { new DTUser() { Id = "1"} } } },
+                    new Post(){ Topic = new Topic { DTUsers = new[] { new DTUser() { Id = "2"} } } },
+                    new Post(){ Topic = new Topic { DTUsers = new[] { new DTUser() { Id = "3"} } } },
+                });
+
+            // Act
+            _controller.ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext() { User = user }
+            };
+            var result = await _controller.NewPosts();
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var viewModel = Assert.IsType<HomeViewModel>(viewResult.Model);
+            Assert.Equal(2, viewModel.Posts.Count());
+            Assert.Equal("Index", viewResult.ViewName);
+        }
+
+        [Fact]
+        public async Task Explore_ReturnsHomeViewModelWithPostsAndIndexView()
+        {
+            // Arrange
+            _postRepositoryMock.Setup(repo => repo.GetPosts())
+                .ReturnsAsync(new List<Post>()
+                {
+                    new Post(),
+                    new Post(),
+                    new Post()
+                });
+
+            // Act
+            var result = await _controller.Explore();
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var viewModel = Assert.IsType<HomeViewModel>(viewResult.Model);
+            Assert.Equal(3, viewModel.Posts.Count());
+            Assert.Equal("Index", viewResult.ViewName);
+        }
+
+        [Fact]
+        public async Task Explore_ReturnsHomeViewModelWithPostsTheUserIsSubsribedToAndIndexView()
+        {
+            // Arrange
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
+            {
+                new Claim(ClaimTypes.Name, "example name"),
+                new Claim(ClaimTypes.NameIdentifier, "1"),
+                new Claim("custom-claim", "example claim value"),
+            }, "mock"));
+
+            _postRepositoryMock.Setup(repo => repo.GetPosts())
+                .ReturnsAsync(new List<Post>()
+                {
+                    new Post(){ Topic = new Topic { DTUsers = new[] { new DTUser() { Id = "1"} } } },
+                    new Post(){ Topic = new Topic { DTUsers = new[] { new DTUser() { Id = "1"} } } },
+                    new Post(){ Topic = new Topic { DTUsers = new[] { new DTUser() { Id = "2"} } } },
+                    new Post(){ Topic = new Topic { DTUsers = new[] { new DTUser() { Id = "3"} } } },
+                });
+
+            // Act
+            _controller.ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext() { User = user }
+            };
+            var result = await _controller.Explore();
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var viewModel = Assert.IsType<HomeViewModel>(viewResult.Model);
+            Assert.Equal(4, viewModel.Posts.Count());
+            Assert.Equal("1", viewModel.CurrentUserId);
+            Assert.Equal("Index", viewResult.ViewName);
+        }
 
     }
 }

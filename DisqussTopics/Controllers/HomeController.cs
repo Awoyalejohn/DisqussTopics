@@ -87,17 +87,7 @@ namespace DisqussTopics.Controllers
         // GET: MostUpvoted
         public async Task<IActionResult> MostDiscussed()
         {
-            var currentUserId = HttpContext.User
-                .FindFirstValue(ClaimTypes.NameIdentifier);
-
             var posts = await _postRepository.GetPosts();
-
-            if (User.Identity.IsAuthenticated)
-            {
-                posts = posts
-                    .Where(p => p.Topic.DTUsers
-                    .Any(u => u.Id == currentUserId));
-            }
 
             posts = posts
                 .OrderByDescending(p => p.Comments?.Count ?? 0);
@@ -105,8 +95,20 @@ namespace DisqussTopics.Controllers
             var homeViewModel = new HomeViewModel()
             {
                 Posts = posts,
-                CurrentUserId = currentUserId
             };
+
+            if (User != null && User.Identity.IsAuthenticated)
+            {
+                var currentUserId = HttpContext.User
+                    .FindFirstValue(ClaimTypes.NameIdentifier);
+
+                posts = posts
+                    .Where(p => p.Topic.DTUsers
+                    .Any(u => u.Id == currentUserId));
+
+                homeViewModel.Posts = posts;
+                homeViewModel.CurrentUserId = currentUserId;
+            }
 
             return View("Index", homeViewModel);
         }
@@ -114,28 +116,29 @@ namespace DisqussTopics.Controllers
         // GET: NewPosts
         public async Task<IActionResult> NewPosts()
         {
-            var currentUserId = HttpContext.User
-                .FindFirstValue(ClaimTypes.NameIdentifier);
-
             var posts = await _postRepository.GetPosts();
-
-            if (User.Identity.IsAuthenticated)
-            {
-                posts = posts
-                    .Where(p => p.Topic.DTUsers
-                    .Any(u => u.Id == currentUserId));
-            }
 
             posts = posts
                 .OrderByDescending(p => p.Created)
                 .ThenBy(p => p.Created.TimeOfDay);
 
-
             var homeViewModel = new HomeViewModel()
             {
-                Posts = posts,
-                CurrentUserId = currentUserId
+                Posts = posts
             };
+
+            if (User != null && User.Identity.IsAuthenticated)
+            {
+                var currentUserId = HttpContext.User
+                    .FindFirstValue(ClaimTypes.NameIdentifier);
+
+                posts = posts
+                    .Where(p => p.Topic.DTUsers
+                    .Any(u => u.Id == currentUserId));
+
+                homeViewModel.Posts = posts;
+                homeViewModel.CurrentUserId = currentUserId;
+            }
 
             return View("Index", homeViewModel);
         }
@@ -143,9 +146,6 @@ namespace DisqussTopics.Controllers
         // GET: Explore
         public async Task<IActionResult> Explore()
         {
-            var currentUserId = HttpContext.User
-                .FindFirstValue(ClaimTypes.NameIdentifier);
-
             var posts = await _postRepository.GetPosts();
 
             Random random = new Random();
@@ -157,8 +157,15 @@ namespace DisqussTopics.Controllers
             var homeViewModel = new HomeViewModel()
             {
                 Posts = posts,
-                CurrentUserId = currentUserId
             };
+
+            if (User != null && User.Identity.IsAuthenticated)
+            {
+                var currentUserId = HttpContext.User
+                .FindFirstValue(ClaimTypes.NameIdentifier);
+
+                homeViewModel.CurrentUserId = currentUserId;
+            }
 
             return View("Index", homeViewModel);
         }
