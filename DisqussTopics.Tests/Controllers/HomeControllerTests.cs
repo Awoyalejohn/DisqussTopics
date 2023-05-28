@@ -1,5 +1,4 @@
-﻿using Castle.Core.Logging;
-using DisqussTopics.Controllers;
+﻿using DisqussTopics.Controllers;
 using DisqussTopics.Models;
 using DisqussTopics.Models.ViewModels;
 using DisqussTopics.Repository;
@@ -7,13 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using NuGet.ContentModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DisqussTopics.Tests.Controllers
 {
@@ -31,7 +24,7 @@ namespace DisqussTopics.Tests.Controllers
         }
 
         [Fact]
-        public async Task Index_ReturnsViewForIndex()
+        public async Task Index_ActionExecutes_ReturnsViewForIndex()
         {
             // Act
             var result = await _controller.Index();
@@ -41,7 +34,7 @@ namespace DisqussTopics.Tests.Controllers
         }
 
         [Fact]
-        public async Task Index_ReturnsHomeViewModelWithExactNumberOfPost()
+        public async Task Index_ActionExecutes_ReturnsHomeViewModelWithExactNumberOfPost()
         {
             // Arrange
             _postRepositoryMock.Setup(repo => repo.GetPosts())
@@ -63,7 +56,7 @@ namespace DisqussTopics.Tests.Controllers
         }
 
         [Fact]
-        public async Task Index_ReturnsHomeViewModelWithPostsTheUserIsSubsribedTo()
+        public async Task Index_ActionExecutes_ReturnsHomeViewModelWithPostsTheUserIsSubsribedTo()
         {
             // Arrange
             var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
@@ -96,7 +89,7 @@ namespace DisqussTopics.Tests.Controllers
         }
 
         [Fact]
-        public async Task MostUpvoted_ReturnsHomeViewModelWithPostsAndIndexView()
+        public async Task MostUpvoted_ActionExecutes_ReturnsHomeViewModelWithPostsAndIndexView()
         {
             // Arrange
             _postRepositoryMock.Setup(repo => repo.GetPosts())
@@ -119,7 +112,7 @@ namespace DisqussTopics.Tests.Controllers
         }
 
         [Fact]
-        public async Task MostUpvoted_ReturnsHomeViewModelWithPostsTheUserIsSubsribedToAndIndexView()
+        public async Task MostUpvoted_ActionExecutes_ReturnsHomeViewModelWithPostsTheUserIsSubsribedToAndIndexView()
         {
             // Arrange
             var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
@@ -154,7 +147,7 @@ namespace DisqussTopics.Tests.Controllers
         }
 
         [Fact]
-        public async Task MostDiscussed_ReturnsHomeViewModelWithPostsAndIndexView()
+        public async Task MostDiscussed_ActionExecutes_ReturnsHomeViewModelWithPostsAndIndexView()
         {
             // Arrange
             _postRepositoryMock.Setup(repo => repo.GetPosts())
@@ -176,7 +169,7 @@ namespace DisqussTopics.Tests.Controllers
         }
 
         [Fact]
-        public async Task MostDiscussed_ReturnsHomeViewModelWithPostsTheUserIsSubsribedToAndIndexView()
+        public async Task MostDiscussed_ActionExecutes_ReturnsHomeViewModelWithPostsTheUserIsSubsribedToAndIndexView()
         {
             // Arrange
             var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
@@ -210,7 +203,7 @@ namespace DisqussTopics.Tests.Controllers
         }
 
         [Fact]
-        public async Task NewPosts_ReturnsHomeViewModelWithPostsAndIndexView()
+        public async Task NewPosts_ActionExecutes_ReturnsHomeViewModelWithPostsAndIndexView()
         {
             // Arrange
             _postRepositoryMock.Setup(repo => repo.GetPosts())
@@ -232,7 +225,7 @@ namespace DisqussTopics.Tests.Controllers
         }
 
         [Fact]
-        public async Task NewPosts_ReturnsHomeViewModelWithPostsTheUserIsSubsribedToAndIndexView()
+        public async Task NewPosts_ActionExecutes_ReturnsHomeViewModelWithPostsTheUserIsSubsribedToAndIndexView()
         {
             // Arrange
             var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
@@ -266,7 +259,7 @@ namespace DisqussTopics.Tests.Controllers
         }
 
         [Fact]
-        public async Task Explore_ReturnsHomeViewModelWithPostsAndIndexView()
+        public async Task Explore_ActionExecutes_ReturnsHomeViewModelWithPostsAndIndexView()
         {
             // Arrange
             _postRepositoryMock.Setup(repo => repo.GetPosts())
@@ -288,7 +281,7 @@ namespace DisqussTopics.Tests.Controllers
         }
 
         [Fact]
-        public async Task Explore_ReturnsHomeViewModelWithPostsTheUserIsSubsribedToAndIndexView()
+        public async Task Explore_ActionExecutes_ReturnsHomeViewModelWithPostsTheUserIsSubsribedToAndIndexView()
         {
             // Arrange
             var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
@@ -320,6 +313,32 @@ namespace DisqussTopics.Tests.Controllers
             Assert.Equal(4, viewModel.Posts.Count());
             Assert.Equal("1", viewModel.CurrentUserId);
             Assert.Equal("Index", viewResult.ViewName);
+        }
+
+        [Fact]
+        public void Privacy_ActionExecutes_ReturnsViewForPrivacy()
+        {
+            // Act
+            var result = _controller.Privacy();
+
+            // Assert
+            Assert.IsType<ViewResult>(result);
+        }
+
+        [Fact]
+        public void Error_ActionExecutes_ReturnsErrorViewModel()
+        {
+            // Arrange
+            var httpContext = new DefaultHttpContext();
+            var controllerContext = new ControllerContext { HttpContext = httpContext };
+            _controller.ControllerContext = controllerContext;
+
+            // Act
+            var result = _controller.Error();
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            Assert.IsType<ErrorViewModel>(viewResult.Model);
         }
 
     }

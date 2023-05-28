@@ -37,14 +37,16 @@ namespace DisqussTopics.Controllers
         [Authorize(Roles = "User, Admin")]
         public async Task<IActionResult> Create()
         {
-            var currentUserId = HttpContext.User
-                .FindFirstValue(ClaimTypes.NameIdentifier);
+            var postViewModel = new PostViewModel();
 
-            var postViewModel = new PostViewModel()
+            if (User != null & User.Identity.IsAuthenticated)
             {
-                Topics = new SelectList(await _topicRepository
-                .GetSubscribedTopics(currentUserId), "Id", "Name")
-            };
+                var currentUserId = HttpContext.User
+                    .FindFirstValue(ClaimTypes.NameIdentifier);
+                postViewModel.Topics = new SelectList(await _topicRepository
+                    .GetSubscribedTopics(currentUserId), "Id", "Name");
+            }
+
             return View(postViewModel);
         }
 
@@ -56,12 +58,18 @@ namespace DisqussTopics.Controllers
         public async Task<IActionResult> Create(
             [Bind("Post,TopicId,Topics,DTUserId,UploadImage,UploadVideo")] PostViewModel postViewModel)
         {
-            // Get the user Id 
-            var currentUserId = HttpContext.User
-                .FindFirstValue(ClaimTypes.NameIdentifier);
+            string? currentUserId = string.Empty;
+            DTUser currentUser = new();
 
-            var currentUser = await _userRepository
-                .GetUserByIdAsync(currentUserId);
+            if (User != null && User.Identity.IsAuthenticated)
+            {
+                // Get the user Id 
+                currentUserId = HttpContext.User
+                    .FindFirstValue(ClaimTypes.NameIdentifier);
+
+                currentUser = await _userRepository
+                    .GetUserByIdAsync(currentUserId);
+            }
 
             if (ModelState.IsValid)
             {
@@ -77,7 +85,7 @@ namespace DisqussTopics.Controllers
                 // Get the image result
                 var imageResult = await _imageService.AddImageAsync(postViewModel.UploadImage);
                 string? imageResultURL = string.Empty;
-                if (imageResult.SecureUrl != null)
+                if (imageResult?.SecureUrl != null)
                 {
                     imageResultURL = imageResult.SecureUrl.ToString();
                 }
@@ -85,7 +93,7 @@ namespace DisqussTopics.Controllers
                 // Get the video result 
                 var videoResult = await _videoService.AddVideoAsync(postViewModel.UploadVideo);
                 string? videoResultURL = string.Empty;
-                if (videoResult.SecureUrl != null)
+                if (videoResult?.SecureUrl != null)
                 {
                     videoResultURL = videoResult.SecureUrl.ToString();
                 }
