@@ -81,7 +81,6 @@ namespace DisqussTopics.Controllers
 
                 var slug = helper.GenerateSlug(postViewModel.Post.Title);
 
-
                 // Get the image result
                 var imageResult = await _imageService.AddImageAsync(postViewModel.UploadImage);
                 string? imageResultURL = string.Empty;
@@ -118,7 +117,6 @@ namespace DisqussTopics.Controllers
                     Video = videoResultURL,
                     Upvotes = new[] { currentUser },
                     Votes = 1
-                    
                 };
 
                 var topic = await _topicRepository.GetTopicById(post.TopicId);
@@ -128,7 +126,6 @@ namespace DisqussTopics.Controllers
                 TempData["Success"] = "Post created successfully!";
 
                 return RedirectToAction(nameof(Detail), new { Topic = topic.Name, Slug = slug, Id = post.Id });
-                //return RedirectToAction("Index", "Home");
             }
 
             // If the model state is not valid, redisplay the form with validation errors
@@ -154,8 +151,6 @@ namespace DisqussTopics.Controllers
 
             var postUpvoted = post.Upvotes.Any(u => u.Id == currentUserId);
             var postDownvoted = post.Downvotes.Any(u => u.Id == currentUserId);
-            //var commentUpvoted;
-            //var commentDownvoted;
 
             var postDetailViewModel = new PostDetailViewModel()
             {
@@ -182,7 +177,7 @@ namespace DisqussTopics.Controllers
             var topicId = post.TopicId;
 
             var currentUserId = HttpContext.User
-              .FindFirstValue(ClaimTypes.NameIdentifier);
+                .FindFirstValue(ClaimTypes.NameIdentifier);
 
             var postViewModel = new PostViewModel()
             {

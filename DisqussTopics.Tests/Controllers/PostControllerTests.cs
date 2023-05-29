@@ -1,4 +1,5 @@
-﻿using DisqussTopics.Controllers;
+﻿using CloudinaryDotNet.Actions;
+using DisqussTopics.Controllers;
 using DisqussTopics.Models;
 using DisqussTopics.Models.ViewModels;
 using DisqussTopics.Repository;
@@ -79,7 +80,8 @@ namespace DisqussTopics.Tests.Controllers
 
             _controller.ModelState.AddModelError("PostViewModel", "Title is required");
 
-            var postViewModel = new PostViewModel() { Post = GetTestPost1() };
+            var postViewModel = GetTestPostViewModel();
+            postViewModel.Post.Title = null!;
 
             // Act
             var result = await _controller.Create(postViewModel);
@@ -96,40 +98,118 @@ namespace DisqussTopics.Tests.Controllers
         }
 
         [Fact]
-        public async Task Create_ModelStateValid_RedirectsToDetailAction()
+        public async Task Create_ModelStateValid_PostWithContentRedirectsToDetailAction()
         {
             // Arrange
+            Post? post = null;
+            _postRepositoryMock.Setup(repo => repo.InsertPost(It.IsAny<Post>()))
+                .Callback<Post>(p => post = p);
+
             var user = GetTestUser();
             _controller.ControllerContext = new ControllerContext()
             {
                 HttpContext = new DefaultHttpContext() { User = user },
             };
 
-            
-
             var tempData = _tempDataDictionary;
             tempData["Success"] = "Post created successfully!";
 
             _controller.TempData = tempData;
-            var postViewModel = GetTestPost2();
+            var postViewModel = GetTestPostViewModel();
 
             _topicRepositoryMock.Setup(repo => repo.GetTopicById(postViewModel.TopicId))
-                .ReturnsAsync(
-                new Topic()
-                {
-                    Id = postViewModel.TopicId,
-                    Name = "Test",
-                    Slug = "test",
-                });
+                .ReturnsAsync(GetTestTopic());
 
             // Act
             var result = await _controller.Create(postViewModel);
-          
 
             // Assert
             var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("Detail", redirectToActionResult.ActionName);
+            _postRepositoryMock.Verify(repo => repo.InsertPost(It.IsAny<Post>()), Times.Once);
+            Assert.Equal(post.Title, postViewModel.Post.Title);
+            Assert.Equal(post.Slug, postViewModel.Post.Slug);
+            Assert.Equal(post.Content, postViewModel.Post.Content);
+        }
 
+        [Fact]
+        public async Task Create_ModelStateValid_PostWithImageRedirectsToDetailAction()
+        {
+            // Arrange
+            Post? post = null;
+            _postRepositoryMock.Setup(repo => repo.InsertPost(It.IsAny<Post>()))
+                .Callback<Post>(p => post = p);
+
+            var user = GetTestUser();
+            _controller.ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext() { User = user },
+            };
+
+            var tempData = _tempDataDictionary;
+            tempData["Success"] = "Post created successfully!";
+            _controller.TempData = tempData;
+
+            var postViewModel = GetTestPostViewModel();
+            postViewModel.Post.Content = null;
+            postViewModel.UploadImage = GetTestImage();
+
+            _imageServiceMock.Setup(repo => repo.AddImageAsync(postViewModel.UploadImage))
+                .ReturnsAsync(GetMockImageUploadResult());
+
+            _topicRepositoryMock.Setup(repo => repo.GetTopicById(postViewModel.TopicId))
+                .ReturnsAsync(GetTestTopic());
+
+            // Act
+            var result = await _controller.Create(postViewModel);
+
+            // Assert
+            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("Detail", redirectToActionResult.ActionName);
+            _postRepositoryMock.Verify(repo => repo.InsertPost(It.IsAny<Post>()), Times.Once);
+            Assert.Equal(post.Title, postViewModel.Post.Title);
+            Assert.Equal(post.Slug, postViewModel.Post.Slug);
+            Assert.Equal("https://example.com/test2.png", post.Image);
+        }
+
+        [Fact]
+        public async Task Create_ModelStateValid_PostWithVideoRedirectsToDetailAction()
+        {
+            // Arrange
+            Post? post = null;
+            _postRepositoryMock.Setup(repo => repo.InsertPost(It.IsAny<Post>()))
+                .Callback<Post>(p => post = p);
+
+            var user = GetTestUser();
+            _controller.ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext() { User = user },
+            };
+
+            var tempData = _tempDataDictionary;
+            tempData["Success"] = "Post created successfully!";
+            _controller.TempData = tempData;
+
+            var postViewModel = GetTestPostViewModel();
+            postViewModel.Post.Content = null;
+            postViewModel.UploadVideo = GetTestVideo();
+
+            _videoServiceMock.Setup(repo => repo.AddVideoAsync(postViewModel.UploadVideo))
+                .ReturnsAsync(GetMockVideoUploadResult());
+
+            _topicRepositoryMock.Setup(repo => repo.GetTopicById(postViewModel.TopicId))
+                .ReturnsAsync(GetTestTopic());
+
+            // Act
+            var result = await _controller.Create(postViewModel);
+
+            // Assert
+            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("Detail", redirectToActionResult.ActionName);
+            _postRepositoryMock.Verify(repo => repo.InsertPost(It.IsAny<Post>()), Times.Once);
+            Assert.Equal(post.Title, postViewModel.Post.Title);
+            Assert.Equal(post.Slug, postViewModel.Post.Slug);
+            Assert.Equal("https://example.com/sea-turtle.mp4", post.Video);
         }
 
         private ClaimsPrincipal GetTestUser()
@@ -142,19 +222,67 @@ namespace DisqussTopics.Tests.Controllers
             }, "mock"));
         }
 
-        private Post GetTestPost1()
+        private IFormFile CreateMockImageFile(string fileName, byte[] content)
         {
-            return new Post()
+            var ms = new MemoryStream(content);
+            return new FormFile(ms, 0, content.Length, fileName, fileName)
             {
-                Id = 1,
-                Slug = "test",
-                Created = DateTime.Now,
-                Updated = DateTime.Now,
-                Content = "Test"
+                Headers = new HeaderDictionary(),
+                ContentType = "image/png" // or "image/jpg", "image/gif", etc.
+            };
+        }
+        private IFormFile CreateMockVideoFile(string fileName, byte[] content)
+        {
+            var ms = new MemoryStream(content);
+            return new FormFile(ms, 0, content.Length, fileName, fileName)
+            {
+                Headers = new HeaderDictionary(),
+                ContentType = "video/mp4" // or "image/jpg", "image/gif", etc.
             };
         }
 
-        private PostViewModel GetTestPost2()
+        private IFormFile GetTestImage()
+        {
+            var imageContent = File.ReadAllBytes("C:/Users/John/Documents/GitHub/DisqussTopics/DisqussTopics/wwwroot/images/test2.png"); // or test.jpg, test.gif, etc.
+            var mockImage = CreateMockImageFile("C:/Users/John/Documents/GitHub/DisqussTopics/DisqussTopics/wwwroot/images/test2.png", imageContent);
+            return mockImage;
+        }
+
+        private IFormFile GetTestVideo()
+        {
+            var videoContent = File.ReadAllBytes("C:/Users/John/Documents/GitHub/DisqussTopics/DisqussTopics/wwwroot/videos/sea-turtle.mp4"); // or test.jpg, test.gif, etc.
+            var mockvideo = CreateMockVideoFile("C:/Users/John/Documents/GitHub/DisqussTopics/DisqussTopics/wwwroot/videos/sea-turtle.mp4", videoContent);
+            return mockvideo;
+        }
+        private ImageUploadResult GetMockImageUploadResult()
+        {
+            return new ImageUploadResult()
+            {
+                PublicId = "mock_public_id",
+                Version = "1234567890",
+                Format = "png",
+                Width = 800,
+                Height = 600,
+                SecureUrl = new Uri("https://example.com/test2.png"),
+                OriginalFilename = "test2.png"
+            };
+        }
+        private VideoUploadResult GetMockVideoUploadResult()
+        {
+            return new VideoUploadResult()
+            {
+                PublicId = "mock_public_id",
+                Version = "1234567890",
+                Format = "mp4",
+                Width = 1920,
+                Height = 1080,
+                SecureUrl = new Uri("https://example.com/sea-turtle.mp4"),
+                OriginalFilename = "sea-turtle.mp4",
+                Duration = 60 // Duration in seconds
+            };
+        }
+
+        private PostViewModel GetTestPostViewModel()
         {
             return new PostViewModel()
             {
@@ -168,6 +296,16 @@ namespace DisqussTopics.Tests.Controllers
                 },
                 TopicId = 1,
                 DTUserId = "1"
+            };
+        }
+
+        private Topic GetTestTopic()
+        {
+            return new Topic()
+            {
+                Id = 1,
+                Name = "Test",
+                Slug = "test",
             };
         }
 
