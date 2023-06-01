@@ -212,6 +212,60 @@ namespace DisqussTopics.Tests.Controllers
             Assert.Equal("https://example.com/sea-turtle.mp4", post.Video);
         }
 
+        [Fact]
+        public async Task Detail_ReturnsDetailView_UserIsNotAuthenticated()
+        {
+            // Arrange
+            int id = 1;
+            _postRepositoryMock.Setup(repo => repo.GetPostByIdNoTracking(id))
+                .ReturnsAsync(GetTestPost());
+
+            // Act
+            var result = await _controller.Detail(id);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var viewModel = Assert.IsType<PostDetailViewModel>(viewResult.Model);
+
+            Assert.Equal(1, viewModel.Post.Id);
+            Assert.Equal("Test", viewModel.Post.Title);
+            Assert.Equal("test", viewModel.Post.Slug);
+            Assert.Equal("Test", viewModel.Post.Content);
+
+        }
+
+        [Fact]
+        public async Task Detail_ReturnsDetailView_UserIsAuthenticated()
+        {
+            // Arrange
+            var user = GetTestUser();
+            _controller.ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext() { User = user },
+            };
+
+            var post = GetTestPost();
+            post.Upvotes = new[] { new DTUser { Id = "1"} };
+            post.Downvotes = Array.Empty<DTUser>();
+
+            int id = 1;
+            _postRepositoryMock.Setup(repo => repo.GetPostByIdNoTracking(id))
+                .ReturnsAsync(GetTestPost());
+
+            // Act
+            var result = await _controller.Detail(id);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var viewModel = Assert.IsType<PostDetailViewModel>(viewResult.Model);
+
+            Assert.Equal(1, viewModel.Post.Id);
+            Assert.Equal("Test", viewModel.Post.Title);
+            Assert.Equal("test", viewModel.Post.Slug);
+            Assert.Equal("Test", viewModel.Post.Content);
+
+        }
+
         private ClaimsPrincipal GetTestUser()
         {
             return new ClaimsPrincipal(new ClaimsIdentity(new[]
@@ -296,6 +350,19 @@ namespace DisqussTopics.Tests.Controllers
                 },
                 TopicId = 1,
                 DTUserId = "1"
+            };
+        }
+
+        private Post GetTestPost()
+        {
+            return new Post()
+            {
+                Id = 1,
+                Title = "Test",
+                Slug = "test",
+                Created = DateTime.Now,
+                Updated = DateTime.Now,
+                Content = "Test"
             };
         }
 

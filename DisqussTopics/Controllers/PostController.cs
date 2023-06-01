@@ -145,22 +145,32 @@ namespace DisqussTopics.Controllers
 
             var comments = await _commentRepository.GetPostComments(post);
 
-            var currentUserId = HttpContext.User
-                .FindFirstValue(ClaimTypes.NameIdentifier);
-
-
-            var postUpvoted = post.Upvotes.Any(u => u.Id == currentUserId);
-            var postDownvoted = post.Downvotes.Any(u => u.Id == currentUserId);
-
             var postDetailViewModel = new PostDetailViewModel()
             {
                 Post = post,
                 Comment = new Comment(),
                 Comments = comments,
-                PostUpvoted = postUpvoted,
-                PostDownvoted = postDownvoted,
-                UserId = currentUserId,
             };
+
+            if (User != null && User.Identity.IsAuthenticated)
+            {
+                var currentUserId = HttpContext.User
+                    .FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (post.Upvotes != null && post.Upvotes.Any(u => u.Id == currentUserId))
+                {
+                    var postUpvoted = post.Upvotes.Any(u => u.Id == currentUserId);
+                    postDetailViewModel.PostUpvoted = postUpvoted;
+                }
+
+                if (post.Downvotes != null && post.Downvotes.Any(u => u.Id == currentUserId))
+                {
+                    var postDownvoted = post.Downvotes.Any(u => u.Id == currentUserId);
+                    postDetailViewModel.PostDownvoted = postDownvoted;
+                }
+            
+                postDetailViewModel.UserId = currentUserId;
+            }
 
             return View(postDetailViewModel);
         }
