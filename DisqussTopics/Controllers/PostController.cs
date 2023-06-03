@@ -184,19 +184,23 @@ namespace DisqussTopics.Controllers
 
             if (post == null) return NotFound();
 
-            var topicId = post.TopicId;
-
-            var currentUserId = HttpContext.User
-                .FindFirstValue(ClaimTypes.NameIdentifier);
-
             var postViewModel = new PostViewModel()
             {
-                Post = post,
-                TopicId = topicId,
-                Topics = new SelectList(await _topicRepository
-                .GetSubscribedTopics(currentUserId), "Id", "Name"),
-                DTUserId = currentUserId,
+                Post = post
             };
+
+            var topicId = post.TopicId;
+
+            if (User != null && User.Identity.IsAuthenticated)
+            {
+                var currentUserId = HttpContext.User
+                    .FindFirstValue(ClaimTypes.NameIdentifier);
+
+                postViewModel.TopicId = topicId;
+                postViewModel.Topics = new SelectList(await _topicRepository
+                    .GetSubscribedTopics(currentUserId), "Id", "Name");
+                postViewModel.DTUserId = currentUserId;
+            }
 
             return View(postViewModel);
         }
@@ -227,7 +231,7 @@ namespace DisqussTopics.Controllers
                 // Get the image result
                 var imageResult = await _imageService.AddImageAsync(postViewModel.UploadImage);
                 string? imageResultURL = string.Empty;
-                if (imageResult.SecureUrl != null)
+                if (imageResult?.SecureUrl != null)
                 {
                     imageResultURL = imageResult.SecureUrl.ToString();
 
@@ -257,7 +261,7 @@ namespace DisqussTopics.Controllers
                 // Get the video result 
                 var videoResult = await _videoService.AddVideoAsync(postViewModel.UploadVideo);
                 string? videoResultURL = string.Empty;
-                if (videoResult.SecureUrl != null)
+                if (videoResult?.SecureUrl != null)
                 {
                     videoResultURL = videoResult.SecureUrl.ToString();
 

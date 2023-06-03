@@ -245,7 +245,7 @@ namespace DisqussTopics.Tests.Controllers
             };
 
             var post = GetTestPost();
-            post.Upvotes = new[] { new DTUser { Id = "1"} };
+            post.Upvotes = new[] { new DTUser { Id = "1" } };
             post.Downvotes = Array.Empty<DTUser>();
 
             int id = 1;
@@ -263,9 +263,290 @@ namespace DisqussTopics.Tests.Controllers
             Assert.Equal("Test", viewModel.Post.Title);
             Assert.Equal("test", viewModel.Post.Slug);
             Assert.Equal("Test", viewModel.Post.Content);
+        }
+
+        [Fact]
+        public async Task Edit_ActionExecutes_ReturnsViewForEdit()
+        {
+            // Arrange
+            var user = GetTestUser();
+            _controller.ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext() { User = user },
+            };
+
+            int id = 1;
+            _postRepositoryMock.Setup(repo => repo.GetPostByIdNoTracking(id))
+                .ReturnsAsync(GetTestPost());
+
+            // Act
+            var result = await _controller.Edit(id);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var viewModel = Assert.IsType<PostViewModel>(viewResult.Model);
+            Assert.Equal(id, viewModel.Post.Id);
+            Assert.Equal("Test", viewModel.Post.Title);
+            Assert.Equal("test", viewModel.Post.Slug);
+            Assert.Equal("Test", viewModel.Post.Content);
+        }
+
+        [Fact]
+        public async Task Edit_InvalidModelState_ReturnsEditView()
+        {
+            // Arrange
+            int id = 1;
+
+            var postViewModel = GetTestPostViewModel();
+            postViewModel.Post.Title = null!;
+
+            var tempData = _tempDataDictionary;
+            tempData["Error"] = "Failed to edit Post!";
+
+            _controller.TempData = tempData;
+
+            _controller.ModelState.AddModelError("PostViewModel", "Title is required");
+
+            // Act
+            var result = await _controller.Edit(id, postViewModel);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var viewModel = Assert.IsType<PostViewModel>(viewResult.Model);
+            Assert.Equal(postViewModel.Post.Id, viewModel.Post.Id);
+            Assert.Equal(postViewModel.Post.Slug, viewModel.Post.Slug);
+            Assert.Equal(postViewModel.Post.Created, viewModel.Post.Created);
+            Assert.Equal(postViewModel.Post.Updated, viewModel.Post.Updated);
+            Assert.Equal(postViewModel.Post.Content, viewModel.Post.Content);
+        }
+
+        [Fact]
+        public async Task Edit_ModelStateValid_PostWithContentRedirectsToDetailAction()
+        {
+            // Arrange
+            int id = 1;
+            Post? post = null;
+            _postRepositoryMock.Setup(repo => repo.UpdatePost(It.IsAny<Post>()))
+                .Callback<Post>(p => post = p);
+
+            var tempData = _tempDataDictionary;
+            tempData["Success"] = "Post edited successfully!";
+
+            _controller.TempData = tempData;
+            var postViewModel = GetTestPostViewModel();
+
+            _postRepositoryMock.Setup(repo => repo.GetPostById(id))
+                .ReturnsAsync(GetTestPost());
+
+            _topicRepositoryMock.Setup(repo => repo.GetTopicById(postViewModel.TopicId))
+                .ReturnsAsync(GetTestTopic());
+
+            // Act
+            var result = await _controller.Edit(id, postViewModel);
+
+            // Assert
+            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("Detail", redirectToActionResult.ActionName);
+            _postRepositoryMock.Verify(repo => repo.UpdatePost(It.IsAny<Post>()), Times.Once);
+            Assert.Equal(post.Title, postViewModel.Post.Title);
+            Assert.Equal(post.Slug, postViewModel.Post.Slug);
+            Assert.Equal(post.Content, postViewModel.Post.Content);
+        }
+
+        [Fact]
+        public async Task Edit_ModelStateValid_PostWithImageRedirectsToDetailAction()
+        {
+            // Arrange
+            int id = 1;
+            Post? post = null;
+            _postRepositoryMock.Setup(repo => repo.UpdatePost(It.IsAny<Post>()))
+                .Callback<Post>(p => post = p);
+
+            var tempData = _tempDataDictionary;
+            tempData["Success"] = "Post edited successfully!";
+
+            _controller.TempData = tempData;
+            var postViewModel = GetTestPostViewModel();
+            postViewModel.Post.Content = null;
+            postViewModel.UploadImage = GetTestImage();
+
+            _postRepositoryMock.Setup(repo => repo.GetPostById(id))
+                .ReturnsAsync(GetTestPost());
+
+            _imageServiceMock.Setup(repo => repo.AddImageAsync(postViewModel.UploadImage))
+                .ReturnsAsync(GetMockImageUploadResult());
+
+            _topicRepositoryMock.Setup(repo => repo.GetTopicById(postViewModel.TopicId))
+                .ReturnsAsync(GetTestTopic());
+
+            // Act
+            var result = await _controller.Edit(id, postViewModel);
+
+            // Assert
+            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("Detail", redirectToActionResult.ActionName);
+            _postRepositoryMock.Verify(repo => repo.UpdatePost(It.IsAny<Post>()), Times.Once);
+            Assert.Equal(post.Title, postViewModel.Post.Title);
+            Assert.Equal(post.Slug, postViewModel.Post.Slug);
+            Assert.Equal("https://example.com/test2.png", post.Image);
+        }
+
+        [Fact]
+        public async Task Edit_ModelStateValid_PostWithVideoRedirectsToDetailAction()
+        {
+            // Arrange
+            int id = 1;
+            Post? post = null;
+            _postRepositoryMock.Setup(repo => repo.UpdatePost(It.IsAny<Post>()))
+                .Callback<Post>(p => post = p);
+
+            var tempData = _tempDataDictionary;
+            tempData["Success"] = "Post edited successfully!";
+
+            _controller.TempData = tempData;
+            var postViewModel = GetTestPostViewModel();
+            postViewModel.Post.Content = null;
+            postViewModel.UploadVideo = GetTestVideo();
+
+            _postRepositoryMock.Setup(repo => repo.GetPostById(id))
+                .ReturnsAsync(GetTestPost());
+
+            _videoServiceMock.Setup(repo => repo.AddVideoAsync(postViewModel.UploadVideo))
+                .ReturnsAsync(GetMockVideoUploadResult());
+
+            _topicRepositoryMock.Setup(repo => repo.GetTopicById(postViewModel.TopicId))
+                .ReturnsAsync(GetTestTopic());
+
+            // Act
+            var result = await _controller.Edit(id, postViewModel);
+
+            // Assert
+            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("Detail", redirectToActionResult.ActionName);
+            _postRepositoryMock.Verify(repo => repo.UpdatePost(It.IsAny<Post>()), Times.Once);
+            Assert.Equal(post.Title, postViewModel.Post.Title);
+            Assert.Equal(post.Slug, postViewModel.Post.Slug);
+            Assert.Equal("https://example.com/sea-turtle.mp4", post.Video);
+        }
+
+        [Fact]
+        public async Task Delete_ActionExecutes_ReturnsNotFound()
+        {
+            // Arrange
+            int id = 0;
+            Post? post = null;
+            _postRepositoryMock.Setup(repo => repo.GetPostByIdNoTracking(id))
+                .ReturnsAsync(post);
+
+            // Act
+            var result = await _controller.Delete(id);
+
+            // Assert
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact]
+        public async Task Delete_ActionExecutes_ReturnsViewDeleteView()
+        {
+            // Arrange
+            int id = 1;
+            Post post = GetTestPost();
+            _postRepositoryMock.Setup(repo => repo.GetPostByIdNoTracking(id))
+                .ReturnsAsync(post);
+
+            // Act
+            var result = await _controller.Delete(id);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsType<Post>(viewResult.Model);
+            Assert.Equal(post.Id, model.Id);
+            Assert.Equal(post.Title, model.Title);
+            Assert.Equal(post.Slug, model.Slug);
+            Assert.Equal(post.Content, model.Content);
 
         }
 
+        [Fact]
+        public async Task DeleteConfirmed_ActionExecute_DeletesPostAndRedirects()
+        {
+            // Arrange
+            int id = 1;
+            _postRepositoryMock.Setup(repo => repo.DeletePost(It.IsAny<Post>()));
+
+            _postRepositoryMock.Setup(repo => repo.GetPostById(id))
+                .ReturnsAsync(GetTestPost());
+
+            var tempData = _tempDataDictionary;
+            tempData["Success"] = "Post deleted successfully!";
+
+            _controller.TempData = tempData;
+
+            // Act
+            var result = await _controller.DeleteConfirmed(id);
+
+            // Assert
+            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("Index", redirectToActionResult.ActionName);
+            _postRepositoryMock.Verify(repo => repo.DeletePost(It.IsAny<Post>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task Share_ActionExecutes_ReturnsSharePostPartial()
+        {
+            var httpContext = new DefaultHttpContext();
+            httpContext.Request.Host = new HostString("example.com");
+            _controller.ControllerContext = new ControllerContext()
+            {
+                HttpContext = httpContext
+            };
+
+            int id = 1;
+            Post post = GetTestPost();
+
+            _postRepositoryMock.Setup(repo => repo.GetPostByIdNoTracking(id))
+                .ReturnsAsync(post);
+
+            // Act
+            var result = await _controller.Share(id);
+
+            // Assert
+            var partialViewResult = Assert.IsType<PartialViewResult>(result);
+            var viewModel = Assert.IsType<PostViewModel>(partialViewResult.Model);
+            Assert.Equal("_SharePostPartial", partialViewResult.ViewName);
+            Assert.Equal(post.Title, viewModel.Post.Title);
+            Assert.Equal(post.Slug, viewModel.Post.Slug);
+            Assert.Equal(post.Content, viewModel.Post.Content);
+            Assert.Equal(@$"example.com/Post/Detail/{post.Topic.Name}/{post.Slug}/{id}", viewModel.URL);
+        }
+
+        [Fact]
+        public async Task UpvotePost_ActionExecutes_PostGetsOneUpvote()
+        {
+            // Arrange
+            int id = 1;
+            var user = GetTestUser();
+            var dtUser = GetTestDTUser();
+            Post post = GetTestPost();
+
+            _controller.ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext() { User = user },
+            };
+
+            _postRepositoryMock.Setup(repo => repo.GetPostById(id))
+                .ReturnsAsync(post);
+
+            _userRepositoryMock.Setup(repo => repo.GetUserByIdAsync("1"))
+                .ReturnsAsync(dtUser);
+
+            // Act
+            var result = await _controller.UpvotePost(id);
+
+            // Assert
+            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("Detail", redirectToActionResult.ActionName);
+        }
         private ClaimsPrincipal GetTestUser()
         {
             return new ClaimsPrincipal(new ClaimsIdentity(new[]
@@ -274,6 +555,17 @@ namespace DisqussTopics.Tests.Controllers
                 new Claim(ClaimTypes.NameIdentifier, "1"),
                 new Claim("custom-claim", "example claim value"),
             }, "mock"));
+        }
+
+        private DTUser GetTestDTUser()
+        {
+            return new DTUser()
+            {
+                Id = "1",
+                DTUsername = "test",
+                PostUpvotes = new List<Post>(),
+                PostDownvotes = new List<Post>()
+            };
         }
 
         private IFormFile CreateMockImageFile(string fileName, byte[] content)
@@ -346,7 +638,7 @@ namespace DisqussTopics.Tests.Controllers
                     Slug = "test",
                     Created = DateTime.Now,
                     Updated = DateTime.Now,
-                    Content = "Test"
+                    Content = "Test",
                 },
                 TopicId = 1,
                 DTUserId = "1"
@@ -362,7 +654,11 @@ namespace DisqussTopics.Tests.Controllers
                 Slug = "test",
                 Created = DateTime.Now,
                 Updated = DateTime.Now,
-                Content = "Test"
+                Content = "Test",
+                TopicId = 1,
+                Topic = new Topic() { Name = "Test" },
+                Upvotes = new List<DTUser>(),
+                Downvotes = new List<DTUser>()
             };
         }
 
