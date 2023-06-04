@@ -547,6 +547,97 @@ namespace DisqussTopics.Tests.Controllers
             var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("Detail", redirectToActionResult.ActionName);
         }
+
+        [Fact]
+        public async Task RemoveUpvotePost_ActionExecutes_PostRemovesOneUpvote()
+        {
+            // Arrange
+            int id = 1;
+            var user = GetTestUser();
+            var dtUser = GetTestDTUser();
+            Post post = GetTestPost();
+
+            dtUser.PostUpvotes = new List<Post> { post };
+            post.Upvotes = new List<DTUser> { dtUser };
+
+            _controller.ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext() { User = user },
+            };
+
+            _postRepositoryMock.Setup(repo => repo.GetPostById(id))
+                .ReturnsAsync(post);
+
+            _userRepositoryMock.Setup(repo => repo.GetUserByIdAsync("1"))
+                .ReturnsAsync(dtUser);
+
+            // Act
+            var result = await _controller.RemoveUpvotePost(id);
+
+            // Assert
+            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("Detail", redirectToActionResult.ActionName);
+        }
+
+        [Fact]
+        public async Task DownvotePost_ActionExecutes_PostGetsOneDownvote()
+        {
+            // Arrange
+            int id = 1;
+            var user = GetTestUser();
+            var dtUser = GetTestDTUser();
+            Post post = GetTestPost();
+
+            _controller.ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext() { User = user },
+            };
+
+            _postRepositoryMock.Setup(repo => repo.GetPostById(id))
+                .ReturnsAsync(post);
+
+            _userRepositoryMock.Setup(repo => repo.GetUserByIdAsync("1"))
+                .ReturnsAsync(dtUser);
+
+            // Act
+            var result = await _controller.DownvotePost(id);
+
+            // Assert
+            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("Detail", redirectToActionResult.ActionName);
+        }
+
+        [Fact]
+        public async Task RemoveDownvotePost_ActionExecutes_PostRemovesOneDownvote()
+        {
+            // Arrange
+            int id = 1;
+            var user = GetTestUser();
+            var dtUser = GetTestDTUser();
+            Post post = GetTestPost();
+
+            dtUser.PostDownvotes = new List<Post> { post };
+            post.Downvotes = new List<DTUser> { dtUser };
+
+            _controller.ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext() { User = user },
+            };
+
+            _postRepositoryMock.Setup(repo => repo.GetPostById(id))
+                .ReturnsAsync(post);
+
+            _userRepositoryMock.Setup(repo => repo.GetUserByIdAsync("1"))
+                .ReturnsAsync(dtUser);
+
+            // Act
+            var result = await _controller.RemoveDownvotePost(id);
+
+            // Assert
+            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("Detail", redirectToActionResult.ActionName);
+        }
+
         private ClaimsPrincipal GetTestUser()
         {
             return new ClaimsPrincipal(new ClaimsIdentity(new[]
